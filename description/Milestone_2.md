@@ -343,7 +343,7 @@ Effect: <CARD_DESCRIPTION>
 Creature:
 ```
 === Card Info ===========================================================================\n
-Tutor [TUTOR] (4 mana)\n
+Evil Tutor [TUTOR] (4 mana)\n
 Type: Creature\n
 Base Attack: 5\n
 Base Health: 4\n
