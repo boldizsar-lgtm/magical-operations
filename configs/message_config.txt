@@ -109,6 +109,7 @@ D_BORDER_STATUS:=== Status =====================================================
 D_BORDER_BATTLE_PHASE:===================================== BATTLE PHASE ======================================
 D_ATTACK_1:--- ATTACK 1 ---
 D_ATTACK_2:--- ATTACK 2 ---
+D_BORDER_BATTLE_END:-------------------------------------- BATTLE END ---------------------------------------
 D_BORDER_GAME_END:======================================= GAME END ========================================
 D_END_PLAYER_DEFEATED:The battle has ended!
 D_END_DRAW_CARD:No more cards to draw.

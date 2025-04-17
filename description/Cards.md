@@ -51,7 +51,7 @@ A creature is said to **take damage** when its current health is reduced. A crea
 </details>
 
 <details>
-<summary><h4>Traits</h4></summary>
+<summary><h4>Base Traits & Current Traits</h4></summary>
 
 In addition to mana cost, attack, and health, most creatures also have so-called **traits**. Traits grant the creature additional effects or abilities. In the output, they are always displayed in alphabetical order, either by their first letter in uppercase (see [Milestone 1](Milestone_1.md) > Game Board Printing > Card Printing) or by their name (see [Milestone 2](Milestone_2.md) > Command: info).
 
@@ -70,7 +70,7 @@ When and how traits should be handled is described in [Milestone 2](Milestone_2.
 | U      | Undying      | If this creature is in the graveyard, it is placed in its owner's first empty Field Zone slot at the end of the Battle Phase of the current round. The creature then loses the Undying trait. If no empty Field Zone slot is available, the creature remains in the graveyard and does not lose the trait. |
 | V      | Venomous     | If this creature deals damage to another creature, the opponent creature gains the Poisoned trait.                                                                                                                                                                                                         |
 
-Base traits is the list of traits that a creature has without any additional effects added by spells (see Base Traits in the list of creature cards below). Current traits is the list of traits a creature currently has, after optionally being affected by spells or other creatures. When a creature enters a player's hand (e.g. through drawing a card, or through a spell) or the board (e.g. through a `creature` command, or through a spell), its current traits are set to its base traits.
+Base traits is the list of traits that a creature has without any additional effects added by spells (see Base Traits in the list of creature cards below). The list of base traits does not change and is the same for all creatures of the same type. Current traits is the list of traits a creature currently has, after optionally being affected by spells or other creatures. When a creature enters a player's hand (e.g. through drawing a card, or through a spell) or the board (e.g. through a `creature` command, or through a spell), its current traits are set to its base traits.
 
 If a trait contradicts the general rules, the trait takes precedence. For example, the trait Challenger can move a creature into a Battle Zone slot in the same round it has entered the board, without causing an `E_CREATURE_CANNOT_BATTLE` error.
 

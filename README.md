@@ -52,7 +52,7 @@ Information about this can be found here: [Effective C++ Points](https://www.not
 ### Program (**mandatory**)
 
 - Push to your team's repository **on a branch called `submission`**
-- Deliverables: all .cpp and .hpp files needed to run your program
+- Deliverables: all .cpp/.hpp (and optionally other) files needed to run your program
 - **Deadline: 21.05.2025, 23:59 (Austrian time)**
 - **Assignment 2 is team work!** It is submitted in teams of three people. Try to keep the division of labor as even as possible. If a team member does not contribute sufficiently to the project, they may get deductions. Every team member should make their own commits so that we are able to see who implemented what. In the artifacts downloaded from Gitlab, you can find a gitreport that shows your current statistics. 
 
@@ -61,6 +61,7 @@ Information about this can be found here: [Effective C++ Points](https://www.not
 ### General Notes
 The notes given in this section are important for the entire assignment description.
 
+- Any additional non-.cpp/.hpp files needed by the program must be placed in a directory called `data` in the root directory of the repository. Otherwise, they won't be recognized by the test system. This is optional, there is no requirement to have additional files.
 - `\n` shouldn't be printed as two separate characters, instead they represent the newline character.
 - Note the leading and trailing spaces in the text fields. You can make them visible by selecting the text field.
 - Words in uppercase letters in angle brackets (like `<CARD_ID>`) should be replaced by calculated or given data. They are *not* part of the output itself!

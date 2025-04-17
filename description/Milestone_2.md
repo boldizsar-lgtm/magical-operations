@@ -37,6 +37,8 @@ A `<SLOT>` parameter describes the position of a slot on the board. It must (cas
 - `(F|B)` specifies whether the slot is in the Field (`F`) or Battle Zone (`B`)
 - `[1-7]` specifies the slot ID
 
+The whole `<SLOT>` parameter must match the regex pattern to be valid. The parameter is not allowed to contain additional characters.
+
 <details>
 <summary>Example</summary>
 
@@ -666,7 +668,7 @@ where
 
 If the slot is empty, nothing happens and the evaluation moves on to the next slot. If the slot contains a creature, a fight happens (see Resolving a Fight).
 
-After **all** slots in the Attacker's Battle Zone have been evaluated, all surviving creatures on the board with the Temporary trait are moved to the owner's graveyard. Then, all remaining creatures in both players' Battle Zones return to their respective Field Zone. Next, all creatures with the Undying trait in the graveyard enter the board again.
+After **all** slots in the Attacker's Battle Zone have been evaluated, `<D_BORDER_BATTLE_END>` is printed. Then, all surviving creatures on the board with the Temporary trait are moved to the owner's graveyard. Then, all remaining creatures in both players' Battle Zones return to their respective Field Zone. Next, all creatures with the Undying trait in the graveyard enter the board again.
 
 Finally, the current round ends, and the next round starts as described in [Milestone 1](Milestone_1.md) > Playing the Game > Round Start. Any effects a creature has received during this round (e.g. reduced current health, added or removed traits) carry over into the next round.
 
@@ -687,7 +689,7 @@ The following creatures will never be part of a fight:
 
 If there is no creature in the same lane in the Defender's Battle Zone, the Defender is hit by the attack directly. `<I_DIRECT>` should be printed and the Defender's health is reduced by the Attacker's creature's current attack. Creature traits are not relevant for a direct hit.
 
-If this reduces the Defender's health to equal or smaller than zero, the game ends immediately and the Attacker wins. The program should move on to the Final Phase instead of evaluating the next slot in the Attacker's Battle Zone.
+If this reduces the Defender's health to equal or smaller than zero, the game ends immediately and the Attacker wins. The program should move on to the Final Phase instead of evaluating the next slot in the Attacker's Battle Zone or printing any further output in the Battle Phase.
 
 #### Fight Between Two Creatures
 
@@ -718,7 +720,7 @@ If an attacking creature has the **Lifesteal** trait and reduces the opposing cr
 
 If an attacking creature has the **Venomous** trait and reduces the opposing creature's current health with an attack, the opposing creature gains the Poisoned trait and `<I_VENOMOUS>` should be printed. `<I_VENOMOUS>` should be printed even if the attack kills the opposing creature, or if it was already poisoned. Both creatures may be poisoned in the same fight. For how the Poisoned trait is handled, see Command: done.
 
-If, **after resolving a fight completely (including all trait messages)**, a player's health has been reduced to equal or smaller than zero, the game ends immediately and the other player wins. If both players' health points are reduced to equal or smaller than zero in the same fight, the game ends in a tie. The program should move on to the Final Phase instead of evaluating the next slot in the Attacker's Battle Zone.
+If, **after resolving a fight completely (including all trait messages)**, a player's health has been reduced to equal or smaller than zero, the game ends immediately and the other player wins. If both players' health points are reduced to equal or smaller than zero in the same fight, the game ends in a tie. The program should move on to the Final Phase instead of evaluating the next slot in the Attacker's Battle Zone or printing any further output in the Battle Phase.
 
 <details>
 <summary><h4>Examples</h4></summary>
@@ -948,7 +950,7 @@ Graveyard: G, F, P
 
 After all creatures on the board have been returned to the Field Zone, all creatures that are in a player's graveyard and have the Undying trait reenter the board in their owner's first empty Field Zone slot. This is done by going through both player's graveyard piles from top to bottom, meaning the most recent creature to move to the graveyard is moved first. 
 
-After a creature enters the board through this process, the Undying trait is removed from the creature. It will only regain the trait if it dies again and reenters the board through some other method (e.g. the Heroic Memory spell), causing its traits to be reset.
+When a creature enters the board through this process, its current values are reset to its base values (see the [card overview](Cards.md) for a more detailed explanation). Afterward, the Undying trait is removed from the creature. It will only regain the trait if it dies again and reenters the board through some other method (e.g. the Heroic Memory spell), causing its values to be reset again.
 
 If no empty Field Zone slot is available, the creature remains in the graveyard and does not lose the trait.
 
@@ -1199,6 +1201,7 @@ F               A01___H01   A05___H03                                           
 ---------------------------------------- SLOT 5 -----------------------------------------
 ---------------------------------------- SLOT 6 -----------------------------------------
 ---------------------------------------- SLOT 7 -----------------------------------------
+-------------------------------------- BATTLE END ---------------------------------------
 
 =========================================================================================
                                          ROUND 2
@@ -1349,6 +1352,7 @@ F                                                                               
 ---------------------------------------- SLOT 5 -----------------------------------------
 ---------------------------------------- SLOT 6 -----------------------------------------
 ---------------------------------------- SLOT 7 -----------------------------------------
+-------------------------------------- BATTLE END ---------------------------------------
 
 =========================================================================================
                                          ROUND 3
