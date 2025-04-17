@@ -1,0 +1,80 @@
+> =========================================================================================
+> Welcome to Magical OOPerations. Are you ready to OOPtimize your strategy?
+> =========================================================================================
+> 
+> =========================================================================================
+>                                          ROUND 1
+> =========================================================================================
+> ================================== DEFENDER: PLAYER 2 ===================================
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> ===[---------]=[---------]=[---------]=[---------]=[---------]=[---------]=[---------]===
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> ~~~[~~~ 1 ~~~]~[~~~ 2 ~~~]~[~~~ 3 ~~~]~[~~~ 4 ~~~]~[~~~ 5 ~~~]~[~~~ 6 ~~~]~[~~~ 7 ~~~]~~~
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> ===[---------]=[---------]=[---------]=[---------]=[---------]=[---------]=[---------]===
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> ================================== ATTACKER: PLAYER 1 ===================================
+> 
+? P1> 
+< help
+> === Commands ============================================================================
+> - help
+>     Prints this help text.
+> 
+> - quit
+>     Terminates the game.
+> 
+> - battle <FIELD_SLOT> <BATTLE_SLOT>
+>     Moves a creature from a Field Zone slot into a Battle Zone slot.
+>     <FIELD_SLOT>: Current slot of the creature (F1, ..., F7)
+>     <BATTLE_SLOT>: Battle slot for the creature (B1, ..., B7)
+> 
+> - board
+>     Toggles the board printing.
+> 
+> - creature <HAND_CARD_ID> <FIELD_SLOT>
+>     Places a creature from your hand into a Field Zone slot.
+>     <HAND_CARD_ID>: The ID of the creature card in your hand
+>     <FIELD_SLOT>: The Field Zone slot to place the creature in
+> 
+> - done
+>     Ends your turn for this round.
+> 
+> - graveyard
+>     Prints all the cards in your graveyard.
+> 
+> - hand
+>     Prints your hand cards.
+> 
+> - info <CARD_ID>
+>     Prints card information.
+>     <CARD_ID>: The ID of the card to be inspected
+> 
+> - redraw
+>     Discards all hand cards and draws the same amount minus one from your deck.
+> 
+> - spell <HAND_CARD_ID> [<TARGET_SLOT>|<GRAVEYARD_CARD_ID>]
+>     Casts a spell from your hand.
+>     <HAND_CARD_ID>: The ID of the spell in your hand
+>     <TARGET_SLOT>: The slot to target with a target spell
+>     <GRAVEYARD_CARD_ID>: The ID of a card in the graveyard to cast a graveyard spell on
+> 
+> - status
+>     Prints general information about both players.
+> 
+> =========================================================================================
+> 
+? P1> 
+< quit

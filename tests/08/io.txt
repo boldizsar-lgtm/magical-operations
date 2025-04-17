@@ -1,0 +1,71 @@
+> =========================================================================================
+> Welcome to Magical OOPerations. Are you ready to OOPtimize your strategy?
+> =========================================================================================
+> 
+> =========================================================================================
+>                                          ROUND 1
+> =========================================================================================
+> ================================== DEFENDER: PLAYER 2 ===================================
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> ===[---------]=[---------]=[---------]=[---------]=[---------]=[---------]=[---------]===
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> ~~~[~~~ 1 ~~~]~[~~~ 2 ~~~]~[~~~ 3 ~~~]~[~~~ 4 ~~~]~[~~~ 5 ~~~]~[~~~ 6 ~~~]~[~~~ 7 ~~~]~~~
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> B                                                                                       B
+> ===[---------]=[---------]=[---------]=[---------]=[---------]=[---------]=[---------]===
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> F                                                                                       F
+> ================================== ATTACKER: PLAYER 1 ===================================
+> 
+? P1> 
+< creature agrat
+> [ERROR] Too many or too few parameters were passed for this command.
+> 
+? P1> 
+< creature rat f2
+> [ERROR] The card ID is invalid.
+> 
+? P1> 
+< creature agrat f8
+> [ERROR] The slot is invalid.
+> 
+? P1> 
+< creature dragn b4d
+> [ERROR] The slot is invalid.
+> 
+? P1> 
+< creature hwolf f2
+> [ERROR] You do not have this card in your hand.
+> 
+? P1> 
+< creature moblz f2
+> [ERROR] This card is not a creature.
+> 
+? P1> 
+< creature agrat b2
+> [ERROR] You must choose a slot in your own Field Zone.
+> 
+? P1> 
+< creature agrat f2
+> [INFO] Squeak squeak.
+> 
+? P1> 
+< creature snake f2
+> [ERROR] This Field Zone slot is already taken.
+> 
+? P1> 
+< creature dragn f3
+> [ERROR] You do not have enough mana for this.
+> 
+? P1> 
+< quit

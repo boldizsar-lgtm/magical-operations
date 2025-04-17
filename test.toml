@@ -1,0 +1,245 @@
+[project_definition]
+binary_path = "./a2"
+makefile_path = "."
+make_targets = ["all"]
+project_name = "a2"
+diff_table_width = 91
+global_timeout = 20
+
+################################################################################
+## Minimum Requirement
+##
+
+[[testcases]]
+name = "MINIMUM REQUIREMENT"
+description = ""
+type = "OrdIO"
+io_file = "tests/01/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/01_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+################################################################################
+## M1 public test cases
+##
+
+[[testcases]]
+name = "Wrong Number Cli Parameters"
+description = ""
+type = "OrdIO"
+io_file = "tests/02/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 2
+argv = ["configs/02_game_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Standard Game Start (M1 Example)"
+description = ""
+type = "OrdIO"
+io_file = "tests/03/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/03_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Rounds, Phases and Turns"
+description = ""
+type = "OrdIO"
+io_file = "tests/04/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/04_game_config.txt", "configs/message_config.txt"]
+protected = false
+timeout = 60
+
+################################################################################
+## M2 public test cases
+##
+
+[[testcases]]
+name = "Command Info"
+description = ""
+type = "OrdIO"
+io_file = "tests/05/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/05_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Command Hand & Redraw"
+description = ""
+type = "OrdIO"
+io_file = "tests/06/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/06_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Command Creature"
+description = ""
+type = "OrdIO"
+io_file = "tests/07/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/07_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Command Creature Errors"
+description = ""
+type = "OrdIO"
+io_file = "tests/08/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/08_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Command Battle"
+description = ""
+type = "OrdIO"
+io_file = "tests/09/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/09_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Command Help"
+description = ""
+type = "OrdIO"
+io_file = "tests/10/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/10_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Command Board"
+description = ""
+type = "OrdIO"
+io_file = "tests/11/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/11_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Command Graveyard"
+description = ""
+type = "OrdIO"
+io_file = "tests/12/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/12_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Full Game (M2 Example)"
+description = ""
+type = "OrdIO"
+io_file = "tests/13/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/13_game_config.txt", "configs/message_config.txt"]
+protected = false
+add_exp_file = "tests/13/game_config_ref.txt"
+add_out_file = "configs/13_game_config.txt"
+
+
+[[testcases]]
+name = "Small Deck"
+description = ""
+type = "OrdIO"
+io_file = "tests/14/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/14_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Battle Cry"
+description = ""
+type = "OrdIO"
+io_file = "tests/15/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/15_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Target Spells"
+description = ""
+type = "OrdIO"
+io_file = "tests/16/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/16_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Graveyard Spells"
+description = ""
+type = "OrdIO"
+io_file = "tests/17/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/17_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Brutal"
+description = ""
+type = "OrdIO"
+io_file = "tests/18/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/18_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Regenerate"
+description = ""
+type = "OrdIO"
+io_file = "tests/19/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/19_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Temporary Nightmare"
+description = ""
+type = "OrdIO"
+io_file = "tests/20/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/20_game_config.txt", "configs/message_config.txt"]
+protected = false
+
+[[testcases]]
+name = "Undying Zombies"
+description = ""
+type = "OrdIO"
+io_file = "tests/21/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/21_game_config.txt", "configs/message_config.txt"]
+protected = false
+timeout = 60
+
+[[testcases]]
+name = "Venomous & Poisoned"
+description = ""
+type = "OrdIO"
+io_file = "tests/22/io.txt"
+io_prompt = "^.*>\\s*$"
+exp_exit_code = 0
+argv = ["configs/22_game_config.txt", "configs/message_config.txt"]
+protected = false
+timeout = 60
