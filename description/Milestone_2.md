@@ -362,10 +362,10 @@ Effect: The target creature gains the Temporary trait. This spell's mana cost is
 
 In addition to the error described in the Invalid Commands Handling section, the following errors must be handled:
 
-| Rank | Error Description                                                                           | Message Key              |
-|------|---------------------------------------------------------------------------------------------|--------------------------|
-| 2    | there are more or less parameters than the given command should have                        | `E_INVALID_PARAM_COUNT`  |
-| 4    | a given `<CARD_ID>` parameter does not match any of the card IDs in the card overview       | `E_INVALID_CARD`         |
+| Rank | Error Description                                                    | Message Key              |
+|------|----------------------------------------------------------------------|--------------------------|
+| 2    | there are more or less parameters than the given command should have | `E_INVALID_PARAM_COUNT`  |
+| 4    | `<CARD_ID>` does not match any of the card IDs in the card overview  | `E_INVALID_CARD`         |
 
 </details>
 
@@ -538,7 +538,7 @@ In addition to the error described in the Invalid Commands Handling section, the
 | Rank | Error Description                                                                                    | Message Key                   |
 |------|------------------------------------------------------------------------------------------------------|-------------------------------|
 | 2    | there are more or less parameters than the given command should have                                 | `E_INVALID_PARAM_COUNT`       |
-| 5    | a given `<SLOT>` parameter does not match the slot regex pattern `O?(F\|B)[1-7]`                     | `E_INVALID_SLOT`              |
+| 5    | `<FIELD_SLOT>` or `<BATTLE_SLOT>` does not match the slot regex pattern `O?(F\|B)[1-7]`              | `E_INVALID_SLOT`              |
 | 12   | `<FIELD_SLOT>` is not in the player's own Field Zone                                                 | `E_NOT_IN_FIELD`              |
 | 13   | `<FIELD_SLOT>` does not contain a creature                                                           | `E_FIELD_EMPTY`               |
 | 14   | the creature in `<FIELD_SLOT>` entered the board in the same round and does not have the Haste trait | `E_CREATURE_CANNOT_BATTLE`    |
@@ -560,16 +560,16 @@ When a `creature` command is successfully executed, the creature card is removed
 
 In addition to the error described in the Invalid Commands Handling section, the following errors must be handled:
 
-| Rank | Error Description                                                                     | Message Key             |
-|------|---------------------------------------------------------------------------------------|-------------------------|
-| 2    | there are more or less parameters than the given command should have                  | `E_INVALID_PARAM_COUNT` |
-| 4    | a given `<CARD_ID>` parameter does not match any of the card IDs in the card overview | `E_INVALID_CARD`        |
-| 5    | a given `<SLOT>` parameter does not match the slot regex pattern `O?(F\|B)[1-7]`      | `E_INVALID_SLOT`        |
-| 8    | `<HAND_CARD_ID>` is not present in the player's hand cards                            | `E_NOT_IN_HAND`         |
-| 9    | `<HAND_CARD_ID>` is not a creature                                                    | `E_NOT_CREATURE`        |
-| 12   | `<FIELD_SLOT>` is not in the player's own Field Zone                                  | `E_NOT_IN_FIELD`        |
-| 17   | `<FIELD_SLOT>` already contains a creature                                            | `E_FIELD_OCCUPIED`      |
-| 21   | not enough mana to play this card                                                     | `E_NOT_ENOUGH_MANA`     |
+| Rank | Error Description                                                         | Message Key             |
+|------|---------------------------------------------------------------------------|-------------------------|
+| 2    | there are more or less parameters than the given command should have      | `E_INVALID_PARAM_COUNT` |
+| 4    | `<HAND_CARD_ID>` does not match any of the card IDs in the card overview  | `E_INVALID_CARD`        |
+| 5    | `<FIELD_SLOT>` does not match the slot regex pattern `O?(F\|B)[1-7]`      | `E_INVALID_SLOT`        |
+| 8    | `<HAND_CARD_ID>` is not present in the player's hand cards                | `E_NOT_IN_HAND`         |
+| 9    | `<HAND_CARD_ID>` is not a creature                                        | `E_NOT_CREATURE`        |
+| 12   | `<FIELD_SLOT>` is not in the player's own Field Zone                      | `E_NOT_IN_FIELD`        |
+| 17   | `<FIELD_SLOT>` already contains a creature                                | `E_FIELD_OCCUPIED`      |
+| 21   | not enough mana to play this card                                         | `E_NOT_ENOUGH_MANA`     |
 
 </details>
 
@@ -595,14 +595,14 @@ All spells need the `<HAND_CARD_ID>` of the card to be played as a parameter. De
 
 In addition to the error described in the Invalid Commands Handling section, the following errors must be handled for **all** spells:
 
-| Rank | Error Description                                                                                                      | Message Key                   |
-|------|------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| 3    | the `spell` command has zero parameters                                                                                | `E_MISSING_CARD`              |
-| 4    | a given `<CARD_ID>` parameter does not match any of the card IDs in the card overview                                  | `E_INVALID_CARD`              |
-| 8    | `<HAND_CARD_ID>` is not present in the player's hand cards                                                             | `E_NOT_IN_HAND`               |
-| 10   | `<HAND_CARD_ID>` is not a spell                                                                                        | `E_NOT_SPELL`                 |
-| 11   | the `spell` command does not have exactly the amount of parameters needed for `<HAND_CARD_ID>`'s subtype               | `E_INVALID_PARAM_COUNT_SPELL` |
-| 21   | not enough mana to play this card                                                                                      | `E_NOT_ENOUGH_MANA`           |
+| Rank | Error Description                                                                                        | Message Key                   |
+|------|----------------------------------------------------------------------------------------------------------|-------------------------------|
+| 3    | the `spell` command has zero parameters                                                                  | `E_MISSING_CARD`              |
+| 4    | `<HAND_CARD_ID>` does not match any of the card IDs in the card overview                                 | `E_INVALID_CARD`              |
+| 8    | `<HAND_CARD_ID>` is not present in the player's hand cards                                               | `E_NOT_IN_HAND`               |
+| 10   | `<HAND_CARD_ID>` is not a spell                                                                          | `E_NOT_SPELL`                 |
+| 11   | the `spell` command does not have exactly the amount of parameters needed for `<HAND_CARD_ID>`'s subtype | `E_INVALID_PARAM_COUNT_SPELL` |
+| 21   | not enough mana to play this card                                                                        | `E_NOT_ENOUGH_MANA`           |
 
 ### General Spells
 
