@@ -1,0 +1,118 @@
+MESSAGE
+E_UNKNOWN_COMMAND:An unknown command was entered!
+E_INVALID_PARAM_COUNT:Too many or too few parameters were passed for this command.
+E_MISSING_CARD:You need to specify a card ID.
+E_INVALID_CARD:The card ID is invalid.
+E_INVALID_SLOT:The slot is invalid.
+E_REDRAW_DISABLED:You cannot redraw after affecting the game state.
+E_REDRAW_NOT_ENOUGH_CARDS:You must have more than one hand card to redraw.
+E_NOT_IN_HAND:You do not have this card in your hand.
+E_NOT_CREATURE:This card is not a creature.
+E_NOT_SPELL:This card is not a spell.
+E_INVALID_PARAM_COUNT_SPELL:Too many or too few parameters were passed for this spell.
+E_NOT_IN_FIELD:You must choose a slot in your own Field Zone.
+E_FIELD_EMPTY:This Field Zone slot is empty.
+E_CREATURE_CANNOT_BATTLE:This creature cannot battle this round.
+E_NOT_IN_BATTLE:You must choose a slot in your own Battle Zone.
+E_BATTLE_OCCUPIED:This Battle Zone slot is already taken.
+E_FIELD_OCCUPIED:This Field Zone slot is already taken.
+E_INVALID_SLOT_SPELL:The spell target slot is invalid.
+E_TARGET_EMPTY:The target slot is empty.
+E_NOT_IN_GRAVEYARD:There is no card with this ID in your graveyard.
+E_NOT_ENOUGH_MANA:You do not have enough mana for this.
+I_CLONE:Look, mum, my card has a clone!
+I_CURSE:So you like cursing others, huh?
+I_SHOCK:Get shocked!!!
+I_MOBLZ:Mobilizing!
+I_RRUSH:Rush activated.
+I_SHILD:This creature is part of SHIELD. It's a pretty exclusive club.
+I_AMPUT:Say bye to that trait.
+I_FINAL:Curtains up for the final act.
+I_LYLTY:So loyal!
+I_ZMBFY:The undead are rising. A creature was zombified.
+I_BLOOD:Bloodlust activated.
+I_BTLCY:You really must be desperate to activate this card.
+I_METOR:It's a bird, it's a plane. Well, actually it's a meteor...
+I_FIRBL:Burning hot. Like a fireball.
+I_MEMRY:Remember me?
+I_REVIV:Revive...revived a creature.
+I_AGRAT:Squeak squeak.
+I_CADET:Cadet reporting in!
+I_FARMR:It ain't much, but it's honest work.
+I_SQIRL:A squirrel soldier?!?!?
+I_FSHLD:Do NOT touch the floating shield.
+I_NITMR:Well now, this is a nightmare.
+I_SOLDR:Soldier at your command!
+I_SNAKE:I'm a thnake. I'm a slithery little thnaky thnake.
+I_HWOLF:Alpha wolf hungry.
+I_ZOMBI:Turns out eating brains makes you kind of smart. Who knew...
+I_ASASN:You always strike first if you're in the shadows...
+I_CVLRY:Sir, the horses are ready for battle!
+I_GLDTR:Are you not entertained?
+I_KNGHT:Do you see over yonder, friend Sancho, thirty or forty hulking giants?
+I_VAMPS:I seek blood.
+I_ALCHM:This is my side gig. Normally I try to recreate the elixir of life.
+I_TUTOR:You missed a whitespace. Minus 50 %.
+I_TURTL:He's neither a teenager, nor a mutant, nor a ninja, just a turtle...
+I_NINJA:Once a ninja, always a ninja.
+I_GUARD:You shall not pass!
+I_RAPTR:I am speed.
+I_WRLCK:Those witchhunters are never going to find me.
+I_GOLEM:**still as a stone**
+I_HYDRA:Oh yeah, I have more heads than this.
+I_KINGV:The whole world is mine, as my father King IV used to tell me.
+I_LLICH:Can I please not hurt anybody?
+I_T_REX:Hey, can you scratch my back? I can't reach.
+I_VAMPL:Erica, I told you, no meetings after 8 am!
+I_ANGEL:May peace be with us all.
+I_DRAGN:Who touched my gold?!
+I_SLAYR:Slay!
+I_D_GOD:Me? A Demi-God? Well, can a Demi-God do this???
+I_DEVIL:Are you sure you want me here?
+I_BRUTAL:That was brutal!
+I_CHALLENGER:Challenge accepted!
+I_FIRST_STRIKE:First to strike!
+I_HASTE:Moving with haste!
+I_LIFESTEAL:Stealing life!
+I_POISONED:Not feeling too well...
+I_REGENERATE:That's refreshing!
+I_TEMPORARY:Life is so temporary...
+I_UNDYING:Aaaaand I'm back again!
+I_VENOMOUS:Put some venom in it!
+I_DIRECT:Direct hit!!! That hurt!
+I_FIGHT:Two creatures are fighting!
+D_CLONE:A newly created creature of the same type as the target creature enters the board in the player's first empty Field Zone slot. The new creature's current attack, current health and current traits are set to the target creature's values, and it gains the Haste and Temporary traits. This spell's mana cost is equal to half the target creature's mana cost (rounded up).
+D_CURSE:The target creature gains the Temporary trait. This spell's mana cost is equal to the target creature's mana cost plus 1.
+D_SHOCK:The target creature's current health is reduced by 1.
+D_MOBLZ:The target creature gains the Haste trait and its current attack is increased by 1.
+D_RRUSH:The target creature gains the First Strike and Temporary traits and its current attack is increased by 2.
+D_SHILD:The target creature's current health is increased by 2.
+D_AMPUT:The target creature's first trait in alphabetical order is removed.
+D_FINAL:The target creature gains the Brutal, Haste and Temporary traits, and its current attack is increased by 3.
+D_LYLTY:The target creature gains the Haste trait and its current health is increased by 1.
+D_ZMBFY:The target creature gains the Venomous and Undying traits.
+D_BLOOD:The target creature gains the Brutal and Lifesteal traits, but its current health is reduced to half its previous value (rounded up).
+D_BTLCY:All of the player's own creatures on the board gain the Haste and Temporary traits, and their current attack is increased by 3.
+D_METOR:All creatures on the board take 3 damage.
+D_FIRBL:All enemy creatures on the board take 2 damage.
+D_MEMRY:This spell moves a creature from the player's graveyard into their first empty Field Zone slot. It gains the Haste and Temporary traits. This spell's mana cost is equal to half the moved creature's mana cost (rounded up).
+D_REVIV:This spell moves a creature from the player's graveyard into their hand.
+D_WELCOME:Welcome to Magical OOPerations. Are you ready to OOPtimize your strategy?
+D_BORDER_A:===[---------]=[---------]=[---------]=[---------]=[---------]=[---------]=[---------]===
+D_BORDER_B:~~~[~~~ 1 ~~~]~[~~~ 2 ~~~]~[~~~ 3 ~~~]~[~~~ 4 ~~~]~[~~~ 5 ~~~]~[~~~ 6 ~~~]~[~~~ 7 ~~~]~~~
+D_BORDER_C:-----------------------------------------------------------------------------------------
+D_BORDER_D:=========================================================================================
+D_BORDER_GRAVEYARD:=== Graveyard ===========================================================================
+D_BORDER_HAND:=== Hand Cards ==========================================================================
+D_BORDER_INFO:=== Card Info ===========================================================================
+D_BORDER_STATUS:=== Status ==============================================================================
+D_BORDER_BATTLE_PHASE:===================================== BATTLE PHASE ======================================
+D_ATTACK_1:--- ATTACK 1 ---
+D_ATTACK_2:--- ATTACK 2 ---
+D_BORDER_BATTLE_END:-------------------------------------- BATTLE END ---------------------------------------
+D_BORDER_GAME_END:======================================= GAME END ========================================
+D_END_PLAYER_DEFEATED:The battle has ended!
+D_END_DRAW_CARD:No more cards to draw.
+D_END_MAX_ROUNDS:The maximum number of rounds has been reached.
+D_TIE:It's a tie...
+I_FILE_WRITE_FAILED:Result not written to file.
