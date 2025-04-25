@@ -1,8 +1,8 @@
 #ifndef CARDPILE_HPP
 #define CARDPILE_HPP
 
-#include "Card.hpp"
 #include <vector>
+#include "Card.hpp"
 
 class CardPile
 {
