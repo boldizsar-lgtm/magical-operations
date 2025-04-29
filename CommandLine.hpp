@@ -26,13 +26,12 @@ public:
   CommandLine(const CommandLine&) = delete;
   ~CommandLine() = default;
 
-  //TODO : if we choose to work with commandparser -> delete this function
   //------------------------------------------------------------------------------------------------------------------
   // This function reads an input from the user and stores it in a Command object.
   //
   // @return the parsed Command object
   //
-  //Command readCommand();
+  Command readCommand();
 
 private:
   //------------------------------------------------------------------------------------------------------------------

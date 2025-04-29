@@ -8,6 +8,7 @@
 //
 
 #include <iostream>
+#include "Utils.hpp"
 #include "Command.hpp"
 #include "CommandLine.hpp"
 
@@ -49,66 +50,25 @@ void CommandLine::stringToVector(const std::string& string, std::vector<std::str
   vector.push_back(string.substr(position));
 }
 
-//TODO : if we choose to work with commandparser -> delete this function
-/*
+//Heavily changed from the original CommandLine readCommand, however all the param and invalid checks are made in the Command Class, and should work.
 Command CommandLine::readCommand()
 {
-  std::cout << std::endl << "What do you want to do?" << std::endl << " > ";
+  //print "<CURRENT_PLAYER>> "
   std::string input;
   std::getline(std::cin, input);
   removeWhitespacesAtEnds(input);
-  std::transform(input.begin(), input.end(), input.begin(), [](unsigned char c) { return std::tolower(c); });
-  if (input.empty())
-  {
-    return Command(CommandType::INVALID);
-  }
+  Utils::toLower(input);
   std::vector<std::string> vectorised_string;
   stringToVector(input, vectorised_string, ' ');
   Command command(vectorised_string);
   switch (command.getType())
+  if (command.getType() == CommandType::INVALID)
   {
-    case CommandType::QUIT:
-      if (!command.getParameters().empty())
-      {
-        command.setType(CommandType::WRONG_PARAM);
-      }
-      break;
-    case CommandType::INVALID:
-      std::cout << "[ERROR] Entered command not found!" << std::endl;
-      return command;
-
-    case CommandType::INFO:
-      if (command.getParameters().empty() || command.getParameters().size() == 2)
-        break;
-      command.setType(CommandType::WRONG_PARAM);
-      break;
-    case CommandType::SHOP:
-    case CommandType::MAP:
-    case CommandType::RATE:
-      if (!command.getParameters().empty())
-      {
-        command.setType(CommandType::WRONG_PARAM);
-      }
-      break;
-    case CommandType::BUY:
-      if (command.getParameters().size() != 3)
-      {
-        command.setType(CommandType::WRONG_PARAM);
-      }
-      break;
-    case CommandType::BUILD:
-      if (command.getParameters().size() != 5)
-      {
-        command.setType(CommandType::WRONG_PARAM);
-      }
-      break;
-    case CommandType::WRONG_PARAM:
-      break;
+    //print message of the key "E_UNKNOWN_COMMAND"
   }
   if (command.getType() == CommandType::WRONG_PARAM)
   {
-    std::cout << "[ERROR] Wrong number of parameters for this command!" << std::endl;
+    //print message of the key "E_INVALID_PARAM_COUNT"
   }
   return command;
 }
-*/

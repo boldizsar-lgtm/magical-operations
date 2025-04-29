@@ -2,8 +2,7 @@
 #define GAME_HPP
 
 #include "Player.hpp"
-#include "Config.hpp"
-//#include "CommandParse.hpp"
+#include "Command.hpp"
 
 class Game
 {
@@ -14,8 +13,7 @@ protected:
   Player* defending_player_;
   int max_rounds_;
   int round_count_;
-  Config config_;
-  //CommandParse command_parser_;
+  bool board_active_;
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
@@ -28,6 +26,8 @@ public:
   void startRound();
   void startSetupPhase();
   void startBattlePhase();
+  void printBoard();
+  void processCommand(Command command);
 };
 
 #endif //GAME_HPP
