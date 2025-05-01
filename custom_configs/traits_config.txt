@@ -1,0 +1,11 @@
+B;Brutal;mid
+C;Challenger;pre
+F;First Strike;mid
+H;Haste;special
+L;Lifesteal;mid
+P;Poisoned;special
+R;Regenerate;special
+T;Temporary;post
+U;Undying;post
+V;Venomous;mid
+

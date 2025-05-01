@@ -33,9 +33,12 @@ int main(int argc, char* argv[])
 {
   //Syntax: /path/to/executable <GAME_CONFIG_FILE> <MESSAGE_CONFIG_FILE>
   
-  
-  //check for memory allocation error
-  
+  Config config;
+  if (!saveTraits(custom_configs/traits_config.txt) || !saveCards(custom_configs/cards_config.txt))
+  {
+    std::cout << "[ERROR] Not enough memory!\n" << std::endl;
+    return NOT_ENOUGH_MEMORY;
+  }
   
   if (argc != 3)
   {
@@ -43,7 +46,6 @@ int main(int argc, char* argv[])
     return WRONG_NUMBER_OF_PARAMETERS;
   }
 
-  Config config;
   if (!config.readGameConfig(argv[2]))
   {
     std::cout << "[ERROR] Invalid file " << argv[2] << '.' << std::endl;

@@ -7,7 +7,8 @@ enum class TraitType
 {
   PRE_BATTLE,
   MID_BATTLE,
-  POST_BATTLE
+  POST_BATTLE,
+  SPECIAL
 };
 
 class Trait
