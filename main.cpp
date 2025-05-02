@@ -33,13 +33,13 @@ int main(int argc, char* argv[])
 {
   //Syntax: /path/to/executable <GAME_CONFIG_FILE> <MESSAGE_CONFIG_FILE>
   
-  Config config;
-  if (!saveTraits("custom_configs/traits_config.txt"))
+  Config& config = Config::getInstance();
+  if (!config.saveTraits("custom_configs/traits_config.txt"))
   {
     std::cout << "[ERROR] Not enough memory!\n" << std::endl;
     return NOT_ENOUGH_MEMORY;
   }
-  saveCards("custom_configs/cards_config.txt")
+  config.saveCards("custom_configs/cards_config.txt");
   
   if (argc != 3)
   {

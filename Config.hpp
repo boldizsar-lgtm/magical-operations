@@ -5,13 +5,16 @@
 #include <memory>
 #include <string>
 #include "Card.hpp"
+#include "Creature.hpp"
+#include "Spell.hpp"
 #include "Trait.hpp"
 #include "Utils.hpp"
 #include "CardPile.hpp"
 
+//Singleton Class
 class Config
 {
-protected:
+private:
   int player_health_;
   int max_rounds_;
   int deck_size_;
@@ -22,17 +25,26 @@ protected:
   std::map<std::string, Card> cards_;
   std::map<std::string, std::string> messages_;
 
-public:
-  //Constructor, Copy-Assignment-Operator, Destructor
+  //Singleton Requirement
+  static Config* instance_;
+
+  /*Constructor, Copy-Assignment-Operator, Destructor,
+  and Singleton Requirements*/
   Config() = default;
-  Config(Config&) = default;
+  Config(Config&) = delete;
+  Config& operator=(const Config&) = delete;
   ~Config() = default;
 
+
+public:
   //Methods
+  static Config& getInstance(); //Singleton Requirement
   bool saveTraits(std::string path);
   void saveCards(std::string path);
   bool readGameConfig(std::string path);
   bool readMessageConfig(std::string path);
+  Card* getCard(std::string id);
+  std::string getMessage(std::string key);
   void createGame();
 };
 

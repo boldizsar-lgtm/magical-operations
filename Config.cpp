@@ -1,12 +1,19 @@
 #include <fstream>
 #include "Config.hpp"
 
+//Singleton Requirements
+Config& Config::getInstance()
+{
+  static Config instance;
+  return instance;
+}
+
 //read in the traits config file we created
 //
 //param: path, the path of the traits config file
 //
 //return: false if memory allocation error occurs, true if successful
-bool saveTraits(std::string path)
+bool Config::saveTraits(std::string path)
 {
   //open file
   std::ifstream file(path);
@@ -31,7 +38,7 @@ bool saveTraits(std::string path)
 //read in the cards config file we created
 //
 //param: path, the path of the cards config file
-void saveCards(std::string path)
+void Config::saveCards(std::string path)
 {
   //open file
   std::ifstream file(path);
@@ -144,7 +151,7 @@ bool Config::readGameConfig(std::string path)
     else
       std::getline(file, line, '\n');
 
-    player_1_deck_.pile_.push_back(cards_[line]);
+    player_1_deck_.addCard(line);
   }
 
   //save player 2's deck
@@ -155,7 +162,7 @@ bool Config::readGameConfig(std::string path)
     else
       std::getline(file, line, '\n');
 
-    player_2_deck_.pile_.push_back(cards_[line]);
+    player_2_deck_.addCard(line);
   }
 
   return true;
@@ -187,10 +194,26 @@ bool Config::readMessageConfig(std::string path)
   while (getline(file, key, ':') &&
          getline(file, message, '\n'))
   {
-    messages_[key] = message;
+    if (key[0] == 'E')
+      messages_[key] = "[ERROR] " + message;
+    if (key[0] == 'I')
+      messages_[key] = "[INFO] " + message;
+    else
+      messages_[key] = message;
   }
 
   return true;
+}
+
+Card* Config::getCard(std::string id)
+{
+  return &cards_[id];
+}
+
+
+std::string Config::getMessage(std::string key)
+{
+  return messages_[key];
 }
 
 void Config::createGame()
