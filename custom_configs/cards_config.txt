@@ -1,36 +1,36 @@
-AGRAT;1;Angry Rat;Haste;1;1
-CADET;1;Cadet;-;2;1
-FARMR;1;Farmer;Haste;1;2
-SQIRL;1;Squirrel Soldier;First Strike;1;1
-FSHLD;2;Floating Shield;-;0;8
-NITMR;2;Nightmare;Haste, Temporary;5;1
-SOLDR;2;Soldier;-;3;4
-SNAKE;2;Snake;Venomous;2;1
-HWOLF;2;Hungry Wolf;Brutal;3;2
-ZOMBI;2;Zombie;Undying;2;2
-ASASN;3;Assassin;First Strike;5;2
-CVLRY;3;Cavalry;Haste;4;4
-GLDTR;3;Gladiator;Challenger;5;3
-KNGHT;3;Knight;Haste;4;6
-VAMPS;3;Vampire Soldier;Lifesteal;4;3
-ALCHM;4;Alchemist;Venomous;4;6
-TUTOR;4;Evil Tutor;Challenger, Lifesteal;5;4
-TURTL;4;Giant Turtle;-;3;11
-NINJA;4;Ninja;First Strike, Haste;6;4
-GUARD;5;Eternal Guardian;Haste, Undying;5;5
-RAPTR;5;Raptor;Brutal, First Strike;7;4
-WRLCK;5;Warlock;Lifesteal, Venomous;4;7
-GOLEM;6;Golem;Regenerate;5;12
-HYDRA;6;Hydra;Regenerate, Undying;7;6
-KINGV;6;King V;Challenger, Haste;6;11
-LLICH;7;Likeable Lich;Lifesteal, Undying;9;6
-T_REX;7;T-Rex;Brutal;13;9
-VAMPL;7;Vampire Lord;Challenger, Lifesteal;10;7
-ANGEL;8;Angel;Haste;9;14
-DRAGN;8;Dragon;Brutal, Challenger;13;10
-SLAYR;8;Slayer;First Strike, Haste;15;6
-D_GOD;9;Demi-God;Regenerate, Undying;15;15
-DEVIL;9;Devil;Brutal, First Strike;16;7
+AGRAT;1;Angry Rat;H;1;1
+CADET;1;Cadet;;2;1
+FARMR;1;Farmer;H;1;2
+SQIRL;1;Squirrel Soldier;F;1;1
+FSHLD;2;Floating Shield;;0;8
+NITMR;2;Nightmare;HT;5;1
+SOLDR;2;Soldier;;3;4
+SNAKE;2;Snake;V;2;1
+HWOLF;2;Hungry Wolf;B;3;2
+ZOMBI;2;Zombie;U;2;2
+ASASN;3;Assassin;F;5;2
+CVLRY;3;Cavalry;H;4;4
+GLDTR;3;Gladiator;C;5;3
+KNGHT;3;Knight;H;4;6
+VAMPS;3;Vampire Soldier;L;4;3
+ALCHM;4;Alchemist;V;4;6
+TUTOR;4;Evil Tutor;CL;5;4
+TURTL;4;Giant Turtle;;3;11
+NINJA;4;Ninja;FH;6;4
+GUARD;5;Eternal Guardian;HU;5;5
+RAPTR;5;Raptor;BF;7;4
+WRLCK;5;Warlock;LV;4;7
+GOLEM;6;Golem;R;5;12
+HYDRA;6;Hydra;RU;7;6
+KINGV;6;King V;CH;6;11
+LLICH;7;Likeable Lich;LU;9;6
+T_REX;7;T-Rex;B;13;9
+VAMPL;7;Vampire Lord;CL;10;7
+ANGEL;8;Angel;H;9;14
+DRAGN;8;Dragon;BC;13;10
+SLAYR;8;Slayer;FH;15;6
+D_GOD;9;Demi-God;RU;15;15
+DEVIL;9;Devil;BF;16;7
 
 BTLCY;3;Battle Cry;All of the player's own creatures on the board gain the Haste and Temporary traits, and their current attack is increased by 3.
 METOR;4;Meteor;All creatures on the board take 3 damage.
@@ -42,7 +42,7 @@ MOBLZ;2;Mobilize;The target creature gains the Haste trait and its current attac
 RRUSH;2;Rapid Rush;The target creature gains the First Strike and Temporary traits and its current attack is increased by 2.
 SHILD;2;Shield;The target creature's current health is increased by 2.
 AMPUT;3;Amputate;The target creature's first trait in alphabetical order is removed.
-FINAL;3;Final Act;The target creature gains the Brutal, Haste and Temporary traits, and its current attack is increased by 3
+FINAL;3;Final Act;The target creature gains the Brutal, Haste and Temporary traits, and its current attack is increased by 3.
 LYLTY;3;Loyalty;The target creature gains the Haste trait and its current health is increased by 1.
 ZMBFY;4;Zombify;The target creature gains the Venomous and Undying traits.
 BLOOD;5;Bloodlust;The target creature gains the Brutal and Lifesteal traits, but its current health is reduced to half its previous value (rounded up).

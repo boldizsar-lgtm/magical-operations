@@ -4,22 +4,22 @@
 #include <string>
 #include "Card.hpp"
 
-enum class SpellType
+/*enum class SpellType
 {
   GENERAL,
   TARGET,
   GRAVEYARD
-};
+};*/
 
 class Spell : public Card
 {
 protected:
-  SpellType subtype_;
+  //SpellType subtype_;
   std::string effect_;
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Spell() = default;
+  Spell(std::string id, int mana_cost, std::string name, std::string effect) : Card(id, mana_cost, name), effect_(effect) {}
   Spell(Spell&) = default;
   ~Spell() = default;
 

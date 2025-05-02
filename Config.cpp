@@ -12,47 +12,85 @@ bool saveTraits(std::string path)
   std::ifstream file(path);
   
   //save traits
-  //UNFINISHED
-
+  std::string id_str;
+  std::string trait;
+  try {
+    while (std::getline(file, id_str, ';') && std::getline(file, trait))
+    {
+      char id = id_str[0];
+      traits_[id] = std::make_shared<Trait>(trait, id);
+    }
+  } catch (const std::bad_alloc& e)
+  {
+    return false;
+  }
+  
   return true;
 }
 
 //read in the cards config file we created
 //
 //param: path, the path of the cards config file
-//
-//return: false if memory allocation error occurs, true if successful
-bool saveCards(std::string path)
+void saveCards(std::string path)
 {
   //open file
   std::ifstream file(path);
   
-  //save cards
+  //read in creatures
   //syntax: <ID>;<Mana Cost>;<Name>;<Base Traits>;<Base Attack>;<Base Health>
   std::string id;
-  std::string str_mana_cost;
+  std::string mana_cost_str;
   std::string name;
-  std::string base_traits;
-  std::string str_base_attack;
-  std::string str_base_health;
-  int mana_cost;
-  int base_attack;
-  int base_health;
+  std::string base_traits_str;
+  std::string base_attack_str;
+  std::string base_health_str;
   while (std::getline(file, id, ';') &&
-         std::getline(file, mana_cost, ';') &&
+         std::getline(file, mana_cost_str, ';') &&
          std::getline(file, name, ';') &&
-         std::getline(file, base_traits, ';') &&
-         std::getline(file, base_attack, ';') &&
-         std::getline(file, base_health, '\n'))
+         std::getline(file, base_traits_str, ';') &&
+         std::getline(file, base_attack_str, ';') &&
+         std::getline(file, base_health_str))
   {
-    Utils::decimalStringToInt(str_mana_cost, mana_cost)
-    Utils::decimalStringToInt(str_base_attack, base_attack)
-    Utils::decimalStringToInt(str_base_health, base_health)
-    //UNFINISHED
+    int mana_cost = 0;
+    int base_attack = 0;
+    int base_health = 0;
+    Utils::decimalStringToInt(mana_cost_str, mana_cost);
+    Utils::decimalStringToInt(base_attack_str, base_attack);
+    Utils::decimalStringToInt(base_health_str, base_health);
+
+    //look through the map and create the base_traits vector
+    std::vector<std::shared_ptr<Trait>> base_traits;
+    for (char c : base_traits_str)
+    {
+      auto it = traits_.find(c);
+      base_traits.push_back(it->second);
+    }
+
+    //create creature
+    cards_[id] = Creature(id, mana_cost, name, base_traits, base_attack, base_health);
   }
 
+  //read in empty line
+  std::string empty_line;
+  std::getline(file, empty_line);
 
-  return true;
+  //read in spells
+  //syntax: <ID>;<Mana Cost>;<Name>;<Effect>
+  std::string effect;
+  while (std::getline(file, id, ';') &&
+         std::getline(file, mana_cost_str, ';') &&
+         std::getline(file, name, ';') &&
+         std::getline(file, effect))
+  {
+    int mana_cost = 0;
+    if (mana_cost_str == "x")
+      mana_cost = -1; //MY THOUGHT WAS TO SAVE X COSTED SPELLS AS -1 AND DEAL WITH THEM IN THE SPELL CLASS
+    else 
+      Utils::decimalStringToInt(mana_cost_str, mana_cost);
+
+    //create spell
+    cards_[id] = Spell(id, mana_cost, name, effect);
+  }
 }
 
 //Open and read in the game config file
@@ -86,16 +124,39 @@ bool Config::readGameConfig(std::string path)
   //save game configs
   std::string line;
   std::getline(file, line);
-  Utils::decimalStringToInt(line, player_health_)
+  Utils::decimalStringToInt(line, player_health_);
   std::getline(file, line);
-  Utils::decimalStringToInt(line, max_rounds_)
+  Utils::decimalStringToInt(line, max_rounds_);
   std::getline(file, line);
-  Utils::decimalStringToInt(line, deck_size_)
+  Utils::decimalStringToInt(line, deck_size_);
   std::getline(file, line);
-  Utils::decimalStringToInt(line, mana_pool_size)
+  Utils::decimalStringToInt(line, mana_pool_size_);
 
-  //save player decks
-  //UNFINISHED
+  //read in empty line
+  std::string empty_line;
+  std::getline(file, empty_line);
+
+  //save player 1's deck
+  for (int i = 1; i <= deck_size_; i++)
+  {
+    if (i < deck_size_)
+      std::getline(file, line, ';');
+    else
+      std::getline(file, line, '\n');
+
+    player_1_deck_.pile_.push_back(cards_[line]);
+  }
+
+  //save player 2's deck
+  for (int i = 1; i <= deck_size_; i++)
+  {
+    if (i < deck_size_)
+      std::getline(file, line, ';');
+    else
+      std::getline(file, line, '\n');
+
+    player_2_deck_.pile_.push_back(cards_[line]);
+  }
 
   return true;
 }
@@ -107,6 +168,8 @@ bool Config::readGameConfig(std::string path)
 //return: false if file couldn't be opened or wrong Magic Number, true if successful
 bool Config::readMessageConfig(std::string path)
 {
+  //Syntax: <Key>:<Message>
+  
   //open file
   std::ifstream file(path);
   if (!file.is_open())
@@ -119,9 +182,19 @@ bool Config::readMessageConfig(std::string path)
     return false;
   
   //save messages
-  //UNFINISHED
+  std::string key;
+  std::string message;
+  while (getline(file, key, ':') &&
+         getline(file, message, '\n'))
+  {
+    messages_[key] = message;
+  }
 
   return true;
 }
 
+void Config::createGame()
+{
+  
+}
 

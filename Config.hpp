@@ -2,6 +2,7 @@
 #define CONFIG_HPP
 
 #include <map>
+#inclide <memory>
 #include <string>
 #include "Card.hpp"
 #include "Trait.hpp"
@@ -14,7 +15,9 @@ protected:
   int max_rounds_;
   int deck_size_;
   int mana_pool_size_;
-  std::map<char, Trait> traits_;
+  CardPile player_1_deck_;
+  CardPile player_2_deck_;
+  std::map<char, std::shared_ptr<Trait>> traits_;
   std::map<std::string, Card> cards_;
   std::map<std::string, std::string> messages_;
 
@@ -26,10 +29,10 @@ public:
 
   //Methods
   bool saveTraits(std::string path);
-  bool saveCards(std::string path);
+  void saveCards(std::string path);
   bool readGameConfig(std::string path);
   bool readMessageConfig(std::string path);
-
+  voud createGame();
 };
 
 #endif //CONFIG_HPP

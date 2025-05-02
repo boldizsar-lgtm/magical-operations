@@ -34,11 +34,12 @@ int main(int argc, char* argv[])
   //Syntax: /path/to/executable <GAME_CONFIG_FILE> <MESSAGE_CONFIG_FILE>
   
   Config config;
-  if (!saveTraits(custom_configs/traits_config.txt) || !saveCards(custom_configs/cards_config.txt))
+  if (!saveTraits("custom_configs/traits_config.txt"))
   {
     std::cout << "[ERROR] Not enough memory!\n" << std::endl;
     return NOT_ENOUGH_MEMORY;
   }
+  saveCards("custom_configs/cards_config.txt")
   
   if (argc != 3)
   {
@@ -46,18 +47,19 @@ int main(int argc, char* argv[])
     return WRONG_NUMBER_OF_PARAMETERS;
   }
 
-  if (!config.readGameConfig(argv[2]))
+  if (!config.readGameConfig(argv[1]))
+  {
+    std::cout << "[ERROR] Invalid file " << argv[1] << '.' << std::endl;
+    return INVALID_FILE;
+  }
+
+  if (!config.readMessageConfig(argv[2]))
   {
     std::cout << "[ERROR] Invalid file " << argv[2] << '.' << std::endl;
     return INVALID_FILE;
   }
 
-  if (!config.readMessageConfig(argv[3]))
-  {
-    std::cout << "[ERROR] Invalid file " << argv[3] << '.' << std::endl;
-    return INVALID_FILE;
-  }
-
+  config.createGame();
 
   CommandLine cli;
   while (true)

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "Card.hpp"
 #include "Trait.hpp"
 
@@ -11,19 +12,20 @@ class Creature : public Card
 protected:
   int base_attack_;
   int base_health_;
-  std::vector<Trait*> base_traits_;
+  std::vector<std::shared_ptr<Trait>> base_traits_;
 
   int current_attack_;
   int current_health_;
-  std::vector<Trait*> current_traits_;
+  std::vector<std::shared_ptr<Trait>> current_traits_;
 
-  std::vector<Trait*> preBattleTraits;
-  std::vector<Trait*> midBattleTraits;
-  std::vector<Trait*> postBattleTraits;
+  bool can_attack_;
   
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Creature() = default;
+  Creature(std::string id, int mana_cost, std::string name, std::vector<std::shared_ptr<Trait>> base_traits,
+           int base_attack, int base_health) : Card(id, mana_cost, name), base_traits_(base_traits),
+           current_traits_(base_traits) base_attack_(base_attack), current_attack_(base_attack),
+           base_health_(base_health), current_health_(base_health), can_attack_(false) {}
   Creature(Creature&) = default;
   ~Creature() = default;
 

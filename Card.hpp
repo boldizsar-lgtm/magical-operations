@@ -6,13 +6,13 @@
 class Card
 {
 protected:
-  std::string name_;
   std::string id_;
   int mana_cost_;
+  std::string name_;
   
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Card(std::string name, std::string id, int mana_cost) : name_{name}, id_{id}, mana_cost_{mana_cost} {}
+  Card(std::string id, int mana_cost, std::string name) : id_{id}, mana_cost_{mana_cost}, name_{name} {}
   Card(Card&) = default;
   virtual ~Card() = default;
 
