@@ -2,11 +2,12 @@
 #define CONFIG_HPP
 
 #include <map>
-#inclide <memory>
+#include <memory>
 #include <string>
 #include "Card.hpp"
 #include "Trait.hpp"
 #include "Utils.hpp"
+#include "CardPile.hpp"
 
 class Config
 {
@@ -32,7 +33,7 @@ public:
   void saveCards(std::string path);
   bool readGameConfig(std::string path);
   bool readMessageConfig(std::string path);
-  voud createGame();
+  void createGame();
 };
 
 #endif //CONFIG_HPP
