@@ -1,8 +1,11 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include <iostream>
 #include "Player.hpp"
 #include "Command.hpp"
+#include "Config.hpp"
+#include "CommandError.hpp"
 
 class Game
 {

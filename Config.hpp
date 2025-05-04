@@ -1,7 +1,6 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-
 #include <map>
 #include <memory>
 #include <string>
@@ -11,7 +10,6 @@
 #include "Trait.hpp"
 #include "Utils.hpp"
 #include "CardPile.hpp"
-#include "Game.hpp"
 
 //Singleton Class
 class Config

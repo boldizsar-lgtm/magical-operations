@@ -5,7 +5,7 @@ std::string Spell::getType() const
   return "Spell";
 }
 
-std::string Spell::getCardString(int row) const
+void Spell::printCardLine(int row) const
 {
   if (row == 1)
     std::cout << " _____M" << Card::getManaCost();
@@ -15,4 +15,9 @@ std::string Spell::getCardString(int row) const
     std::cout << "|       |";
   else if (row == 4)
     std::cout << "_______ ";
+}
+
+std::string Spell::getEffect() const
+{
+  return effect_;
 }

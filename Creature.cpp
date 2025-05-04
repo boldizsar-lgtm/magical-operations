@@ -27,15 +27,71 @@ std::string Creature::getType() const
   return "Creature";
 }
 
-std::string Creature::printTraits() const
+std::string Creature::getTraitIds() const
 {
   std::string traits_string;
+  int letter_amount = 0;
+  bool more_than_five = false;
+
   for (auto trait : current_traits_)
   {
+    if (letter_amount == 5)
+    {
+      more_than_five = true;
+      break;
+    }
+
     traits_string += trait->getId();
+    letter_amount++;
+  }
+
+  if (more_than_five == true)
+    traits_string.at(4) = '+';
+  
+  else if (letter_amount < 5)
+  {
+    for (int counter = 5; counter <= letter_amount; counter--)
+    {
+      traits_string += " ";
+    }
   }
 
   return traits_string;
+}
+
+void Creature::printBaseTraitList() const
+{
+  if (base_traits_.empty() == false)
+  {
+    for (auto trait : base_traits_)
+    {
+      std::cout << trait->getName();
+
+      if (trait == base_traits_.back())
+        break;
+      
+      std::cout << ", ";
+    }
+  }
+  else
+    std::cout << "-";
+
+  std::cout << std::endl;
+}
+
+int Creature::getBaseAttack() const
+{
+  return base_attack_;
+}
+
+int Creature::getBaseHealth() const
+{
+  return base_health_;
+}
+
+std::vector<std::shared_ptr<Trait>> Creature::getBaseTraits() const
+{
+  return base_traits_;
 }
 
 int Creature::getAttack() const
@@ -48,14 +104,14 @@ int Creature::getHealth() const
   return current_health_;
 }
 
-std::string Creature::getCardString(int row) const
+void Creature::printCardLine(int row) const
 {
   if (row == 1)
     std::cout << " _____M" << Card::getManaCost();
   else if (row == 2)
     std::cout << "| " << Card::getId() << " |";
   else if (row == 3)
-    std::cout << "| " << printTraits() << " |";
+    std::cout << "| " << getTraitIds() << " |";
   else if (row == 4)
     std::cout << 'A' << getAttack() << "___H" << getHealth();
 }

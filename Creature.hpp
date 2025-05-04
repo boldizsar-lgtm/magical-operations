@@ -33,10 +33,14 @@ public:
   void setCurrentHealth(int new_health);
   void addTrait(std::shared_ptr<Trait> trait);
   std::string getType() const override;
-  std::string printTraits() const;
+  std::string getTraitIds() const;
+  void printBaseTraitList() const;
+  int getBaseAttack() const;
+  int getBaseHealth() const;
+  std::vector<std::shared_ptr<Trait>> getBaseTraits() const;
   int getAttack() const;
   int getHealth() const;
-  std::string getCardString(int row) const override;
+  void printCardLine(int row) const override;
 };
 
 #endif //CREATURE_HPP

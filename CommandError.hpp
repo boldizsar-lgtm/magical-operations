@@ -13,8 +13,7 @@ class CommandError : public std::exception
     CommandError(std::string key)
     {
       //getting the correct error message out of the messages map
-      Config& config = Config::getInstance();
-      message_ = config.getMessage(key);
+      message_ = Config::getInstance().getMessage(key);
     };
     CommandError(const CommandError& error) = delete;
     ~CommandError() = default;

@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include "Config.hpp"
-#include "Game.hpp"
 
 //Singleton Requirements
 Config& Config::getInstance()
@@ -168,6 +167,7 @@ bool Config::readGameConfig(std::string path)
     player_2_deck_.createCard(line);
   }
 
+  player_1_deck_.printCardPile(); // TEMPORARY
   return true;
 }
 
@@ -218,7 +218,7 @@ Card* Config::getCard(std::string id)
 
 std::string Config::getMessage(std::string key)
 {
-  if (messages_.find(id) == messages_.end())
+  if (messages_.find(key) == messages_.end())
     return "";
   else
     return messages_[key];

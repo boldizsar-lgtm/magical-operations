@@ -21,7 +21,7 @@ public:
   void addCard(Card* card);
   void removeCard(std::string id);
   void removeTopCard();
-  const std::string getCardPileString();
+  const void printCardPile();
 };
 
 #endif //CARDPILE_HPP

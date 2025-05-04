@@ -27,6 +27,7 @@ public:
   //Methods
   char getId() const;
   TraitType getType() const;
+  std::string getName() const;
 };
 
 #endif //TRAIT_HPP

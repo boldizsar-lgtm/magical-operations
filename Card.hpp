@@ -11,13 +11,13 @@ protected:
   std::string name_;
 
 public:
-  //Constructor, Copy-Assignment-Operator, Destructor
+  // Constructor, Copy-Assignment-Operator, Destructor
   Card(std::string id, int mana_cost, std::string name) : id_{id}, mana_cost_{mana_cost}, name_{name} {}
   Card(Card&) = default;
   virtual ~Card() = default;
 
-  //Methods
-  virtual std::string getCardString(int row) const = 0;
+  // Methods
+  virtual void printCardLine(int row) const = 0;
   virtual std::string getType() const = 0;
   std::string getId() const;
   std::string getName() const;

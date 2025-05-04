@@ -1,7 +1,4 @@
 #include "Game.hpp"
-#include "Player.hpp"
-#include "Config.hpp"
-
 
 Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2}
 {
@@ -9,7 +6,6 @@ Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_act
   attacking_player_ = &player1_;
   defending_player_ = &player2_;
 }
-
 
 void Game::startGame()
 {
@@ -21,10 +17,6 @@ void Game::startRound()
 {
 //TODO
 }
-
-
-
-
 
 void Game::printBoard()
 {
@@ -60,7 +52,42 @@ void Game::processCommand(Command command)
   }
   if (command_type == CommandType::INFO)
   {
-    //print info of the card entered as the parameter, check based on Card_ID. Check if its an existing ID
+    // Check if card exists:
+    std::string card_id = command.getParameters().at(0);
+
+    Card* card = Config::getInstance().getCard(card_id);
+
+    // If it doesn't, throw an error
+    if (card == nullptr)
+      throw CommandError("E_INVALID_CARD");
+    
+    // Print info border
+    std::cout << Config::getInstance().getMessage("D_BORDER_INFO") << std::endl;
+    
+    // Print Card info
+    std::cout << card->getName() << " [" << card->getId() << "] (" << card->getManaCost() << " mana)" << std::endl;
+    std::cout << "Type: " << card->getType() << std::endl;
+
+    // Print card specifics
+    if (card->getType() == "Creature")
+    {
+      // Cast a creature and print everything
+      // Traits are handled in Creature Class
+      Creature* creature = static_cast<Creature*>(card);
+      std::cout << "Base Attack: " << creature->getBaseAttack() << std::endl;
+      std::cout << "Base Health: " << creature->getBaseAttack() << std::endl;
+      std::cout << "Base Traits: ";
+      creature->printBaseTraitList();
+    }
+    else
+    {
+      // Cast a spell (ba-dum-tss) and print everything
+      Spell* spell = static_cast<Spell*>(card);
+      std::cout << "Effect: " << spell->getEffect() << std::endl;
+    }
+
+    // Print end border
+    std::cout << std::endl << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
   }
   if (command_type == CommandType::REDRAW)
   {
@@ -92,7 +119,6 @@ void Game::processCommand(Command command)
     //cast a spell from the current player's hand
   }
 }
-
 
 int Game::getRound() const
 {

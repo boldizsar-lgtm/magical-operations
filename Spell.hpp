@@ -26,7 +26,8 @@ public:
 
   //Method
   std::string getType() const override;
-  std::string getCardString(int row) const override;
+  void printCardLine(int row) const override;
+  std::string getEffect() const;
 };
 
 #endif //SPELL_HPP
