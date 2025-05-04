@@ -19,8 +19,9 @@ public:
   //Methods
   virtual std::string getCardString(int row) const = 0;
   virtual std::string getType() const = 0;
-  int getManaCost() const;
   std::string getId() const;
+  std::string getName() const;
+  int getManaCost() const;
 };
 
 #endif //CARD_HPP
