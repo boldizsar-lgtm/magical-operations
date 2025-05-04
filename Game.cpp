@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include "Player.hpp"
 #include "Config.hpp"
+#include "CommandError.hpp"
 
 
 Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2}
@@ -21,10 +22,6 @@ void Game::startRound()
 {
 //TODO
 }
-
-
-
-
 
 void Game::printBoard()
 {
@@ -61,6 +58,23 @@ void Game::processCommand(Command command)
   if (command_type == CommandType::INFO)
   {
     //print info of the card entered as the parameter, check based on Card_ID. Check if its an existing ID
+
+        
+    // Check if card exists:
+    std::string card_id = command.getParameters().at(0);
+
+    Card* card = Config::getInstance().getCard(card_id);
+
+    if (card == nullptr)
+      throw CommandError("E_INVALID_CARD");
+    
+    // Print info border
+    std::cout << Config::getInstance().getMessage("D_BORDER_INFO") << std::endl;
+    
+    //
+
+    // Print Card
+
   }
   if (command_type == CommandType::REDRAW)
   {
