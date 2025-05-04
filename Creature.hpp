@@ -19,20 +19,19 @@ protected:
   std::vector<std::shared_ptr<Trait>> current_traits_;
 
   bool can_attack_;
-  
+
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
   Creature(std::string id, int mana_cost, std::string name, std::vector<std::shared_ptr<Trait>> base_traits,
-           int base_attack, int base_health) : Card(id, mana_cost, name), base_traits_(base_traits),
-           current_traits_(base_traits) base_attack_(base_attack), current_attack_(base_attack),
-           base_health_(base_health), current_health_(base_health), can_attack_(false) {}
+  int base_attack, int base_health);
   Creature(Creature&) = default;
   ~Creature() = default;
 
   //Methods
   void setCurrentAttack(int new_attack);
   void setCurrentHealth(int new_health);
-  void addTrait(Trait* trait);
+  void addTrait(std::shared_ptr<Trait> trait);
+  std::string getType() const override;
   std::string getCardString(int row) const override;
 };
 

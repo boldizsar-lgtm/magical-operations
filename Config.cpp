@@ -1,5 +1,7 @@
 #include <fstream>
+#include <iostream>
 #include "Config.hpp"
+#include "Game.hpp"
 
 //Singleton Requirements
 Config& Config::getInstance()
@@ -42,7 +44,7 @@ void Config::saveCards(std::string path)
 {
   //open file
   std::ifstream file(path);
-  
+
   //read in creatures
   //syntax: <ID>;<Mana Cost>;<Name>;<Base Traits>;<Base Attack>;<Base Health>
   std::string id;
@@ -52,6 +54,7 @@ void Config::saveCards(std::string path)
   std::string base_attack_str;
   std::string base_health_str;
   while (std::getline(file, id, ';') &&
+         (id != " ") &&
          std::getline(file, mana_cost_str, ';') &&
          std::getline(file, name, ';') &&
          std::getline(file, base_traits_str, ';') &&
@@ -74,7 +77,7 @@ void Config::saveCards(std::string path)
     }
 
     //create creature
-    cards_[id] = Creature(id, mana_cost, name, base_traits, base_attack, base_health);
+    cards_[id] = new Creature(id, mana_cost, name, base_traits, base_attack, base_health);
   }
 
   //read in empty line
@@ -96,7 +99,7 @@ void Config::saveCards(std::string path)
       Utils::decimalStringToInt(mana_cost_str, mana_cost);
 
     //create spell
-    cards_[id] = Spell(id, mana_cost, name, effect);
+    cards_[id] = new Spell(id, mana_cost, name, effect);
   }
 }
 
@@ -121,7 +124,7 @@ bool Config::readGameConfig(std::string path)
   std::ifstream file(path);
   if (!file.is_open())
     return false;
-  
+
   //check magic number
   std::string magic_num;
   std::getline(file, magic_num);
@@ -151,7 +154,7 @@ bool Config::readGameConfig(std::string path)
     else
       std::getline(file, line, '\n');
 
-    player_1_deck_.addCard(line);
+    player_1_deck_.createCard(line);
   }
 
   //save player 2's deck
@@ -162,7 +165,7 @@ bool Config::readGameConfig(std::string path)
     else
       std::getline(file, line, '\n');
 
-    player_2_deck_.addCard(line);
+    player_2_deck_.createCard(line);
   }
 
   return true;
@@ -207,7 +210,7 @@ bool Config::readMessageConfig(std::string path)
 
 Card* Config::getCard(std::string id)
 {
-  return &cards_[id];
+  return cards_[id];
 }
 
 
@@ -216,8 +219,36 @@ std::string Config::getMessage(std::string key)
   return messages_[key];
 }
 
-void Config::createGame()
+
+int Config::getMaxRounds() const
 {
-  
+  return max_rounds_;
 }
+
+
+int Config::getBaseHealth() const
+{
+  return player_health_;
+}
+
+
+int Config::getBaseMana() const
+{
+  return mana_pool_size_;
+}
+
+
+CardPile Config::getDeck(int player_id)
+{
+  if (player_id == 1)
+  {
+    return player_1_deck_;
+  }
+  else
+  {
+    return player_2_deck_;
+  }
+}
+
+
 

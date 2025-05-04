@@ -24,6 +24,7 @@ public:
   ~Spell() = default;
 
   //Method
+  std::string getType() const override;
   std::string getCardString(int row) const override;
 };
 

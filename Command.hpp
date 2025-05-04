@@ -28,12 +28,12 @@ class Command
 protected:
   CommandType type_;
   std::vector<std::string> parameters_;
-  
+
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Command(std::vector<std::string>& input);
+  Command(const std::vector<std::string>& input);
   Command(CommandType type) : type_{type} {}
-  Command(Command&) = default;
+  Command(const Command&) = default;
   ~Command() = default;
 
   //Methods

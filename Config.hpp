@@ -1,6 +1,7 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
+
 #include <map>
 #include <memory>
 #include <string>
@@ -10,6 +11,7 @@
 #include "Trait.hpp"
 #include "Utils.hpp"
 #include "CardPile.hpp"
+#include "Game.hpp"
 
 //Singleton Class
 class Config
@@ -22,8 +24,9 @@ private:
   CardPile player_1_deck_;
   CardPile player_2_deck_;
   std::map<char, std::shared_ptr<Trait>> traits_;
-  std::map<std::string, Card> cards_;
+  std::map<std::string, Card*> cards_;
   std::map<std::string, std::string> messages_;
+
 
   //Singleton Requirement
   static Config* instance_;
@@ -45,7 +48,10 @@ public:
   bool readMessageConfig(std::string path);
   Card* getCard(std::string id);
   std::string getMessage(std::string key);
-  void createGame();
+  int getMaxRounds() const;
+  int getBaseHealth() const;
+  int getBaseMana() const;
+  CardPile getDeck(int player_id);
 };
 
 #endif //CONFIG_HPP

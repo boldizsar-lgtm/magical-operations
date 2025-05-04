@@ -8,6 +8,8 @@
 class Player
 {
 private:
+  int id_;
+
   CardPile hand_;
   CardPile deck_;
   CardPile graveyard_;
@@ -23,11 +25,12 @@ private:
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Player() = default;
+  Player(int id);
   Player(Player&) = default;
   ~Player() = default;
 
   //Methods
+  void setDeck(int player_id);
   void changeCurrentHealth(int amount);
   void changeCurrentMana(int amount);
   void refillCurrentMana();

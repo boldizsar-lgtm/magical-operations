@@ -1,4 +1,30 @@
 #include "Game.hpp"
+#include "Player.hpp"
+#include "Config.hpp"
+
+
+Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2}
+{
+  //set default roles of players
+  attacking_player_ = &player1_;
+  defending_player_ = &player2_;
+}
+
+
+void Game::startGame()
+{
+//TODO
+}
+
+
+void Game::startRound()
+{
+//TODO
+}
+
+
+
+
 
 void Game::printBoard()
 {
@@ -66,3 +92,10 @@ void Game::processCommand(Command command)
     //cast a spell from the current player's hand
   }
 }
+
+
+int Game::getRound() const
+{
+  return round_count_;
+}
+

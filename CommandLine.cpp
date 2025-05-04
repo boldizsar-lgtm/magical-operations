@@ -64,10 +64,14 @@ Command CommandLine::readCommand()
   switch (command.getType())
   if (command.getType() == CommandType::INVALID)
   {
+    //TODO: Throw error to catch in main
+    
     //print message of the key "E_UNKNOWN_COMMAND"
   }
   if (command.getType() == CommandType::WRONG_PARAM)
   {
+    //TODO: Throw error to catch in main
+    
     //print message of the key "E_INVALID_PARAM_COUNT"
   }
   return command;

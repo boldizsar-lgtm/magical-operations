@@ -3,24 +3,24 @@
 
 #include <string>
 
-/*enum class TraitType
+enum class TraitType
 {
   PRE_BATTLE,
   MID_BATTLE,
   POST_BATTLE,
   SPECIAL
-};*/
+};
 
 class Trait
 {
 private:
-  //TraitType type_;
+  TraitType type_;
   char id_;
   std::string name_;
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Trait(char id, std::string name) : id_{id}, name_{name} {}
+  Trait(std::string name, char id) : name_{name}, id_{id} {}
   Trait(Trait&) = default;
   ~Trait() = default;
 

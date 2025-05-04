@@ -31,7 +31,7 @@ DRAGN;8;Dragon;BC;13;10
 SLAYR;8;Slayer;FH;15;6
 D_GOD;9;Demi-God;RU;15;15
 DEVIL;9;Devil;BF;16;7
-
+ ;
 BTLCY;3;Battle Cry;All of the player's own creatures on the board gain the Haste and Temporary traits, and their current attack is increased by 3.
 METOR;4;Meteor;All creatures on the board take 3 damage.
 FIRBL;5;Fireball;All enemy creatures on the board take 2 damage.

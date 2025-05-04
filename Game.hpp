@@ -17,7 +17,7 @@ protected:
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Game() = default;
+  Game(int max_rounds_);
   Game(Game&) = default;
   ~Game() = default;
 
@@ -28,6 +28,7 @@ public:
   void startBattlePhase();
   void printBoard();
   void processCommand(Command command);
+  int getRound() const;
 };
 
 #endif //GAME_HPP

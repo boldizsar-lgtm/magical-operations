@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Card.hpp"
-#include "Config.hpp"
+
 
 class CardPile
 {
@@ -17,8 +17,9 @@ public:
   ~CardPile() = default;
 
   //Methods
-  void addCard(std::string id);
-  void removeCard(int id);
+  void createCard(std::string id);
+  void addCard(Card* card);
+  void removeCard(std::string id);
   void removeTopCard();
   const std::string getCardPileString();
 };

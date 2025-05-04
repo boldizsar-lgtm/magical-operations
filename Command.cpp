@@ -2,7 +2,7 @@
 #include "Utils.hpp"
 
 //Implemented Bobo's a1 version of command handling with adjustments for now
-Command::Command(std::vector<std::string>& input)
+Command::Command(const std::vector<std::string>& input)
 {
   std::string command_string = input.at(0);
   Utils::toLower(command_string);
@@ -93,7 +93,7 @@ Command::Command(std::vector<std::string>& input)
   }
   else
     type_ = CommandType::INVALID;
-  
+
   parameters_ = std::vector<std::string>(input.begin() + 1, input.end());
 }
 

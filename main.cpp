@@ -10,6 +10,7 @@
 #include "Utils.hpp"
 #include "CommandLine.hpp"
 #include "Command.hpp"
+#include "CommandError.hpp"
 
 enum ReturnValues
 {
@@ -32,7 +33,7 @@ enum ReturnValues
 int main(int argc, char* argv[])
 {
   //Syntax: /path/to/executable <GAME_CONFIG_FILE> <MESSAGE_CONFIG_FILE>
-  
+
   Config& config = Config::getInstance();
   if (!config.saveTraits("custom_configs/traits_config.txt"))
   {
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
     return NOT_ENOUGH_MEMORY;
   }
   config.saveCards("custom_configs/cards_config.txt");
-  
+
   if (argc != 3)
   {
     std::cout << "[ERROR] Wrong number of parameters." << std::endl;
@@ -59,16 +60,29 @@ int main(int argc, char* argv[])
     return INVALID_FILE;
   }
 
-  config.createGame();
+  Game game(config.getMaxRounds());
 
   CommandLine cli;
   while (true)
   {
-    Command command = cli.readCommand();
-    if (command.isQuit())
+    try
+    {
+      Command command = cli.readCommand();
+      if (command.isQuit())
       break;
-    //Game needs to be created before this point
-    game.processCommand(command);
+      //Game needs to be created before this point
+      game.processCommand(command);
+    }
+    catch(std::bad_alloc& e)
+    {
+      std::cout << "[ERROR] Not enough memory!\n" << std::endl;
+      return NOT_ENOUGH_MEMORY;
+    }
+    catch(CommandError& e)
+    {
+      std::cout << e.what() << std::endl;
+    }
+
   }
 
   return SUCCESSFUL;
