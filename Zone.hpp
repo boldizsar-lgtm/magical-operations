@@ -24,8 +24,8 @@ public:
     ~Zone() = default;
 
     // Methods
-    void removeCreature();  //both methods could work with (Creature* creature) or (std::string id) as parameters
-    void addCreature();
+    void removeCreature(std::string id);  //both methods could work with (Creature* creature) or (std::string id) as parameters
+    void addCreature(Creature* creature,int column);
     std::string printZone(int format) const;
 };
 
