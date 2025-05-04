@@ -1,8 +1,9 @@
 #include "Player.hpp"
 #include "Config.hpp"
+#include "Zone.hpp"
 
 
-Player::Player(int id) : id_{id}
+Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}
 {
   Config& config = Config::getInstance();
   deck_ = config.getDeck(id);

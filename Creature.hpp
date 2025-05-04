@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <iostream>
 #include "Card.hpp"
 #include "Trait.hpp"
 
@@ -32,6 +33,9 @@ public:
   void setCurrentHealth(int new_health);
   void addTrait(std::shared_ptr<Trait> trait);
   std::string getType() const override;
+  std::string printTraits() const;
+  int getAttack() const;
+  int getHealth() const;
   std::string getCardString(int row) const override;
 };
 

@@ -2,6 +2,7 @@
 #define SPELL_HPP
 
 #include <string>
+#include <iostream>
 #include "Card.hpp"
 
 /*enum class SpellType
