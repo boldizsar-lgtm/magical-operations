@@ -20,6 +20,8 @@ public:
   virtual std::string getCardString(int row) const = 0;
   virtual std::string getType() const = 0;
   std::string getId() const;
+  std::string getName() const;
+  int getManaCost() const;
 };
 
 #endif //CARD_HPP
