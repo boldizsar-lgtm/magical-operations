@@ -1,18 +1,10 @@
-B;Brutal;post
+B;Brutal;mid
 C;Challenger;pre
 F;First Strike;mid
-H;Haste;pre
-L;Lifesteal;post
+H;Haste;special
+L;Lifesteal;mid
 P;Poisoned;special
 R;Regenerate;special
 T;Temporary;post
 U;Undying;post
-V;Venomous;post
-
-
-//changes:
-//brutal from mid to post
-//lifesteal from mid to post
-//poisoned from post to special
-//regenerate from post to special
-//venomous from mid to post
+V;Venomous;mid
