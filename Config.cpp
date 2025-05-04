@@ -210,15 +210,19 @@ bool Config::readMessageConfig(std::string path)
 
 Card* Config::getCard(std::string id)
 {
-  return cards_[id];
+  if (cards_.find(id) == cards_.end())
+    return nullptr;
+  else
+    return cards_[id];
 }
-
 
 std::string Config::getMessage(std::string key)
 {
-  return messages_[key];
+  if (messages_.find(id) == messages_.end())
+    return "";
+  else
+    return messages_[key];
 }
-
 
 int Config::getMaxRounds() const
 {
