@@ -8,14 +8,14 @@ std::string Spell::getType() const
 void Spell::printCardLine(int row) const
 {
   if (row == 1)
-    std::cout << " _____M" << Card::getManaCost();
+    std::cout << " _____M" << Card::getManaCostString();
   else if (row == 2)
     std::cout << "| " << Card::getId() << " |";
   else if (row == 3)
     std::cout << "|       |";
   else if (row == 4)
-    std::cout << "_______ ";
-}
+    std::cout << " _______ ";
+} 
 
 std::string Spell::getEffect() const
 {

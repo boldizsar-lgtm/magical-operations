@@ -48,11 +48,12 @@ std::string Creature::getTraitIds() const
   if (more_than_five == true)
     traits_string.at(4) = '+';
   
-  else if (letter_amount < 5)
+  else
   {
-    for (int counter = 5; counter <= letter_amount; counter--)
+    while (letter_amount < 5)
     {
-      traits_string += " ";
+      traits_string += ' ';
+      letter_amount++;
     }
   }
 
@@ -104,14 +105,38 @@ int Creature::getHealth() const
   return current_health_;
 }
 
+std::string Creature::getAttackString() const
+{
+  std::string attack_string;
+
+  if (current_attack_ < 10)
+    attack_string += '0';
+
+  attack_string += std::to_string(current_attack_);
+
+  return attack_string;
+}
+
+std::string Creature::getHealthString() const
+{
+  std::string health_string;
+  
+  if (current_health_ < 10)
+    health_string += '0';
+
+  health_string += std::to_string(current_health_);
+
+  return health_string;
+}
+
 void Creature::printCardLine(int row) const
 {
   if (row == 1)
-    std::cout << " _____M" << Card::getManaCost();
+    std::cout << " _____M" << Card::getManaCostString();
   else if (row == 2)
     std::cout << "| " << Card::getId() << " |";
   else if (row == 3)
     std::cout << "| " << getTraitIds() << " |";
   else if (row == 4)
-    std::cout << 'A' << getAttack() << "___H" << getHealth();
+    std::cout << 'A' << getAttackString() << "___H" << getHealthString();
 }

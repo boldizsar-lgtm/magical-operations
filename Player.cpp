@@ -43,12 +43,12 @@ void Player::drawCard()
 //TODO
 }
 
-std::string Player::printGraveyard() const
+void Player::printGraveyard() const
 {
 //TODO
 }
 
-std::string Player::printHand() const
+void Player::printHand() const
 {
 //TODO
 }

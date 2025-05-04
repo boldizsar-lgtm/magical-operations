@@ -36,8 +36,8 @@ public:
   void refillCurrentMana();
   void increaseMaxMana();
   void drawCard();
-  std::string printGraveyard() const;
-  std::string printHand() const;
+  void printGraveyard() const;
+  void printHand() const;
   void redrawHand();
 };
 

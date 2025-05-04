@@ -68,7 +68,7 @@ const void CardPile::printCardPile()
       std::cout << " ";
 
       if (c == pile_.back())
-        std::cout << std::endl << std::endl;
+        std::cout << std::endl;
     }
   }
 }

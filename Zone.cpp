@@ -22,7 +22,7 @@ void Zone::addCreature(Creature* creature, int column)
   slots_[column] = creature;
 }
 
-std::string Zone::printZone(int format) const
+void Zone::printZone(int format) const
 {
 
 }

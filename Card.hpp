@@ -22,6 +22,7 @@ public:
   std::string getId() const;
   std::string getName() const;
   int getManaCost() const;
+  std::string getManaCostString() const;
 };
 
 #endif //CARD_HPP

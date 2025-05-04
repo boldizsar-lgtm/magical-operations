@@ -40,6 +40,8 @@ public:
   std::vector<std::shared_ptr<Trait>> getBaseTraits() const;
   int getAttack() const;
   int getHealth() const;
+  std::string getAttackString() const;
+  std::string getHealthString() const;
   void printCardLine(int row) const override;
 };
 
