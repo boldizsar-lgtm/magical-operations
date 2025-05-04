@@ -19,7 +19,7 @@ private:
 
 public:
     // Constructor, Copy-Assignment-Operator, Destructor
-    Zone() : slots_(7, nullptr) {}
+    Zone(ZoneType type) : type_{type}, slots_(7, nullptr) {}
     Zone(Zone&) = default;
     ~Zone() = default;
 
