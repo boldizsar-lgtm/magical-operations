@@ -53,3 +53,23 @@ void CardPile::removeCard(std::string id)
 
 }
 
+void CardPile::removeTopCard()
+{
+  //TODO
+}
+
+const std::string CardPile::getCardPileString()
+{
+  for (int row = 1; row <= 4; row++)
+  {
+    int card_count = 0;
+    for (auto c : pile_)
+    {
+      c->getCardString(row);
+      card_count++;
+
+      if (card_count % 7 || c == pile_.back())
+      std::cout << std::endl;
+    }
+  }
+}
