@@ -25,7 +25,7 @@ public:
   ~Trait() = default;
 
   //Methods
-  char getID() const;
+  char getId() const;
   TraitType getType() const;
 };
 

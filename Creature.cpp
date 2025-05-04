@@ -27,7 +27,35 @@ std::string Creature::getType() const
   return "Creature";
 }
 
+std::string Creature::printTraits() const
+{
+  std::string traits_string;
+  for (auto trait : current_traits_)
+  {
+    traits_string += trait->getId();
+  }
+
+  return traits_string;
+}
+
+int Creature::getAttack() const
+{
+  return current_attack_;
+}
+
+int Creature::getHealth() const
+{
+  return current_health_;
+}
+
 std::string Creature::getCardString(int row) const
 {
-  //TODO
+  if (row == 1)
+    std::cout << " _____M" << Card::getManaCost();
+  else if (row == 2)
+    std::cout << "| " << Card::getId() << " |";
+  else if (row == 3)
+    std::cout << "| " << printTraits() << " |";
+  else if (row == 4)
+    std::cout << 'A' << getAttack() << "___H" << getHealth();
 }
