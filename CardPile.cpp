@@ -72,3 +72,12 @@ const void CardPile::printCardPile()
     }
   }
 }
+
+
+CardPile::~CardPile()
+{
+  for(auto& card : pile_)
+  {
+    delete card;
+  }
+}

@@ -34,7 +34,7 @@ private:
   Config() = default;
   Config(Config&) = delete;
   Config& operator=(const Config&) = delete;
-  ~Config() = default;
+  ~Config();
 
 
 public:

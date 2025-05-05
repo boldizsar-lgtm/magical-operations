@@ -26,3 +26,15 @@ void Zone::printZone(int format) const
 {
 
 }
+
+
+Zone::~Zone()
+{
+  for(auto& slot : slots_)
+  {
+    if (slot != nullptr)
+    {
+      delete slot;
+    }
+  }
+}

@@ -30,7 +30,6 @@ public:
   ~Player() = default;
 
   //Methods
-  void setDeck(int player_id);
   void changeCurrentHealth(int amount);
   void changeCurrentMana(int amount);
   void refillCurrentMana();

@@ -21,7 +21,7 @@ public:
     // Constructor, Copy-Assignment-Operator, Destructor
     Zone(ZoneType type) : type_{type}, slots_(7, nullptr) {}
     Zone(Zone&) = default;
-    ~Zone() = default;
+    ~Zone();
 
     // Methods
     void removeCreature(std::string id);  //both methods could work with (Creature* creature) or (std::string id) as parameters

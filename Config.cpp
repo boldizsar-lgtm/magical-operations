@@ -18,7 +18,7 @@ bool Config::saveTraits(std::string path)
 {
   //open file
   std::ifstream file(path);
-  
+
   //save traits
   std::string id_str;
   std::string trait;
@@ -32,7 +32,7 @@ bool Config::saveTraits(std::string path)
   {
     return false;
   }
-  
+
   return true;
 }
 
@@ -179,18 +179,18 @@ bool Config::readGameConfig(std::string path)
 bool Config::readMessageConfig(std::string path)
 {
   //Syntax: <Key>:<Message>
-  
+
   //open file
   std::ifstream file(path);
   if (!file.is_open())
     return false;
-  
+
   //check magic number
   std::string magic_num;
   std::getline(file, magic_num);
   if (magic_num != "MESSAGE")
     return false;
-  
+
   //save messages
   std::string key;
   std::string message;
@@ -255,4 +255,11 @@ CardPile Config::getDeck(int player_id)
 }
 
 
+Config::~Config()
+{
+  for (auto& [key, card] : cards_)
+  {
+    delete card;
+  }
+}
 

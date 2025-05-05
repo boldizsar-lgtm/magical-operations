@@ -47,7 +47,7 @@ std::string Creature::getTraitIds() const
 
   if (more_than_five == true)
     traits_string.at(4) = '+';
-  
+
   else
   {
     while (letter_amount < 5)
@@ -70,7 +70,7 @@ void Creature::printBaseTraitList() const
 
       if (trait == base_traits_.back())
         break;
-      
+
       std::cout << ", ";
     }
   }
@@ -120,7 +120,7 @@ std::string Creature::getAttackString() const
 std::string Creature::getHealthString() const
 {
   std::string health_string;
-  
+
   if (current_health_ < 10)
     health_string += '0';
 

@@ -18,7 +18,7 @@ int Card::getManaCost() const
 std::string Card::getManaCostString() const
 {
   std::string mana_cost_string;
-  
+
   if (mana_cost_ < 10)
     mana_cost_string += '0';
 
