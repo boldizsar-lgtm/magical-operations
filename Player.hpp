@@ -45,6 +45,8 @@ public:
   bool drawCard();
   void printGraveyard() const;
   void printHand() const;
+  void printFieldZone() const;
+  void printBattleZone() const;
   void redrawHand();
 
   std::string getRoleString() const;

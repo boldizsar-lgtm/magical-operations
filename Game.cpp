@@ -53,7 +53,7 @@ bool Game::startRound()
   //print round start
   std::cout << std::endl << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
   std::cout << "                                         ROUND " << getRound() << std::endl;
-  std::cout << std::endl << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
+  std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 
   //increase mana_pool by 1 and refill it
   if (round_count_ % 2 == 1)
@@ -155,13 +155,13 @@ void Game::printBoard() const
         Attacker Border*/
     std::cout << "================================== DEFENDER: PLAYER " << defender_->getId() <<
                  " ===================================" << std::endl;
-    //defender_->printFieldZone();
+    defender_->printFieldZone();
     std::cout << Config::getInstance().getMessage("D_BORDER_A") << std::endl;
-    //defender_->printBattleZone();
+    defender_->printBattleZone();
     std::cout << Config::getInstance().getMessage("D_BORDER_B") << std::endl;
-    //attacker_->printBattleZone();
+    attacker_->printBattleZone();
     std::cout << Config::getInstance().getMessage("D_BORDER_A") << std::endl;
-    //attacker_->printFieldZone();
+    attacker_->printFieldZone();
     std::cout << "================================== ATTACKER: PLAYER " << attacker_->getId() <<
                  " ===================================" << std::endl;
   }

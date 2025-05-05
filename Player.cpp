@@ -60,6 +60,26 @@ void Player::printHand() const
 //TODO
 }
 
+void Player::printFieldZone() const
+{
+  for (int i; i <= 4; i++)
+  {
+    std::cout << "F  ";
+    field_zone_.printZone(i);
+    std::cout << "  F" << std::endl;
+  }
+}
+
+void Player::printBattleZone() const
+{
+  for (int i; i <= 4; i++)
+  {
+    std::cout << "B  ";
+    battle_zone_.printZone(i);
+    std::cout << "  B" << std::endl;
+  }
+}
+
 void Player::redrawHand()
 {
 //TODO
