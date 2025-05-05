@@ -49,6 +49,14 @@ public:
   // @return no return value
   //
   static void toLower(std::string& string);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // This function converts a string to a string with uppercase letters.
+  //
+  // @param string& - reference to the string that should be converted
+  // @return no return value
+  //
+  static void toUpper(std::string& string);
 };
 
 #endif // UTILS_HPP

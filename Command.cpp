@@ -5,86 +5,86 @@
 Command::Command(const std::vector<std::string>& input)
 {
   std::string command_string = input.at(0);
-  Utils::toLower(command_string);
+  Utils::toUpper(command_string);
 
-  if (command_string == "quit")
+  if (command_string == "QUIT")
   {
     if (input.size() == 1)
       type_ = CommandType::QUIT;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "help")
+  else if (command_string == "HELP")
   {
     if (input.size() == 1)
       type_ = CommandType::HELP;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "graveyard")
+  else if (command_string == "GRAVEYARD")
   {
     if (input.size() == 1)
       type_ = CommandType::GRAVEYARD;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "board")
+  else if (command_string == "BOARD")
   {
     if (input.size() == 1)
       type_ = CommandType::BOARD;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "hand")
+  else if (command_string == "HAND")
   {
     if (input.size() == 1)
       type_ = CommandType::HAND;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "info")
+  else if (command_string == "INFO")
   {
     if (input.size() == 2)
       type_ = CommandType::INFO;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "redraw")
+  else if (command_string == "REDRAW")
   {
     if (input.size() == 1)
       type_ = CommandType::REDRAW;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "status")
+  else if (command_string == "STATUS")
   {
     if (input.size() == 1)
       type_ = CommandType::STATUS;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "done")
+  else if (command_string == "DONE")
   {
     if (input.size() == 1)
       type_ = CommandType::DONE;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "battle")
+  else if (command_string == "BATTLE")
   {
     if (input.size() == 3)
       type_ = CommandType::BATTLE;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "creature")
+  else if (command_string == "CREATURE")
   {
     if (input.size() == 3)
       type_ = CommandType::CREATURE;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "spell")
+  else if (command_string == "SPELL")
   {
     if (input.size() == 2 || input.size() == 3)
       type_ = CommandType::SPELL;

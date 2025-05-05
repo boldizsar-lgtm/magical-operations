@@ -57,7 +57,7 @@ Command CommandLine::readCommand()
   std::string input;
   std::getline(std::cin, input);
   removeWhitespacesAtEnds(input);
-  Utils::toLower(input);
+  Utils::toUpper(input);
   std::vector<std::string> vectorised_string;
   stringToVector(input, vectorised_string, ' ');
   Command command(vectorised_string);

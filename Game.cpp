@@ -87,7 +87,7 @@ void Game::processCommand(Command command)
     }
 
     // Print end border
-    std::cout << std::endl << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
+    std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
   }
   if (command_type == CommandType::REDRAW)
   {
