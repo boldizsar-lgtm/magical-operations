@@ -12,26 +12,33 @@ class Game
 protected:
   Player player1_;
   Player player2_;
-  Player* attacking_player_;
-  Player* defending_player_;
+  Player* current_player_;
   int max_rounds_;
   int round_count_;
   bool board_active_;
 
 public:
-  //Constructor, Copy-Assignment-Operator, Destructor
+  // Constructor, Copy-Assignment-Operator, Destructor
   Game(int max_rounds_);
   Game(Game&) = default;
   ~Game() = default;
 
-  //Methods
+  // Methods
   void startGame();
   void startRound();
   void startSetupPhase();
   void startBattlePhase();
-  void printBoard();
   void processCommand(Command command);
   int getRound() const;
+
+  // The different commands
+  void printHelp() const;
+  void printGraveyard(Player* current_player) const;
+  void printHand(Player* current_player) const;
+  void printInfo(Command& command) const;
+  void printStatus() const;
+  void changeBoardStatus();
+  void printBoard();
 };
 
 #endif //GAME_HPP

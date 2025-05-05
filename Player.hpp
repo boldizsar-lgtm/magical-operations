@@ -5,10 +5,18 @@
 #include "CardPile.hpp"
 #include "Zone.hpp"
 
+enum class Role
+{
+  ATTACKER,
+  DEFENDER
+};
+
 class Player
 {
 private:
   int id_;
+
+  Role role_;
 
   CardPile hand_;
   CardPile deck_;
@@ -38,6 +46,12 @@ public:
   void printGraveyard() const;
   void printHand() const;
   void redrawHand();
+
+  std::string getRoleString() const;
+  int getCurrentHealth() const;
+  int getCurrentMana() const;
+
+  void setRole(Role role);
 };
 
 #endif //PLAYER_HPP

@@ -57,3 +57,26 @@ void Player::redrawHand()
 {
 //TODO
 }
+
+std::string Player::getRoleString() const
+{
+  if (role_ == Role::ATTACKER)
+    return "Attacker";
+  else
+    return "Defender";
+}
+
+int Player::getCurrentHealth() const
+{
+  return current_health_;
+}
+
+int Player::getCurrentMana() const
+{
+  return current_mana_;
+}
+
+void Player::setRole(Role role)
+{
+  role_ = role;
+}
