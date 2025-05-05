@@ -55,7 +55,8 @@ void CardPile::removeCard(std::string id)
 
 void CardPile::removeTopCard()
 {
-  //TODO
+  if (pile_.size() != 0)
+    pile_.pop_back();
 }
 
 const void CardPile::printCardPile()
@@ -71,6 +72,14 @@ const void CardPile::printCardPile()
         std::cout << std::endl;
     }
   }
+}
+
+Card* CardPile::getPileEnd() const
+{
+  if (pile_.size() != 0)
+    return pile_.back();
+  else
+    return nullptr;
 }
 
 

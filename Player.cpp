@@ -10,37 +10,44 @@ Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{Zon
 
   //setting base values
   base_health_ = config.getBaseHealth();
-  base_mana_ = config.getBaseMana();
+  mana_pool_ = config.getBaseMana();
 
   //setting current values to base values
   current_health_ = base_health_;
-  current_mana_ = base_mana_;
+  current_mana_ = mana_pool_;
 }
 
 
 void Player::changeCurrentHealth(int amount)
 {
-//TODO
+  current_health_ += amount;
 }
 
 void Player::changeCurrentMana(int amount)
 {
-//TODO
+  current_mana_ += amount;
 }
 
 void Player::refillCurrentMana()
 {
-//TODO
+  current_mana_ = mana_pool_;
 }
 
-void Player::increaseMaxMana()
+void Player::increaseManaPool(int amount)
 {
-//TODO
+  mana_pool_ += amount;
 }
 
-void Player::drawCard()
+bool Player::drawCard()
 {
-//TODO
+  Card* card = deck_.getPileEnd();
+
+  if (card == nullptr)
+    return false;
+
+  hand_.addCard(card);
+  deck_.removeTopCard();
+  return true;
 }
 
 void Player::printGraveyard() const
@@ -76,7 +83,20 @@ int Player::getCurrentMana() const
   return current_mana_;
 }
 
+int Player::getId() const
+{
+  return id_;
+}
+
 void Player::setRole(Role role)
 {
   role_ = role;
+}
+
+void Player::switchRole()
+{
+  if (role_ == Role::ATTACKER)
+    role_ = Role::DEFENDER;
+  else
+    role_ = Role::ATTACKER;
 }

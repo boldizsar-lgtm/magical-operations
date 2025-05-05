@@ -13,6 +13,8 @@ protected:
   Player player1_;
   Player player2_;
   Player* current_player_;
+  Player* attacker_;
+  Player* defender_;
   int max_rounds_;
   int round_count_;
   bool board_active_;
@@ -25,11 +27,12 @@ public:
 
   // Methods
   void startGame();
-  void startRound();
+  bool startRound();
   void startSetupPhase();
   void startBattlePhase();
   void processCommand(Command command);
   int getRound() const;
+  void printBoard() const;
 
   // The different commands
   void printHelp() const;
@@ -38,7 +41,6 @@ public:
   void printInfo(Command& command) const;
   void printStatus() const;
   void changeBoardStatus();
-  void printBoard();
 };
 
 #endif //GAME_HPP

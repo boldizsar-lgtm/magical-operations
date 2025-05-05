@@ -167,7 +167,6 @@ bool Config::readGameConfig(std::string path)
     player_2_deck_.createCard(line);
   }
 
-  player_1_deck_.printCardPile(); // TEMPORARY
   return true;
 }
 

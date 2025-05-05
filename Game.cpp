@@ -1,21 +1,79 @@
 #include "Game.hpp"
 
-Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2}
+Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2},
+                             attacker_(&player1_), defender_(&player2_)
 {
   //set default roles of players
   player1_.setRole(Role::ATTACKER);
   player2_.setRole(Role::DEFENDER);
+
+  //print game start
+  std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
+  std::cout << Config::getInstance().getMessage("D_WELCOME") << std::endl;
+  std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
+
+  startGame();
 }
 
 void Game::startGame()
 {
-//TODO
+  /*while (true)
+    if (!startRound())
+      break;*/
+  startRound();
+  //the command should be read in now and executed
 }
 
-
-void Game::startRound()
+bool Game::startRound()
 {
-//TODO
+  //end game if round_count reach max rounds
+  if (round_count_++ == max_rounds_)
+  {
+    return false;
+  }
+
+  //switch attacking and defending player
+  if (round_count_ % 2 == 0)
+  {
+    if (attacker_ == &player1_)
+    {
+      attacker_ = &player2_;
+      defender_ = &player1_;
+    }
+    else
+    {
+      attacker_ = &player1_;
+      defender_ = &player2_;
+    }
+
+    player1_.switchRole();
+    player2_.switchRole();
+  }
+
+  //print round start
+  std::cout << std::endl << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
+  std::cout << "                                         ROUND " << getRound() << std::endl;
+  std::cout << std::endl << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
+
+  //increase mana_pool by 1 and refill it
+  if (round_count_ % 2 == 1)
+  {
+    player1_.increaseManaPool(1);
+    player1_.refillCurrentMana();
+    player2_.increaseManaPool(1);
+    player2_.refillCurrentMana();
+  }
+
+  //print board
+  printBoard();
+
+  //players draw a card
+  if (!attacker_->drawCard())
+    return false;
+  if (!defender_->drawCard())
+    return false;
+  
+  return true;
 }
 
 void Game::processCommand(Command command)
@@ -79,6 +137,34 @@ void Game::processCommand(Command command)
 int Game::getRound() const
 {
   return round_count_;
+}
+
+void Game::printBoard() const
+{
+  if (board_active_ == true)
+  {
+    /*Syntax:
+        Defender Border
+        Defender Field Zone
+        Border A
+        Defender Battle Zone
+        Border B
+        Attacker Battle Zone
+        Border A
+        Attacker Field Zone
+        Attacker Border*/
+    std::cout << "================================== DEFENDER: PLAYER " << defender_->getId() <<
+                 " ===================================" << std::endl;
+    //defender_->printFieldZone();
+    std::cout << Config::getInstance().getMessage("D_BORDER_A") << std::endl;
+    //defender_->printBattleZone();
+    std::cout << Config::getInstance().getMessage("D_BORDER_B") << std::endl;
+    //attacker_->printBattleZone();
+    std::cout << Config::getInstance().getMessage("D_BORDER_A") << std::endl;
+    //attacker_->printFieldZone();
+    std::cout << "================================== ATTACKER: PLAYER " << attacker_->getId() <<
+                 " ===================================" << std::endl;
+  }
 }
 
 void Game::printHelp() const
@@ -189,9 +275,4 @@ void Game::changeBoardStatus()
     board_active_ = true;
     printBoard();
   }
-}
-
-void Game::printBoard()
-{
-
 }

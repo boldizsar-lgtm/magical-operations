@@ -22,6 +22,7 @@ public:
   void removeCard(std::string id);
   void removeTopCard();
   const void printCardPile();
+  Card* getPileEnd() const;
 };
 
 #endif //CARDPILE_HPP

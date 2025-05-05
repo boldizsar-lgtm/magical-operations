@@ -70,7 +70,6 @@ int main(int argc, char* argv[])
       Command command = cli.readCommand();
       if (command.isQuit())
       break;
-      //Game needs to be created before this point
       game.processCommand(command);
     }
     catch(std::bad_alloc& e)

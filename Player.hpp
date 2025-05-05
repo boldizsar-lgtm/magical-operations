@@ -23,7 +23,7 @@ private:
   CardPile graveyard_;
 
   int base_health_;
-  int base_mana_;
+  int mana_pool_;
 
   int current_health_;
   int current_mana_;
@@ -41,8 +41,8 @@ public:
   void changeCurrentHealth(int amount);
   void changeCurrentMana(int amount);
   void refillCurrentMana();
-  void increaseMaxMana();
-  void drawCard();
+  void increaseManaPool(int amount);
+  bool drawCard();
   void printGraveyard() const;
   void printHand() const;
   void redrawHand();
@@ -50,8 +50,9 @@ public:
   std::string getRoleString() const;
   int getCurrentHealth() const;
   int getCurrentMana() const;
-
+  int getId() const;
   void setRole(Role role);
+  void switchRole();
 };
 
 #endif //PLAYER_HPP
