@@ -115,6 +115,12 @@ bool Game::startSetupPhase()
   return true;
 }
 
+bool Game::startBattlePhase()
+{
+  //TODO
+  return true;
+}
+
 
 void Game::processCommand(Command command)
 {

@@ -15,6 +15,12 @@ Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{Zon
   //setting current values to base values
   current_health_ = base_health_;
   current_mana_ = mana_pool_;
+
+  //draw 6 hand cards from the deck
+  for (int i = 0; i < 6; i++)
+  {
+    drawCard();
+  }
 }
 
 
@@ -59,12 +65,16 @@ void Player::printPlayerPrompt() const
 
 void Player::printGraveyard() const
 {
-  graveyard_.printCardPile();
+  std::cout << Config::getInstance().getMessage("D_BORDER_GRAVEYARD") << std::endl;
+  graveyard_.printGraveyard();
+  std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 }
 
 void Player::printHand() const
 {
-  hand_.printCardPile();
+  std::cout << Config::getInstance().getMessage("D_BORDER_HAND") << std::endl;
+  hand_.printHand();
+  std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 }
 
 void Player::printFieldZone() const

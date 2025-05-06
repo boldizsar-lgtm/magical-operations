@@ -67,17 +67,36 @@ void CardPile::removeTopCard()
     pile_.pop_back();
 }
 
-void CardPile::printCardPile() const
+void CardPile::printHand() const
 {
-  for (int row = 1; row <= 4; row++)
-  {
-    for (auto& c : pile_)
-    {
-      c->printCardLine(row);
-      std::cout << " ";
+  float required_card_rows = (pile_.size() + 6) / 7;
 
-      if (c == pile_.back())
-        std::cout << std::endl;
+  int current_card_rows = 0;  
+
+  while (current_card_rows < required_card_rows)
+  {
+    for (int print_row = 1; print_row <= 4; print_row++)
+    {
+      for (int i = current_card_rows * 7; i < (current_card_rows + 1) * 7 && i < pile_.size(); i++)
+      {
+        pile_[i]->printCardLine(print_row);
+        std::cout << "   ";
+      }
+
+      std::cout << std::endl;
+    }
+
+    current_card_rows++;
+  }
+}
+
+void CardPile::printGraveyard() const
+{
+  if (pile_.size() > 0)
+  {
+    for (int i = pile_.size() - 1; i >= 0; i--)
+    {
+      std::cout << pile_[i]->getId() << " | " << pile_[i]->getName() << std::endl;
     }
   }
 }

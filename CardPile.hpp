@@ -22,7 +22,8 @@ public:
   void addCardTop(Card* card);
   void removeCard(std::string id);
   void removeTopCard();
-  void printCardPile() const;
+  void printHand() const;
+  void printGraveyard() const;
   Card* getPileEnd() const;
   int getSize() const;
 };
