@@ -50,7 +50,6 @@ bool Player::drawCard()
 
   if (card == nullptr)
   {
-    std::cout << "Card is nullptr in drawCard()";
     return false;
   }
 
