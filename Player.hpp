@@ -55,9 +55,11 @@ public:
   std::string getRoleString() const;
   int getCurrentHealth() const;
   int getCurrentMana() const;
+  int getManaPool() const;
   int getId() const;
   int getDeckSize() const;
   CardPile* getDeck() const;
+  const CardPile& getGraveyard() const;
   bool getDoneStatus() const;
   void setRole(Role role);
   void switchRole();

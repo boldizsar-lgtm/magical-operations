@@ -61,11 +61,19 @@ void CardPile::removeCard(std::string id)
 
 }
 
-void CardPile::removeTopCard()
+void CardPile::removeEndCard()
 {
   if (pile_.size() != 0)
     pile_.pop_back();
 }
+
+
+void CardPile::removeTopCard()
+{
+  if (pile_.size() != 0)
+    pile_.erase(pile_.begin());
+}
+
 
 void CardPile::printCardPile() const
 {
@@ -111,6 +119,15 @@ Card* CardPile::getPileEnd() const
   }
 }
 
+Card* CardPile::getPileTop() const
+{
+  if (pile_.size() != 0)
+    return pile_.front();
+  else
+  {
+    return nullptr;
+  }
+}
 
 int CardPile::getSize() const
 {

@@ -1,5 +1,4 @@
 #include "Game.hpp"
-#include "CommandLine.hpp"
 
 Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2},
                              attacker_(&player1_), defender_(&player2_)
@@ -78,19 +77,24 @@ bool Game::startSetupPhase()
 
   CommandLine cli;
   // Command loop for setup phase from main to here, maybe combine in own function to avoid repetition
-  while (!current_player_->getDoneStatus())
-  {
-    current_player_->printPlayerPrompt();
-    Command command = cli.readCommand();
-    if (command.isQuit())
-      return false;
-    processCommand(command);
-  }
+  if (doCommandLoop(cli) == false)
+    return false;
 
   //switch current player
   current_player_ = defender_;
 
   //setup phase for opposing player
+  if (doCommandLoop(cli) == false)
+    return false;
+
+
+  //TODO: check traits?
+
+  return true;
+}
+
+bool Game::doCommandLoop(CommandLine& cli)
+{
   while (!current_player_->getDoneStatus())
   {
     current_player_->printPlayerPrompt();
@@ -99,11 +103,6 @@ bool Game::startSetupPhase()
       return false;
     processCommand(command);
   }
-
-
-  //TODO: check traits?
-
-  return true;
 }
 
 bool Game::startBattlePhase()
@@ -122,13 +121,13 @@ void Game::processCommand(Command command)
     printHelp();
 
   if (command_type == CommandType::GRAVEYARD)
-    printGraveyard(current_player_);
+    current_player_->printGraveyard();
 
   if (command_type == CommandType::BOARD)
     changeBoardStatus();
 
   if (command_type == CommandType::HAND)
-    printHand(current_player_);
+    current_player_->printHand();
 
   if (command_type == CommandType::INFO)
     printInfo(command);
@@ -141,9 +140,7 @@ void Game::processCommand(Command command)
   }
 
   if (command_type == CommandType::STATUS)
-  {
     printStatus();
-  }
 
   if (command_type == CommandType::DONE)
   {
@@ -273,16 +270,6 @@ void Game::printHelp() const
 
 }
 
-void Game::printGraveyard(Player* current_player) const
-{
- // TODO
-}
-
-void Game::printHand(Player* current_player) const
-{
-  // TODO
-}
-
 void Game::printInfo(Command& command) const
 {
   // Check if card exists:
@@ -332,8 +319,9 @@ void Game::printStatus() const
   std::cout << "Player 1" << std::endl;
   std::cout << "Role: " << player1_.getRoleString() << std::endl;
   std::cout << "Health: " << player1_.getCurrentHealth() << std::endl;
-  std::cout << "Mana: " << player1_.getCurrentMana() << " / " << /* BRAUCHEN +++CURENT+++ MANA POOL SIZE HIER, NICHT BASE */ std::endl;
-  // TODO: DECKSIZE, GRAVEYARD SIZE, BRAUCHEN GETTERS IN CARDPILE CLASS DAFÜR
+  std::cout << "Mana: " << player1_.getCurrentMana() << " / " << player1_.getManaPool() << std::endl;
+  std::cout << "Remaining Deck: " << player1_.getDeck()->getSize() << " card(s)" << std::endl;
+  std::cout << "Graveyard Size: " << player1_.getGraveyard().getSize() << " card(s)" << std::endl;
 
    std::cout << Config::getInstance().getMessage("D_BORDER_C") << std::endl;
 
@@ -341,8 +329,9 @@ void Game::printStatus() const
   std::cout << "Player 2" << std::endl;
   std::cout << "Role: " << player2_.getRoleString() << std::endl;
   std::cout << "Health: " << player2_.getCurrentHealth() << std::endl;
-  std::cout << "Mana: " << player2_.getCurrentMana() << " / " << /* BRAUCHEN +++CURENT+++ MANA POOL SIZE HIER, NICHT BASE */ std::endl;
-  // TODO: DECKSIZE, GRAVEYARD SIZE, BRAUCHEN GETTERS IN CARDPILE CLASS DAFÜR
+  std::cout << "Mana: " << player2_.getCurrentMana() << " / " << player2_.getManaPool() << std::endl;
+  std::cout << "Remaining Deck: " << player2_.getDeck()->getSize() << " card(s)" << std::endl;
+  std::cout << "Graveyard Size: " << player2_.getGraveyard().getSize() << " card(s)" << std::endl;
 
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 }

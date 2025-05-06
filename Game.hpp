@@ -6,6 +6,7 @@
 #include "Command.hpp"
 #include "Config.hpp"
 #include "CommandError.hpp"
+#include "CommandLine.hpp"
 
 class Game
 {
@@ -28,6 +29,7 @@ public:
   // Methods
   bool startRound();
   bool startSetupPhase();
+  bool doCommandLoop(CommandLine& cli);
   bool startBattlePhase();
   void processCommand(Command command);
   int getRound() const;
@@ -36,8 +38,6 @@ public:
 
   // The different commands
   void printHelp() const;
-  void printGraveyard(Player* current_player) const;
-  void printHand(Player* current_player) const;
   void printInfo(Command& command) const;
   void printStatus() const;
   void changeBoardStatus();

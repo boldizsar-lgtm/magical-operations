@@ -46,25 +46,22 @@ void Player::increaseManaPool(int amount)
 
 bool Player::drawCard()
 {
-  Card* card = deck_->getPileEnd();
+  Card* card = deck_->getPileTop();
 
   if (card == nullptr)
   {
     return false;
   }
 
-
   hand_.addCardEnd(card);
   deck_->removeTopCard();
   return true;
 }
 
-
 void Player::printPlayerPrompt() const
 {
   std::cout << "\nP" << id_ << "> ";
 }
-
 
 void Player::printGraveyard() const
 {
@@ -123,11 +120,15 @@ int Player::getCurrentMana() const
   return current_mana_;
 }
 
+int Player::getManaPool() const
+{
+  return mana_pool_;
+}
+
 int Player::getId() const
 {
   return id_;
 }
-
 
 int Player::getDeckSize() const
 {
@@ -138,6 +139,11 @@ int Player::getDeckSize() const
 CardPile* Player::getDeck() const
 {
   return deck_;
+}
+
+const CardPile& Player::getGraveyard() const 
+{
+  return graveyard_;
 }
 
 

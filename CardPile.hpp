@@ -22,9 +22,11 @@ public:
   void addCardTop(Card* card);
   void removeCard(std::string id);
   void removeTopCard();
+  void removeEndCard();
   void printCardPile() const;
   void printGraveyard() const;
   Card* getPileEnd() const;
+  Card* getPileTop() const;
   int getSize() const;
 };
 
