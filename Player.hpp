@@ -19,7 +19,7 @@ private:
   Role role_;
 
   CardPile hand_;
-  CardPile* deck_;
+  CardPile deck_;
   CardPile graveyard_;
 
   int base_health_;

@@ -241,15 +241,15 @@ int Config::getBaseMana() const
 }
 
 
-CardPile* Config::getDeck(int player_id)
+CardPile Config::getDeck(int player_id)
 {
   if (player_id == 1)
   {
-    return &player_1_deck_;
+    return player_1_deck_;
   }
   else
   {
-    return &player_2_deck_;
+    return player_2_deck_;
   }
 }
 

@@ -46,13 +46,13 @@ void Player::increaseManaPool(int amount)
 
 bool Player::drawCard()
 {
-  Card* card = deck_->getPileEnd();
+  Card* card = deck_.getPileEnd();
 
   if (card == nullptr)
     return false;
 
   hand_.addCardEnd(card);
-  deck_->removeTopCard();
+  deck_.removeTopCard();
   return true;
 }
 
@@ -128,7 +128,7 @@ int Player::getId() const
 
 int Player::getDeckSize() const
 {
-  return deck_->getSize();
+  return deck_.getSize();
 }
 
 
