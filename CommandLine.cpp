@@ -7,12 +7,7 @@
 //---------------------------------------------------------------------------------------------------------------------
 //
 
-#include <iostream>
-#include "Utils.hpp"
-#include "Command.hpp"
 #include "CommandLine.hpp"
-
-#include <algorithm>
 
 void CommandLine::removeTrailingWhitespaces(std::string& string)
 {
@@ -61,18 +56,12 @@ Command CommandLine::readCommand()
   std::vector<std::string> vectorised_string;
   stringToVector(input, vectorised_string, ' ');
   Command command(vectorised_string);
-  switch (command.getType())
+  
   if (command.getType() == CommandType::INVALID)
-  {
-    //TODO: Throw error to catch in main
-    
-    //print message of the key "E_UNKNOWN_COMMAND"
-  }
+    throw CommandError("E_UNKNOWN_COMMAND");
+
   if (command.getType() == CommandType::WRONG_PARAM)
-  {
-    //TODO: Throw error to catch in main
-    
-    //print message of the key "E_INVALID_PARAM_COUNT"
-  }
+    throw CommandError("E_INVALID_PARAM_COUNT");
+
   return command;
 }

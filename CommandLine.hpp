@@ -12,7 +12,12 @@
 
 #include <string>
 #include <map>
+#include <iostream>
+#include <algorithm>
 #include "Command.hpp"
+#include "Utils.hpp"
+#include "Command.hpp"
+#include "CommandError.hpp"
 
 
 class CommandLine

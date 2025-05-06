@@ -117,19 +117,44 @@ void Game::processCommand(Command command)
   int param_amount = command.getParameters().size();
 
   if (command_type == CommandType::HELP)
-    printHelp();
+  {
+    if (param_amount != 0)
+      command.setType(CommandType::WRONG_PARAM);
+    else
+      printHelp();
+  }
 
   if (command_type == CommandType::GRAVEYARD)
-    current_player_->printGraveyard();
+  {
+    if (param_amount != 0)
+      command.setType(CommandType::WRONG_PARAM);
+    else
+      current_player_->printGraveyard();
+  }
 
   if (command_type == CommandType::BOARD)
-    changeBoardStatus();
+  {
+    if (param_amount != 0)
+      command.setType(CommandType::WRONG_PARAM);
+    else
+      changeBoardStatus();
+  }
 
   if (command_type == CommandType::HAND)
-    current_player_->printHand();
+  {
+    if (param_amount != 0)
+      command.setType(CommandType::WRONG_PARAM);
+    else
+      current_player_->printHand();
+  }
 
   if (command_type == CommandType::INFO)
-    printInfo(command);
+  {
+    if (param_amount != 1)
+      command.setType(CommandType::WRONG_PARAM);
+    else
+      printInfo(command);
+  }
 
   if (command_type == CommandType::REDRAW)
   {
@@ -139,8 +164,13 @@ void Game::processCommand(Command command)
   }
 
   if (command_type == CommandType::STATUS)
-    printStatus();
-
+  {
+    if (param_amount != 0)
+      command.setType(CommandType::WRONG_PARAM);
+    else
+      printStatus();
+  }
+    
   if (command_type == CommandType::DONE)
   {
     //player ends their turn, the board is printed,
@@ -157,11 +187,10 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::CREATURE)
   {
-    //Syntax: creature <HAND_CARD_ID> <FIELD_SLOT>
-    //a creature is placed from the current player's hand onto the chosen field slot
-    playCreature(command);
-
-
+    if (param_amount != 2)
+      command.setType(CommandType::WRONG_PARAM);
+    else
+      playCreature(command);
   }
 
   if (command_type == CommandType::SPELL)
