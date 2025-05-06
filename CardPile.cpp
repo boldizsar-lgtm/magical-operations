@@ -94,7 +94,7 @@ void CardPile::printGraveyard() const
 {
   if (pile_.size() > 0)
   {
-    for (int i = pile_.size() - 1; i >= 0; i--)
+    for (int i = 0; i < pile_.size(); i++)
     {
       std::cout << pile_[i]->getId() << " | " << pile_[i]->getName() << std::endl;
     }
