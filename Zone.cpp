@@ -17,10 +17,12 @@ void Zone::removeCreature(std::string id)
   }
 }
 
+
 void Zone::addCreature(Creature* creature, int column)
 {
   slots_[column] = creature;
 }
+
 
 void Zone::printZone(int row) const
 {
@@ -30,11 +32,8 @@ void Zone::printZone(int row) const
       std::cout << "         ";
     else
       creature->printCardLine(row);
-    
-    if (creature != slots_[7])
-      {
-        std::cout << "   ";
-      }
+
+    std::cout << "   ";
   }
 }
 
