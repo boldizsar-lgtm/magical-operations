@@ -76,6 +76,8 @@ int main(int argc, char* argv[])
         break;
 
       continue_game = game.startBattlePhase();
+      if (!continue_game)
+        break;
 
     }
     catch(std::bad_alloc& e)
