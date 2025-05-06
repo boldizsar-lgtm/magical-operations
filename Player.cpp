@@ -136,6 +136,12 @@ int Player::getDeckSize() const
 }
 
 
+CardPile* Player::getDeck() const
+{
+  return deck_;
+}
+
+
 bool Player::getDoneStatus() const
 {
   return done_;

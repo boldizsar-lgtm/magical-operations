@@ -59,6 +59,8 @@ bool Game::startRound()
   //print board
   printBoard();
 
+  attacker_->getDeck()->printHand();
+
   //players draw a card
   if (!attacker_->drawCard())
     return false;

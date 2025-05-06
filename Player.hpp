@@ -57,6 +57,7 @@ public:
   int getCurrentMana() const;
   int getId() const;
   int getDeckSize() const;
+  CardPile* getDeck() const;
   bool getDoneStatus() const;
   void setRole(Role role);
   void switchRole();
