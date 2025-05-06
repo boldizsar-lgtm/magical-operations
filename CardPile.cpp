@@ -116,13 +116,13 @@ int CardPile::getSize() const
 }
 
 
-CardPile::~CardPile()
-{
-  for(auto& card : pile_)
-  {
-    if (card)
-    {
-      delete card;
-    }
-  }
-}
+// CardPile::~CardPile()
+// {
+//   for(auto& card : pile_)
+//   {
+//     if (card)
+//     {
+//       delete card;
+//     }
+//   }
+// }
