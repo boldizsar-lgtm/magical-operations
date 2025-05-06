@@ -202,7 +202,7 @@ bool Config::readMessageConfig(std::string path)
   {
     if (key[0] == 'E')
       messages_[key] = "[ERROR] " + message;
-    if (key[0] == 'I')
+    else if (key[0] == 'I')
       messages_[key] = "[INFO] " + message;
     else
       messages_[key] = message;

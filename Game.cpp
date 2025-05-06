@@ -96,12 +96,21 @@ bool Game::doCommandLoop(CommandLine& cli)
 {
   while (!current_player_->getDoneStatus())
   {
-    current_player_->printPlayerPrompt();
-    Command command = cli.readCommand();
-    if (command.isQuit())
-      return false;
-    processCommand(command);
+    try
+    {
+      current_player_->printPlayerPrompt();
+      Command command = cli.readCommand();
+      if (command.isQuit())
+        return false;
+      processCommand(command);
+    }
+    catch(const CommandError& e)
+    {
+      std::cout << e.what() << '\n';
+    }
   }
+
+  return true;
 }
 
 bool Game::startBattlePhase()
@@ -118,41 +127,26 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::HELP)
   {
-    if (param_amount != 0)
-      command.setType(CommandType::WRONG_PARAM);
-    else
       printHelp();
   }
 
   if (command_type == CommandType::GRAVEYARD)
   {
-    if (param_amount != 0)
-      command.setType(CommandType::WRONG_PARAM);
-    else
       current_player_->printGraveyard();
   }
 
   if (command_type == CommandType::BOARD)
   {
-    if (param_amount != 0)
-      command.setType(CommandType::WRONG_PARAM);
-    else
       changeBoardStatus();
   }
 
   if (command_type == CommandType::HAND)
   {
-    if (param_amount != 0)
-      command.setType(CommandType::WRONG_PARAM);
-    else
       current_player_->printHand();
   }
 
   if (command_type == CommandType::INFO)
   {
-    if (param_amount != 1)
-      command.setType(CommandType::WRONG_PARAM);
-    else
       printInfo(command);
   }
 
@@ -165,16 +159,14 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::STATUS)
   {
-    if (param_amount != 0)
-      command.setType(CommandType::WRONG_PARAM);
-    else
       printStatus();
   }
-    
+
   if (command_type == CommandType::DONE)
   {
     //player ends their turn, the board is printed,
     current_player_->setDoneStatus(true);
+    printBoard();
     //check regenerate, and poisoned
   }
 
@@ -187,9 +179,6 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::CREATURE)
   {
-    if (param_amount != 2)
-      command.setType(CommandType::WRONG_PARAM);
-    else
       playCreature(command);
   }
 

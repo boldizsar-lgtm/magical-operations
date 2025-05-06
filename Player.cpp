@@ -78,7 +78,7 @@ void Player::printHand() const
 
 void Player::printFieldZone() const
 {
-  for (int i = 0; i < 4; i++)
+  for (int i = 1; i <= 4; i++)
   {
     std::cout << "F   ";
     field_zone_.printZone(i);
@@ -88,7 +88,7 @@ void Player::printFieldZone() const
 
 void Player::printBattleZone() const
 {
-  for (int i = 0; i < 4; i++)
+  for (int i = 1; i <= 4; i++)
   {
     std::cout << "B   ";
     battle_zone_.printZone(i);

@@ -56,7 +56,7 @@ Command CommandLine::readCommand()
   std::vector<std::string> vectorised_string;
   stringToVector(input, vectorised_string, ' ');
   Command command(vectorised_string);
-  
+
   if (command.getType() == CommandType::INVALID)
     throw CommandError("E_UNKNOWN_COMMAND");
 
