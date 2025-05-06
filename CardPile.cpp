@@ -106,7 +106,10 @@ Card* CardPile::getPileEnd() const
   if (pile_.size() != 0)
     return pile_.back();
   else
+  {
     return nullptr;
+    std::cout << "Return nullptr in getPileEnd()";
+  }
 }
 
 

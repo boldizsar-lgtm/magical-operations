@@ -49,7 +49,11 @@ bool Player::drawCard()
   Card* card = deck_->getPileEnd();
 
   if (card == nullptr)
+  {
     return false;
+    std::cout << "Card is nullptr in drawCard()";
+  }
+
 
   hand_.addCardEnd(card);
   deck_->removeTopCard();
