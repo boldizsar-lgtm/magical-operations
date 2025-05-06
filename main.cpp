@@ -62,15 +62,21 @@ int main(int argc, char* argv[])
 
   Game game(config.getMaxRounds());
 
-  CommandLine cli;
-  while (true)
+  bool continue_game = true;
+  while (continue_game)
   {
     try
     {
-      Command command = cli.readCommand();
-      if (command.isQuit())
-      break;
-      game.processCommand(command);
+      continue_game = game.startRound();
+      if (!continue_game)
+        break;
+
+      continue_game = game.startSetupPhase();
+      if (!continue_game)
+        break;
+
+      continue_game = game.startBattlePhase();
+
     }
     catch(std::bad_alloc& e)
     {

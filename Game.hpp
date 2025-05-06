@@ -28,11 +28,12 @@ public:
   // Methods
   void startGame();
   bool startRound();
-  void startSetupPhase();
-  void startBattlePhase();
+  bool startSetupPhase();
+  bool startBattlePhase();
   void processCommand(Command command);
   int getRound() const;
   void printBoard() const;
+  //bool checkEndConditions();
 
   // The different commands
   void printHelp() const;

@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "CommandLine.hpp"
 
 Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2},
                              attacker_(&player1_), defender_(&player2_)
@@ -20,7 +21,7 @@ void Game::startGame()
   /*while (true)
     if (!startRound())
       break;*/
-  startRound();
+  //wie schon besprochen macht startGame() keinen Sinn, in startRound() in main verschoben - Kathi
   //the command should be read in now and executed
 }
 
@@ -72,9 +73,48 @@ bool Game::startRound()
     return false;
   if (!defender_->drawCard())
     return false;
-  
+
   return true;
 }
+
+
+bool Game::startSetupPhase()
+{
+  player1_.setDoneStatus(false);
+  player2_.setDoneStatus(false);
+
+  current_player_ = attacker_;
+
+  CommandLine cli;
+  // Command loop for setup phase from main to here, maybe combine in own function to avoid repetition
+  while (!current_player_->getDoneStatus())
+  {
+    current_player_->printPlayerPrompt();
+    Command command = cli.readCommand();
+    if (command.isQuit())
+      return false;
+    processCommand(command);
+  }
+
+  //switch current player
+  current_player_ = defender_;
+
+  //setup phase for opposing player
+  while (!current_player_->getDoneStatus())
+  {
+    current_player_->printPlayerPrompt();
+    Command command = cli.readCommand();
+    if (command.isQuit())
+      return false;
+    processCommand(command);
+  }
+
+
+  //TODO: check traits?
+
+  return true;
+}
+
 
 void Game::processCommand(Command command)
 {
@@ -110,7 +150,8 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::DONE)
   {
-    //player ends their turn, the board is printed, 
+    //player ends their turn, the board is printed,
+    current_player_->setDoneStatus(true);
     //check regenerate, and poisoned
   }
 
@@ -166,6 +207,49 @@ void Game::printBoard() const
                  " ===================================" << std::endl;
   }
 }
+
+
+// bool Game::checkEndConditions()
+// {
+//   /* 3 end conditions:
+//     1. Health of one of the player below or equal to zero (during battle phase).
+//     2. A Player needs to draw a card but there are no cards left in his deck (this player loses) (during setup phase).
+//     3. Game max rounds is reached (pre setup phase)
+//       - Player with highest health points wins
+//       - Same health points -> tie!
+//   */
+
+//   //TODO: maybe check this with the Role enum
+//   if (player1_.getRoleString() == "Defender")
+//   {
+//     if (player1_.getCurrentHealth() <= 0)
+//     {
+//       // TODO: winner is player2
+//       continue_game_ = false;
+//     }
+//   }
+//   else if (player2_.getRoleString() == "Defender")
+//   {
+//     if(player2_.getCurrentHealth() <= 0)
+//     {
+//       //TODO : winner is player1
+//       continue_game_ = false;
+//     }
+//   }
+
+//   if (current_player_->getDeckSize() == 0)
+//   {
+//     // TODO: current player loses
+//     continue_game_ = false;
+//   }
+
+//   if (round_count_ == max_rounds_)
+//   {
+//     // TODO: determine winner
+//     continue_game_ = false;
+//   }
+// }
+
 
 void Game::printHelp() const
 {
@@ -227,7 +311,7 @@ void Game::printInfo(Command& command) const
     // Traits are handled in Creature Class
     Creature* creature = static_cast<Creature*>(card);
     std::cout << "Base Attack: " << creature->getBaseAttack() << std::endl;
-    std::cout << "Base Health: " << creature->getBaseAttack() << std::endl;
+    std::cout << "Base Health: " << creature->getBaseHealth() << std::endl;
     std::cout << "Base Traits: ";
     creature->printBaseTraitList();
   }

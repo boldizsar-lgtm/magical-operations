@@ -3,7 +3,7 @@
 #include "Zone.hpp"
 
 
-Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}
+Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}, done_{false}
 {
   Config& config = Config::getInstance();
   deck_ = config.getDeck(id);
@@ -40,43 +40,50 @@ void Player::increaseManaPool(int amount)
 
 bool Player::drawCard()
 {
-  Card* card = deck_.getPileEnd();
+  Card* card = deck_->getPileEnd();
 
   if (card == nullptr)
     return false;
 
-  hand_.addCard(card);
-  deck_.removeTopCard();
+  hand_.addCardEnd(card);
+  deck_->removeTopCard();
   return true;
 }
 
+
+void Player::printPlayerPrompt() const
+{
+  std::cout << "\nP" << id_ << "> ";
+}
+
+
 void Player::printGraveyard() const
 {
-//TODO
+  graveyard_.printCardPile();
 }
 
 void Player::printHand() const
 {
-//TODO
+  hand_.printCardPile();
 }
 
 void Player::printFieldZone() const
 {
-  for (int i; i <= 4; i++)
+  for (int i = 0; i < 4; i++)
   {
-    std::cout << "F  ";
+    std::cout << "F   ";
     field_zone_.printZone(i);
-    std::cout << "  F" << std::endl;
+    std::cout << "F" << std::endl;
   }
 }
 
 void Player::printBattleZone() const
 {
-  for (int i; i <= 4; i++)
+  for (int i = 0; i < 4; i++)
   {
-    std::cout << "B  ";
+    std::cout << "B   ";
     battle_zone_.printZone(i);
-    std::cout << "  B" << std::endl;
+    std::cout << "B" << std::endl;
   }
 }
 
@@ -108,6 +115,19 @@ int Player::getId() const
   return id_;
 }
 
+
+int Player::getDeckSize() const
+{
+  return deck_->getSize();
+}
+
+
+bool Player::getDoneStatus() const
+{
+  return done_;
+}
+
+
 void Player::setRole(Role role)
 {
   role_ = role;
@@ -119,4 +139,10 @@ void Player::switchRole()
     role_ = Role::DEFENDER;
   else
     role_ = Role::ATTACKER;
+}
+
+
+void Player::setDoneStatus(bool status)
+{
+  done_ = status;
 }

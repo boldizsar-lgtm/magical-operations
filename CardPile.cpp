@@ -28,11 +28,19 @@ void CardPile::createCard(std::string id)
   }
 }
 
-void CardPile::addCard(Card* card)
+void CardPile::addCardEnd(Card* card)
 {
-  //adding card that already exists to a pile
+  //adding and existing card to end of a pile
   pile_.push_back(card);
 }
+
+
+void CardPile::addCardTop(Card* card)
+{
+  //adding and existing card to top of the pile
+  pile_.insert(pile_.begin(), card);
+}
+
 
 void CardPile::removeCard(std::string id)
 {
@@ -59,7 +67,7 @@ void CardPile::removeTopCard()
     pile_.pop_back();
 }
 
-const void CardPile::printCardPile()
+void CardPile::printCardPile() const
 {
   for (int row = 1; row <= 4; row++)
   {
@@ -83,10 +91,19 @@ Card* CardPile::getPileEnd() const
 }
 
 
+int CardPile::getSize() const
+{
+  return pile_.size();
+}
+
+
 CardPile::~CardPile()
 {
   for(auto& card : pile_)
   {
-    delete card;
+    if (card)
+    {
+      delete card;
+    }
   }
 }

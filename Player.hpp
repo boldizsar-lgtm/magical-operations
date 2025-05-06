@@ -19,7 +19,7 @@ private:
   Role role_;
 
   CardPile hand_;
-  CardPile deck_;
+  CardPile* deck_;
   CardPile graveyard_;
 
   int base_health_;
@@ -30,6 +30,8 @@ private:
 
   Zone field_zone_;
   Zone battle_zone_;
+
+  bool done_;
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
@@ -43,6 +45,7 @@ public:
   void refillCurrentMana();
   void increaseManaPool(int amount);
   bool drawCard();
+  void printPlayerPrompt() const;
   void printGraveyard() const;
   void printHand() const;
   void printFieldZone() const;
@@ -53,8 +56,11 @@ public:
   int getCurrentHealth() const;
   int getCurrentMana() const;
   int getId() const;
+  int getDeckSize() const;
+  bool getDoneStatus() const;
   void setRole(Role role);
   void switchRole();
+  void setDoneStatus(bool status);
 };
 
 #endif //PLAYER_HPP

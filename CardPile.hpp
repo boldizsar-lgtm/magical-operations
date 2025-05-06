@@ -18,11 +18,13 @@ public:
 
   //Methods
   void createCard(std::string id);
-  void addCard(Card* card);
+  void addCardEnd(Card* card);
+  void addCardTop(Card* card);
   void removeCard(std::string id);
   void removeTopCard();
-  const void printCardPile();
+  void printCardPile() const;
   Card* getPileEnd() const;
+  int getSize() const;
 };
 
 #endif //CARDPILE_HPP
