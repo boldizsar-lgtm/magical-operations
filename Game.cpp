@@ -68,6 +68,7 @@ bool Game::startRound()
   //print board
   printBoard();
 
+  std::cout << "drawCard() is the problem\n";
   //players draw a card
   if (!attacker_->drawCard())
     return false;
