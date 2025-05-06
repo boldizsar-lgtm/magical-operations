@@ -61,6 +61,18 @@ void CardPile::removeCard(std::string id)
 
 }
 
+Card* CardPile::searchCard(std::string id) const
+{
+  for (auto& card : pile_)
+  {
+    if (card->getId() == id)
+    {
+      return card;
+    }
+  }
+  return nullptr;
+}
+
 void CardPile::removeEndCard()
 {
   if (pile_.size() != 0)

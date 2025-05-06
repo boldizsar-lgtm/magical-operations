@@ -4,10 +4,17 @@
 #include <vector>
 #include "Card.hpp"
 
+enum class PileType
+{
+  HAND,
+  DECK,
+  GRAVEYARD
+};
 
 class CardPile
 {
 protected:
+  PileType type_;
   std::vector<Card*> pile_;
 
 public:
@@ -21,6 +28,7 @@ public:
   void addCardEnd(Card* card);
   void addCardTop(Card* card);
   void removeCard(std::string id);
+  Card* searchCard(std::string id) const;
   void removeTopCard();
   void removeEndCard();
   void printCardPile() const;

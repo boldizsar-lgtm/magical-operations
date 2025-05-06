@@ -1,6 +1,7 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include <iostream>
 #include <string>
 #include "CardPile.hpp"
 #include "Zone.hpp"
@@ -51,6 +52,9 @@ public:
   void printFieldZone() const;
   void printBattleZone() const;
   void redrawHand();
+  void playCreature(Card* card, std::string field_slot);
+  void removeCardFromPile(PileType pile_type, std::string id);
+  bool isFieldSlotOccupied(std::string field_slot);
 
   std::string getRoleString() const;
   int getCurrentHealth() const;
@@ -60,7 +64,10 @@ public:
   int getDeckSize() const;
   CardPile* getDeck() const;
   const CardPile& getGraveyard() const;
+  const CardPile& getHand() const;
   bool getDoneStatus() const;
+  const Zone& getZone(ZoneType type) const;
+
   void setRole(Role role);
   void switchRole();
   void setDoneStatus(bool status);

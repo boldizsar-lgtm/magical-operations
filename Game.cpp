@@ -76,7 +76,7 @@ bool Game::startSetupPhase()
   current_player_ = attacker_;
 
   CommandLine cli;
-  // Command loop for setup phase from main to here, maybe combine in own function to avoid repetition
+  // Command loop for setup phase
   if (doCommandLoop(cli) == false)
     return false;
 
@@ -86,7 +86,6 @@ bool Game::startSetupPhase()
   //setup phase for opposing player
   if (doCommandLoop(cli) == false)
     return false;
-
 
   //TODO: check traits?
 
@@ -160,6 +159,9 @@ void Game::processCommand(Command command)
   {
     //Syntax: creature <HAND_CARD_ID> <FIELD_SLOT>
     //a creature is placed from the current player's hand onto the chosen field slot
+    playCreature(command);
+
+
   }
 
   if (command_type == CommandType::SPELL)
@@ -345,4 +347,44 @@ void Game::changeBoardStatus()
     board_active_ = true;
     printBoard();
   }
+}
+
+void Game::playCreature(Command& command) const
+{
+  // Check if card exists:
+  std::string card_id = command.getParameters().at(0);
+  std::string field_slot = command.getParameters().at(1);
+
+  if (Config::getInstance().getCard(card_id) == nullptr)
+    throw CommandError("E_INVALID_CARD");
+
+  // Check if field is playable
+  if (!std::regex_match(field_slot, std::regex("O?(F|B)[1-7]")))
+    throw CommandError("E_INVALID_SLOT");
+
+  // Check if the card is in the players hand
+  Card* card = player1_.getHand().searchCard(card_id);
+  
+  if (card == nullptr)
+    throw CommandError("E_NOT_IN_HAND");
+
+  // Check if the card is a creature
+  if (card->getType() != "Creature")
+    throw CommandError("E_NOT_CREATURE");
+
+  // Check if the field slot is in the players own field zone
+  if (!std::regex_match(field_slot, std::regex("F[1-7]")))
+    throw CommandError("E_NOT_IN_FIELD");
+
+  // Check if there's already a creature on the field zone
+  if (current_player_->isFieldSlotOccupied(field_slot) == true)
+    throw CommandError("E_NOT_IN_FIELD");
+
+  // Check player has enough mana
+  if (current_player_->getCurrentMana() - card->getManaCost() < 0)
+    throw CommandError("E_NOT_ENOUGH_MANA");
+
+  // Now play the creature
+  current_player_->playCreature(card, field_slot);
+
 }

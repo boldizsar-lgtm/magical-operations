@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include <iostream>
+#include <regex>
 #include "Player.hpp"
 #include "Command.hpp"
 #include "Config.hpp"
@@ -41,6 +42,7 @@ public:
   void printInfo(Command& command) const;
   void printStatus() const;
   void changeBoardStatus();
+  void playCreature(Command& command) const;
 };
 
 #endif //GAME_HPP

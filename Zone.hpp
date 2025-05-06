@@ -27,6 +27,7 @@ public:
     void removeCreature(std::string id);  //both methods could work with (Creature* creature) or (std::string id) as parameters
     void addCreature(Creature* creature,int column);
     void printZone(int format) const;
+    bool isOccupied(int column);
 };
 
 #endif //ZOO_HPP

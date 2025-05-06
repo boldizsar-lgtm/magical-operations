@@ -17,12 +17,11 @@ void Zone::removeCreature(std::string id)
   }
 }
 
-
 void Zone::addCreature(Creature* creature, int column)
 {
-  slots_[column] = creature;
+  // *** STILL NEED TO MAKE IT SO WHEN A CREATURE ENTERS THE BOARD, IT'S CURRENT VALUES ARE SET TO ITS BASE VALUES, PROBABLY BEST DONE IN addCreature() ***
+  slots_[column - 1] = creature;
 }
-
 
 void Zone::printZone(int row) const
 {
@@ -37,6 +36,13 @@ void Zone::printZone(int row) const
   }
 }
 
+bool Zone::isOccupied(int column)
+{
+  if (slots_[column - 1] != nullptr)
+    return true;
+  else
+    return false;
+}
 
 Zone::~Zone()
 {
