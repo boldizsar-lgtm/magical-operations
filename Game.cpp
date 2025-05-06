@@ -68,14 +68,12 @@ bool Game::startRound()
   //print board
   printBoard();
 
-  std::cout << "drawCard() is the problem\n";
   //players draw a card
   if (!attacker_->drawCard())
     return false;
   if (!defender_->drawCard())
     return false;
 
-  std::cout << "StartRound ended correctly\n";
   return true;
 }
 
@@ -86,8 +84,6 @@ bool Game::startSetupPhase()
   player2_.setDoneStatus(false);
 
   current_player_ = attacker_;
-
-  std::cout << "Setup Phase begins\n";
 
   CommandLine cli;
   // Command loop for setup phase from main to here, maybe combine in own function to avoid repetition

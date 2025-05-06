@@ -14,7 +14,7 @@ public:
   //Constructor, Copy-Assignment-Operator, Destructor
   CardPile() = default;
   CardPile(CardPile&) = default;
-  ~CardPile() = default;
+  ~CardPile();
 
   //Methods
   void createCard(std::string id);

@@ -49,7 +49,7 @@ public:
   int getMaxRounds() const;
   int getBaseHealth() const;
   int getBaseMana() const;
-  CardPile getDeck(int player_id);
+  CardPile* getDeck(int player_id);
 };
 
 #endif //CONFIG_HPP
