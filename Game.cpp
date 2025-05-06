@@ -126,29 +126,19 @@ void Game::processCommand(Command command)
   int param_amount = command.getParameters().size();
 
   if (command_type == CommandType::HELP)
-  {
-      printHelp();
-  }
+    printHelp();
 
   if (command_type == CommandType::GRAVEYARD)
-  {
-      current_player_->printGraveyard();
-  }
+    current_player_->printGraveyard();
 
   if (command_type == CommandType::BOARD)
-  {
-      changeBoardStatus();
-  }
+    changeBoardStatus();
 
   if (command_type == CommandType::HAND)
-  {
-      current_player_->printHand();
-  }
-
+    current_player_->printHand();
+  
   if (command_type == CommandType::INFO)
-  {
-      printInfo(command);
-  }
+    printInfo(command);
 
   if (command_type == CommandType::REDRAW)
   {
@@ -158,9 +148,7 @@ void Game::processCommand(Command command)
   }
 
   if (command_type == CommandType::STATUS)
-  {
-      printStatus();
-  }
+    printStatus();
 
   if (command_type == CommandType::DONE)
   {
@@ -178,9 +166,7 @@ void Game::processCommand(Command command)
   }
 
   if (command_type == CommandType::CREATURE)
-  {
-      playCreature(command);
-  }
+    playCreature(command);
 
   if (command_type == CommandType::SPELL)
   {
@@ -381,7 +367,7 @@ void Game::playCreature(Command& command) const
     throw CommandError("E_INVALID_SLOT");
 
   // Check if the card is in the players hand
-  Card* card = player1_.getHand().searchCard(card_id);
+  Card* card = current_player_->getHand().searchCard(card_id);
   
   if (card == nullptr)
     throw CommandError("E_NOT_IN_HAND");
@@ -396,7 +382,7 @@ void Game::playCreature(Command& command) const
 
   // Check if there's already a creature on the field zone
   if (current_player_->isFieldSlotOccupied(field_slot) == true)
-    throw CommandError("E_NOT_IN_FIELD");
+    throw CommandError("E_FIELD_OCCUPIED");
 
   // Check player has enough mana
   if (current_player_->getCurrentMana() - card->getManaCost() < 0)
