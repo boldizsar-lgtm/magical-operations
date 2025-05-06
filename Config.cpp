@@ -18,6 +18,8 @@ bool Config::saveTraits(std::string path)
 {
   //open file
   std::ifstream file(path);
+  if (!file.is_open())
+    std::cout << "Could not open custom file\n";
 
   //save traits
   std::string id_str;
@@ -43,6 +45,8 @@ void Config::saveCards(std::string path)
 {
   //open file
   std::ifstream file(path);
+  if (!file.is_open())
+    std::cout << "Could not open custom file\n";
 
   //read in creatures
   //syntax: <ID>;<Mana Cost>;<Name>;<Base Traits>;<Base Attack>;<Base Health>
@@ -166,6 +170,9 @@ bool Config::readGameConfig(std::string path)
 
     player_2_deck_.createCard(line);
   }
+
+  player_1_deck_.printCardPile();
+  player_2_deck_.printCardPile();
 
   return true;
 }

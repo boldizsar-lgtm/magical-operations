@@ -77,7 +77,7 @@ void Player::printGraveyard() const
 void Player::printHand() const
 {
   std::cout << Config::getInstance().getMessage("D_BORDER_HAND") << std::endl;
-  hand_.printHand();
+  hand_.printCardPile();
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 }
 

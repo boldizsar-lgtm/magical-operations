@@ -67,7 +67,7 @@ void CardPile::removeTopCard()
     pile_.pop_back();
 }
 
-void CardPile::printHand() const
+void CardPile::printCardPile() const
 {
   float required_card_rows = (pile_.size() + 6) / 7;
 
