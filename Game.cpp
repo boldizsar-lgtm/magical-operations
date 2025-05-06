@@ -13,17 +13,8 @@ Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_act
   std::cout << Config::getInstance().getMessage("D_WELCOME") << std::endl;
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 
-  startGame();
 }
 
-void Game::startGame()
-{
-  /*while (true)
-    if (!startRound())
-      break;*/
-  //wie schon besprochen macht startGame() keinen Sinn, in startRound() in main verschoben - Kathi
-  //the command should be read in now and executed
-}
 
 bool Game::startRound()
 {

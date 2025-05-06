@@ -26,7 +26,6 @@ public:
   ~Game() = default;
 
   // Methods
-  void startGame();
   bool startRound();
   bool startSetupPhase();
   bool startBattlePhase();

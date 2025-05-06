@@ -107,8 +107,8 @@ Card* CardPile::getPileEnd() const
     return pile_.back();
   else
   {
-    return nullptr;
     std::cout << "Return nullptr in getPileEnd()";
+    return nullptr;
   }
 }
 
