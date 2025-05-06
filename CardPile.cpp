@@ -91,16 +91,18 @@ void CardPile::printCardPile() const
 {
   float required_card_rows = (pile_.size() + 6) / 7;
 
-  int current_card_rows = 0;  
+  int current_card_rows = 0;
 
   while (current_card_rows < required_card_rows)
   {
     for (int print_row = 1; print_row <= 4; print_row++)
     {
+      std::cout << ' ';
       for (int i = current_card_rows * 7; i < (current_card_rows + 1) * 7 && i < pile_.size(); i++)
       {
-        pile_[i]->printCardLine(print_row);
+        //print first 3 empty spaces
         std::cout << "   ";
+        pile_[i]->printCardLine(print_row);
       }
 
       std::cout << std::endl;
