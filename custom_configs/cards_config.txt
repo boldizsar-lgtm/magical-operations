@@ -48,3 +48,4 @@ ZMBFY;4;Zombify;The target creature gains the Venomous and Undying traits.
 BLOOD;5;Bloodlust;The target creature gains the Brutal and Lifesteal traits, but its current health is reduced to half its previous value (rounded up).
 MEMRY;x;Heroic Memory;This spell moves a creature from the player's graveyard into their first empty Field Zone slot. It gains the Haste and Temporary traits. This spell's mana cost is equal to half the moved creature's mana cost (rounded up).
 REVIV;2;Revive;This spell moves a creature from the player's graveyard into their hand.
+ 
