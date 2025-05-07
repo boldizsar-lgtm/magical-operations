@@ -438,7 +438,7 @@ void Game::processSpell(Command& command) const
       throw CommandError("E_INVALID_SLOT_SPELL");
 
     // Check if the target slot has a creature
-    if (second_param.at(0) = 'O')
+    if (second_param.at(0) == 'O')
     {
       // Remove the 'O'
       second_param.erase(second_param.begin());
