@@ -33,6 +33,7 @@ public:
   bool startSetupPhase();
   bool doCommandLoop(CommandLine& cli);
   bool startBattlePhase();
+  bool startBattle();
   void processCommand(Command command);
   int getRound() const;
   void printBoard() const;

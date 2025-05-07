@@ -38,7 +38,7 @@ void Zone::printZone(int row) const
   }
 }
 
-bool Zone::isOccupied(int column)
+bool Zone::isOccupied(int column) const
 {
   if (slots_[column - 1] != nullptr)
     return true;

@@ -117,7 +117,28 @@ bool Game::doCommandLoop(CommandLine& cli)
 
 bool Game::startBattlePhase()
 {
-  //TODO
+  std::cout << '\n' << Config::getInstance().getMessage("D_BORDER_BATTLE_PHASE") << '\n';
+
+  for (int i = 1; i <= 7; i++)
+  {
+    std::cout << "---------------------------------------- SLOT " << i;
+    std::cout << " -----------------------------------------\n";
+    if (attacker_->getZone(ZoneType::BATTLE).isOccupied(i) || defender_->getZone(ZoneType::BATTLE).isOccupied(i))
+    {
+      startBattle();
+    }
+  }
+
+  //TODO: only print this if no game end condition is reached
+  std::cout << Config::getInstance().getMessage("D_BORDER_BATTLE_END") << '\n';
+
+  return true;
+}
+
+
+bool Game::startBattle()
+{
+
   return true;
 }
 
@@ -138,7 +159,7 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::HAND)
     current_player_->printHand();
-  
+
   if (command_type == CommandType::INFO)
     printInfo(command);
 
@@ -497,7 +518,11 @@ void Game::processSpell(Command& command)
 
   // Print info
   std::string card_info_string = "I_" + card->getId();
-  std::cout << Config::getInstance().getMessage(card_info_string) << std::endl; 
+
+  //destroy spell after usage
+  delete card;
+
+  std::cout << Config::getInstance().getMessage(card_info_string) << std::endl;
 }
 
 void Game::executeSpell(Command& command)
