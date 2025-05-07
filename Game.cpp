@@ -1,7 +1,8 @@
 #include "Game.hpp"
+#include <fstream>
 
 Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2},
-                             attacker_(&player1_), defender_(&player2_)
+                             attacker_(&player1_), defender_(&player2_), winner_id_{0}
 {
   //set default roles of players
   player1_.setRole(Role::ATTACKER);
@@ -20,6 +21,7 @@ bool Game::startRound()
   //end game if round_count reach max rounds
   if (round_count_++ == max_rounds_)
   {
+    end_condition_ = EndCondition::MAX_ROUNDS;
     return false;
   }
 
@@ -60,9 +62,17 @@ bool Game::startRound()
 
   //players draw a card
   if (!attacker_->drawCard())
+  {
+    end_condition_ = EndCondition::DRAW;
+    winner_id_ = defender_->getId();
     return false;
+  }
   if (!defender_->drawCard())
+  {
+    end_condition_ = EndCondition::DRAW;
+    winner_id_ = attacker_->getId();
     return false;
+  }
 
   return true;
 }
@@ -103,7 +113,10 @@ bool Game::doCommandLoop(CommandLine& cli)
       current_player_->printPlayerPrompt();
       Command command = cli.readCommand();
       if (command.isQuit())
+      {
+        end_condition_ = EndCondition::QUIT;
         return false;
+      }
       processCommand(command);
     }
     catch(const CommandError& e)
@@ -123,21 +136,48 @@ bool Game::startBattlePhase()
   {
     std::cout << "---------------------------------------- SLOT " << i;
     std::cout << " -----------------------------------------\n";
-    if (attacker_->getZone(ZoneType::BATTLE).isOccupied(i) || defender_->getZone(ZoneType::BATTLE).isOccupied(i))
+    if (attacker_->getZone(ZoneType::BATTLE).isOccupied(i))
     {
-      startBattle();
+      if (!startBattle(i))
+        return false;
     }
   }
 
-  //TODO: only print this if no game end condition is reached
   std::cout << Config::getInstance().getMessage("D_BORDER_BATTLE_END") << '\n';
 
   return true;
 }
 
 
-bool Game::startBattle()
+bool Game::startBattle(int column)
 {
+  int amount{0};
+
+  //Direct hit battle
+  if (!defender_->getZone(ZoneType::BATTLE).isOccupied(column))
+  {
+    amount = defender_->getCurrentHealth() - attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack();
+
+    //end condition DEFEAT reached
+    if (amount <= 0)
+    {
+      end_condition_ = EndCondition::DEFEAT;
+      winner_id_ = attacker_->getId();
+      return false;
+    }
+
+    //reduce defenders health
+    defender_->changeCurrentHealth((-attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack()));
+    std::cout << Config::getInstance().getMessage("I_DIRECT");
+    return true;
+  }
+
+  //Fight between two creatures
+  std::cout << Config::getInstance().getMessage("I_FIGHT");
+
+  //TODO: check traits and fight
+
+
 
   return true;
 }
@@ -243,46 +283,65 @@ void Game::printBoard() const
 }
 
 
-// bool Game::checkEndConditions()
-// {
-//   /* 3 end conditions:
-//     1. Health of one of the player below or equal to zero (during battle phase).
-//     2. A Player needs to draw a card but there are no cards left in his deck (this player loses) (during setup phase).
-//     3. Game max rounds is reached (pre setup phase)
-//       - Player with highest health points wins
-//       - Same health points -> tie!
-//   */
+bool Game::startFinalPhase(std::string file_path)
+{
+  if (end_condition_ != EndCondition::QUIT)
+    std::cout << '\n' << Config::getInstance().getMessage("D_BORDER_GAME_END") << std::endl;
 
-//   //TODO: maybe check this with the Role enum
-//   if (player1_.getRoleString() == "Defender")
-//   {
-//     if (player1_.getCurrentHealth() <= 0)
-//     {
-//       // TODO: winner is player2
-//       continue_game_ = false;
-//     }
-//   }
-//   else if (player2_.getRoleString() == "Defender")
-//   {
-//     if(player2_.getCurrentHealth() <= 0)
-//     {
-//       //TODO : winner is player1
-//       continue_game_ = false;
-//     }
-//   }
+  //print game end message
+  switch (end_condition_)
+  {
+  case EndCondition::QUIT:
+    return true;
+  break;
 
-//   if (current_player_->getDeckSize() == 0)
-//   {
-//     // TODO: current player loses
-//     continue_game_ = false;
-//   }
+  case EndCondition::DEFEAT:
+    std::cout << Config::getInstance().getMessage("D_END_PLAYER_DEFEATED") << std::endl;
+    break;
 
-//   if (round_count_ == max_rounds_)
-//   {
-//     // TODO: determine winner
-//     continue_game_ = false;
-//   }
-// }
+  case EndCondition::DRAW:
+    std::cout << Config::getInstance().getMessage("D_END_DRAW_CARD") << std::endl;
+    break;
+
+  case EndCondition::MAX_ROUNDS:
+    std::cout << Config::getInstance().getMessage("D_END_MAX_ROUNDS") << std::endl;
+
+    //determine winner with who has more health left
+    if (player1_.getCurrentHealth() > player2_.getCurrentHealth())
+      winner_id_ = 1;
+    else if (player1_.getCurrentHealth() < player2_.getCurrentHealth())
+      winner_id_ = 2;
+
+    break;
+
+  default:
+    break;
+  }
+
+  std::string result;
+
+  //print result (if 0 -> tie (set in game constructor and not changed))
+  if (winner_id_ == 0)
+  {
+    result = Config::getInstance().getMessage("D_TIE");
+  }
+  else
+  {
+    result = "Player " + std::to_string(winner_id_) + " has won! Congratulations!\n";
+  }
+
+  std::cout << result;
+  std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
+
+  //open file, in append mode
+  std::ofstream file(file_path, std::ios::app);
+  if (!file.is_open())
+    return false;
+
+  file << '\n' << result;
+
+  return true;
+}
 
 
 void Game::printHelp() const
@@ -519,7 +578,7 @@ void Game::processSpell(Command& command)
   // Print info
   std::string card_info_string = "I_" + card->getId();
 
-  //destroy spell after usage
+  // Destroy spell after usage
   delete card;
 
   std::cout << Config::getInstance().getMessage(card_info_string) << std::endl;

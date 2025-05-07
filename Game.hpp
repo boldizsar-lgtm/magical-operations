@@ -9,6 +9,15 @@
 #include "CommandError.hpp"
 #include "CommandLine.hpp"
 
+
+enum class EndCondition
+{
+  DEFEAT,
+  DRAW,
+  MAX_ROUNDS,
+  QUIT
+};
+
 class Game
 {
 protected:
@@ -21,10 +30,12 @@ protected:
   int max_rounds_;
   int round_count_;
   bool board_active_;
+  EndCondition end_condition_;
+  int winner_id_;
 
 public:
   // Constructor, Copy-Assignment-Operator, Destructor
-  Game(int max_rounds_);
+  Game(int max_rounds);
   Game(Game&) = default;
   ~Game() = default;
 
@@ -33,10 +44,11 @@ public:
   bool startSetupPhase();
   bool doCommandLoop(CommandLine& cli);
   bool startBattlePhase();
-  bool startBattle();
+  bool startBattle(int column);
   void processCommand(Command command);
   int getRound() const;
   void printBoard() const;
+  bool startFinalPhase(std::string file_path);
   //bool checkEndConditions();
 
   // The different commands

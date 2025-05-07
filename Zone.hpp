@@ -29,6 +29,7 @@ public:
     void addCreature(Creature* creature,int column);
     void printZone(int format) const;
     bool isOccupied(int column) const;
+    Creature* getCreature(int column) const;
 };
 
 #endif //ZONE_HPP
