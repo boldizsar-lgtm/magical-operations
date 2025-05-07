@@ -1,8 +1,9 @@
 #include "Game.hpp"
 #include <fstream>
 
-Game::Game(int max_rounds) : max_rounds_{max_rounds}, round_count_{0}, board_active_{true}, player1_{1}, player2_{2},
-                             attacker_(&player1_), defender_(&player2_), winner_id_{0}
+Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), defender_(&player2_),
+                             max_rounds_{max_rounds}, round_count_{0}, board_active_{true}
+                             , winner_id_{0}
 {
   //set default roles of players
   player1_.setRole(Role::ATTACKER);
@@ -186,7 +187,6 @@ bool Game::startBattle(int column)
 void Game::processCommand(Command command)
 {
   CommandType command_type = command.getType();
-  int param_amount = command.getParameters().size();
 
   if (command_type == CommandType::HELP)
     printHelp();

@@ -20,7 +20,7 @@ private:
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Trait(std::string name, char id) : name_{name}, id_{id} {}
+  Trait(std::string name, char id) : id_{id}, name_{name} {}
   Trait(Trait&) = default;
   ~Trait() = default;
 

@@ -91,14 +91,14 @@ void CardPile::printCardPile() const
 {
   float required_card_rows = (pile_.size() + 6) / 7;
 
-  int current_card_rows = 0;
+  size_t current_card_rows = 0;
 
   while (current_card_rows < required_card_rows)
   {
     for (int print_row = 1; print_row <= 4; print_row++)
     {
       std::cout << ' ';
-      for (int i = current_card_rows * 7; i < (current_card_rows + 1) * 7 && i < pile_.size(); i++)
+      for (size_t i = current_card_rows * 7; i < (current_card_rows + 1) * 7 && i < pile_.size(); i++)
       {
         //print first 3 empty spaces
         std::cout << "   ";
@@ -116,7 +116,7 @@ void CardPile::printGraveyard() const
 {
   if (pile_.size() > 0)
   {
-    for (int i = 0; i < pile_.size(); i++)
+    for (size_t i = 0; i < pile_.size(); i++)
     {
       std::cout << pile_[i]->getId() << " | " << pile_[i]->getName() << std::endl;
     }
