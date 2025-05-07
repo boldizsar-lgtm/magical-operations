@@ -74,6 +74,7 @@ bool Game::startSetupPhase()
   player2_.setDoneStatus(false);
 
   current_player_ = attacker_;
+  opposing_player_ = defender_;
 
   CommandLine cli;
   // Command loop for setup phase
@@ -82,6 +83,7 @@ bool Game::startSetupPhase()
 
   //switch current player
   current_player_ = defender_;
+  opposing_player_ = attacker_;
 
   //setup phase for opposing player
   if (doCommandLoop(cli) == false)
@@ -166,13 +168,10 @@ void Game::processCommand(Command command)
   }
 
   if (command_type == CommandType::CREATURE)
-    playCreature(command);
+    processCreature(command);
 
   if (command_type == CommandType::SPELL)
-  {
-    //Syntax: spell <HAND_CARD_ID> <OPTIONAL_ADDITIONAL_PARAMETER>
-    //cast a spell from the current player's hand
-  }
+    processSpell(command);
 }
 
 int Game::getRound() const
@@ -353,7 +352,7 @@ void Game::changeBoardStatus()
   }
 }
 
-void Game::playCreature(Command& command) const
+void Game::processCreature(Command& command) const
 {
   // Check if card exists:
   std::string card_id = command.getParameters().at(0);
@@ -390,5 +389,95 @@ void Game::playCreature(Command& command) const
 
   // Now play the creature
   current_player_->playCreature(card, field_slot);
+}
 
+void Game::processSpell(Command& command) const
+{
+  // Check if parameter count is zero
+  if (command.getParameters().size() == 0)
+    throw CommandError("E_MISSING_CARD");
+
+  // Check if card exists:
+  std::string card_id = command.getParameters().at(0);
+  if (Config::getInstance().getCard(card_id) == nullptr)
+    throw CommandError("E_INVALID_CARD");
+
+  // Check if the card is in the players hand
+  Card* card = current_player_->getHand().searchCard(card_id);
+  if (card == nullptr)
+    throw CommandError("E_NOT_IN_HAND");
+
+  // Check if the card is a spell
+  if (card->getType() != "Spell")
+    throw CommandError("E_NOT_SPELL");
+
+  // Individual Spell Type handlings
+  Spell* spell_card = dynamic_cast<Spell*>(card);
+  SpellType sub_type = spell_card->getSubtype();
+  std::string second_param;
+
+  if (sub_type == SpellType::GENERAL)
+  {
+    second_param = "";
+    // Check if parameters are valid
+    if (command.getParameters().size() != 1)
+      throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
+  }
+
+  if (sub_type != SpellType::GENERAL)
+    second_param = command.getParameters().at(1);
+
+  if (sub_type == SpellType::TARGET)
+  {
+    // Check if parameters are valid
+    if (command.getParameters().size() != 2)
+      throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
+
+    // Check if the target slot has valid syntax
+    if (!std::regex_match(second_param, std::regex("O?(F|B)[1-7]")))
+      throw CommandError("E_INVALID_SLOT_SPELL");
+
+    // Check if the target slot has a creature
+    if (second_param.at(0) = 'O')
+    {
+      // Remove the 'O'
+      second_param.erase(second_param.begin());
+
+      if (opposing_player_->isFieldSlotOccupied(second_param) == false)
+        throw CommandError("E_TARGET_EMPTY");
+    }
+    else
+    {
+      if (current_player_->isFieldSlotOccupied(second_param) == false)
+        throw CommandError("E_TARGET_EMPTY");
+    }
+  }
+
+  if (sub_type == SpellType::GRAVEYARD)
+  {
+    // Check if parameters are valid
+    if (command.getParameters().size() != 2)
+      throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
+
+    // Check if Graveyard contains the Card ID
+    if (current_player_->getGraveyard().searchCard(second_param) == nullptr)
+      throw CommandError("E_NOT_IN_GRAVEYARD");
+  }
+
+  // Check player has enough mana
+  if (current_player_->getCurrentMana() - spell_card->getManaCost() < 0)
+    throw CommandError("E_NOT_ENOUGH_MANA");
+
+  // play spell
+  current_player_->removeCardFromPile(PileType::HAND, spell_card->getId());
+
+  // execute spell
+  spell_card->execute(*this);
+
+  // Take away mana
+  current_player_->changeCurrentMana(0 - spell_card->getManaCost());
+
+  // Print info
+  std::string card_info_string = "I_" + card->getId();
+  std::cout << Config::getInstance().getMessage(card_info_string) << std::endl; 
 }

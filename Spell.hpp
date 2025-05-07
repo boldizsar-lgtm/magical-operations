@@ -5,28 +5,37 @@
 #include <iostream>
 #include "Card.hpp"
 
-/*enum class SpellType
+class Config;
+class Game;
+
+enum class SpellType
 {
   GENERAL,
   TARGET,
   GRAVEYARD
-};*/
+};
 
 class Spell : public Card
 {
 protected:
-  //SpellType subtype_;
+  SpellType subtype_;
   std::string effect_;
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
-  Spell(std::string id, int mana_cost, std::string name, std::string effect) : Card(id, mana_cost, name), effect_(effect) {}
+  Spell(std::string id, int mana_cost, std::string name, SpellType subtype, std::string effect) :
+    Card(id, mana_cost, name), subtype_(subtype), effect_(effect) {}
+
   Spell(Spell&) = default;
   ~Spell() = default;
 
   //Method
   std::string getType() const override;
   void printCardLine(int row) const override;
+
+  void execute(const Game& game);
+
+  SpellType getSubtype() const;
   std::string getEffect() const;
 };
 

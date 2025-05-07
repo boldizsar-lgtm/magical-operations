@@ -3,9 +3,9 @@
 
 #include <iostream>
 #include <regex>
+#include "Config.hpp"
 #include "Player.hpp"
 #include "Command.hpp"
-#include "Config.hpp"
 #include "CommandError.hpp"
 #include "CommandLine.hpp"
 
@@ -15,6 +15,7 @@ protected:
   Player player1_;
   Player player2_;
   Player* current_player_;
+  Player* opposing_player_;
   Player* attacker_;
   Player* defender_;
   int max_rounds_;
@@ -42,7 +43,8 @@ public:
   void printInfo(Command& command) const;
   void printStatus() const;
   void changeBoardStatus();
-  void playCreature(Command& command) const;
+  void processCreature(Command& command) const;
+  void processSpell(Command& command) const;
 };
 
 #endif //GAME_HPP

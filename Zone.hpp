@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Creature.hpp"
+#include "Config.hpp"
 
 enum class ZoneType
 {
@@ -30,4 +31,4 @@ public:
     bool isOccupied(int column);
 };
 
-#endif //ZOO_HPP
+#endif //ZONE_HPP

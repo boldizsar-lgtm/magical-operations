@@ -113,8 +113,6 @@ void Player::playCreature(Card* card, std::string field_slot)
   removeCardFromPile(PileType::HAND, card->getId());
 
   // Add card to field zone slot
-
-  // *** STILL NEED TO MAKE IT SO WHEN A CREATURE ENTERS THE BOARD, IT'S CURRENT VALUES ARE SET TO ITS BASE VALUES, PROBABLY BEST DONE IN addCreature() ***
   field_zone_.addCreature(dynamic_cast<Creature*>(card), zone_column);
 
   // Print info

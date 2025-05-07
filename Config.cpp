@@ -89,6 +89,9 @@ void Config::saveCards(std::string path)
 
   //read in spells
   //syntax: <ID>;<Mana Cost>;<Name>;<Effect>
+  int type_counter = 1;
+  SpellType spell_type;
+
   std::string effect;
   while (std::getline(file, id, ';') &&
          std::getline(file, mana_cost_str, ';') &&
@@ -101,8 +104,18 @@ void Config::saveCards(std::string path)
     else 
       Utils::decimalStringToInt(mana_cost_str, mana_cost);
 
+    // Change spelltype based on which card gets added
+    if (type_counter < 4)
+      spell_type = SpellType::GENERAL;
+    else if (type_counter < 15)
+      spell_type = SpellType::TARGET;
+    else
+      spell_type = SpellType::GRAVEYARD;
+
     //create spell
-    cards_[id] = new Spell(id, mana_cost, name, effect);
+    cards_[id] = new Spell(id, mana_cost, name, spell_type, effect);
+
+    type_counter++;
   }
 }
 

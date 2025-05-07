@@ -19,7 +19,9 @@ void Zone::removeCreature(std::string id)
 
 void Zone::addCreature(Creature* creature, int column)
 {
-  // *** STILL NEED TO MAKE IT SO WHEN A CREATURE ENTERS THE BOARD, IT'S CURRENT VALUES ARE SET TO ITS BASE VALUES, PROBABLY BEST DONE IN addCreature() ***
+  // Set values to default values
+  *creature = *dynamic_cast<Creature*>(Config::getInstance().getCard(creature->getId()));
+
   slots_[column - 1] = creature;
 }
 
