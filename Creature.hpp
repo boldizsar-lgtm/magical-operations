@@ -31,6 +31,8 @@ public:
   //Methods
   void setCurrentAttack(int new_attack);
   void setCurrentHealth(int new_health);
+  void changeCurrentAttack(int amount);
+  void changeCurrentHealth(int amount);
   void addTrait(std::shared_ptr<Trait> trait);
   std::string getType() const override;
   std::string getTraitIds() const;

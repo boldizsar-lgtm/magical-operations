@@ -18,6 +18,16 @@ void Creature::setCurrentHealth(int new_health)
   current_health_ = new_health;
 }
 
+void Creature::changeCurrentAttack(int amount)
+{
+  current_attack_ += amount;
+}
+
+void Creature::changeCurrentHealth(int amount)
+{
+  current_health_ += amount;
+}
+
 void Creature::addTrait(std::shared_ptr<Trait> trait)
 {
   //If the creature has no traits, just add the trait

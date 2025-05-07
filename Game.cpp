@@ -176,20 +176,18 @@ bool Game::startBattle(int column)
   //Fight between two creatures
   std::cout << Config::getInstance().getMessage("I_FIGHT");
 
-  //TODO: check traits and fight
+  //resolve fights and check brutal, first strike, lifesteal, venomous
 
+  //check temporary trait
 
+  //return creatures to field zones
 
-  return true;
-}
+  //check undying
 
-bool Game::startRoundEnd()
-{
-  //handle poisoned, and regenerate
   //make all creature's "entered_this_turn" bool = false
+
   return true;
 }
-
 
 void Game::processCommand(Command command)
 {
@@ -223,7 +221,8 @@ void Game::processCommand(Command command)
     //player ends their turn, the board is printed,
     current_player_->setDoneStatus(true);
     printBoard();
-    //check regenerate, and poisoned
+    //check poisoned
+    //check regenerate if round_counter is odd
 
     current_player_->setRedrawNotPossible();
   }
@@ -678,7 +677,24 @@ void Game::executeDeathCurse(std::string target)
 
 void Game::executeShock(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+
+  char zone_type = target.at(0);
+  int column_of_creature = (target.at(1)) - '0';
+
+  //target creature takes 1 damage
+  target_player->getZone(zone_type).getCreature(column_of_creature)->changeCurrentHealth(-1);
+
+  //check if the creature would die and move it to the graveyard if it does
+  //THIS DOESNT WORK PROPERLY
+  if (target_player->getZone(zone_type).getCreature(column_of_creature)->getHealth() < 1)
+    target_player->moveToGraveyard(zone_type, column_of_creature);
 }
 
 void Game::executeMobilize(std::string target)

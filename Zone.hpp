@@ -15,7 +15,7 @@ enum class ZoneType
 class Zone
 {
 private:
-    ZoneType type_; //compiler warning that this isnt used
+    ZoneType type_; //compiler warning that this isnt used, we could remove it
     std::vector<Creature*> slots_;
 
 public:
@@ -25,7 +25,7 @@ public:
     ~Zone();
 
     // Methods
-    void removeCreature(std::string id);  //both methods could work with (Creature* creature) or (std::string id) as parameters
+    void removeCreature(int column);
     void addCreature(Creature* creature,int column);
     void printZone(int format) const;
     bool isOccupied(int column) const;

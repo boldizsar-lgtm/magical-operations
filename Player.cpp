@@ -116,6 +116,22 @@ void Player::redrawHand()
   }
 }
 
+void Player::moveToGraveyard(char zone, int column)
+{
+  if (zone == 'f')
+  {
+    graveyard_.addCardTop(field_zone_.getCreature(column));
+    field_zone_.removeCreature(column);
+  }
+  
+  else
+  {
+    graveyard_.addCardTop(battle_zone_.getCreature(column));
+    battle_zone_.removeCreature(column);
+  }
+    
+}
+
 void Player::playCreature(Card* card, std::string field_slot)
 {
   // user Binary Worrier, stackoverflow comment
@@ -218,6 +234,14 @@ bool Player::getRedrawPossible()
 bool Player::getDoneStatus() const
 {
   return done_;
+}
+
+const Zone& Player::getZone(char type) const
+{
+  if (type == 'B')
+    return battle_zone_;
+  else
+    return field_zone_;
 }
 
 const Zone& Player::getZone(ZoneType type) const

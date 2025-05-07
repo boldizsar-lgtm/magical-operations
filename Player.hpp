@@ -54,6 +54,7 @@ public:
   void printBattleZone() const;
   void redrawHand();
   void playCreature(Card* card, std::string field_slot);
+  void moveToGraveyard(char zone, int column);
   void removeCardFromPile(PileType pile_type, std::string id);
   bool isFieldSlotOccupied(std::string field_slot);
 
@@ -68,6 +69,7 @@ public:
   const CardPile& getHand() const;
   bool getRedrawPossible();
   bool getDoneStatus() const;
+  const Zone& getZone(char type) const;
   const Zone& getZone(ZoneType type) const;
 
   void setRole(Role role);

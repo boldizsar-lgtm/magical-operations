@@ -1,20 +1,8 @@
 #include "Zone.hpp"
 
-void Zone::removeCreature(std::string id)
+void Zone::removeCreature(int column)
 {
-  int index{0};
-  for (auto& creature : slots_)
-  {
-    if (creature != nullptr)
-    {
-      if (creature->getId() == id)
-      {
-        slots_[index] = nullptr;
-        return;
-      }
-      index++;
-    }
-  }
+  slots_[column - 1] = nullptr;
 }
 
 void Zone::addCreature(Creature* creature, int column)
