@@ -66,6 +66,7 @@ public:
   CardPile* getDeck() const;
   const CardPile& getGraveyard() const;
   const CardPile& getHand() const;
+  bool getRedrawPossible();
   bool getDoneStatus() const;
   const Zone& getZone(ZoneType type) const;
 

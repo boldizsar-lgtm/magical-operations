@@ -3,7 +3,8 @@
 Creature::Creature(std::string id, int mana_cost, std::string name, std::vector<std::shared_ptr<Trait>> base_traits,
 int base_attack, int base_health) : Card(id, mana_cost, name), base_attack_(base_attack), base_health_(base_health),
                                     base_traits_(base_traits), current_attack_(base_attack),
-                                    current_health_(base_health), current_traits_(base_traits), can_attack_(false)
+                                    current_health_(base_health), current_traits_(base_traits),
+                                    entered_this_turn_(false)
 {
 }
 
@@ -159,4 +160,13 @@ void Creature::printCardLine(int row) const
     std::cout << "| " << getTraitIds() << " |";
   else if (row == 4)
     std::cout << 'A' << getAttackString() << "___H" << getHealthString();
+}
+
+bool Creature::creatureHasTrait(std::string name) const
+{
+  for (auto& t : current_traits_)
+    if (t->getName() == name)
+      return true;
+  
+  return false;
 }

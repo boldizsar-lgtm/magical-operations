@@ -34,6 +34,7 @@ public:
   bool doCommandLoop(CommandLine& cli);
   bool startBattlePhase();
   bool startBattle();
+  bool startRoundEnd();
   void processCommand(Command command);
   int getRound() const;
   void printBoard() const;
@@ -42,8 +43,10 @@ public:
   // The different commands
   void printHelp() const;
   void printInfo(Command& command) const;
+  void processRedraw(Command& command);
   void printStatus() const;
   void changeBoardStatus();
+  void processBattle(Command& command);
   void processCreature(Command& command) const;
   void processSpell(Command& command);
   void executeSpell(Command& command);

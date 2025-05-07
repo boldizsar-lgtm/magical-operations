@@ -139,6 +139,13 @@ bool Game::startBattlePhase()
 
 bool Game::startBattle()
 {
+  //TODO
+  return true;
+}
+
+bool Game::startRoundEnd()
+{
+  //turn all creatures on the board: can_attack_ = true;
 
   return true;
 }
@@ -165,9 +172,7 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::REDRAW)
   {
-    //redraw current player's hand with 1 less card, disable this command if DONE, BATTLE, CREATURE, or SPELL has been used once
-    //habe implementiert duch ein bool das gecheckt wird ob redraw möglich ist - Bobo
-    //redraw selbst ist noch nicht implementiert - Bobo
+    processRedraw(command);
   }
 
   if (command_type == CommandType::STATUS)
@@ -185,11 +190,7 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::BATTLE)
   {
-    //Syntax: battle <FIELD_SLOT> <BATTLE_SLOT>
-    //move current player's creature from the field zone slot to the battle zone slot, a creature that was played this round cant battle, unless it has haste
-    //check challenger, and haste
-
-    //hase doesn't need to be checked, we have a "can_battle" bool on creatures, it simply needs to be toggled "true" when a creature has or gains gaste, and when the round is over in which the creature entered - Bobo
+    processBattle(command);
     
     current_player_->setRedrawNotPossible();
   }
@@ -350,6 +351,17 @@ void Game::printInfo(Command& command) const
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 }
 
+void Game::processRedraw(Command& command)
+{
+  if (!current_player_->getRedrawPossible())
+    throw CommandError("E_REDRAW_DISABLED");
+
+  if (current_player_->getDeckSize() < 2)
+    throw CommandError("E_REDRAW_NOT_ENOUGH_CARDS");
+  
+  current_player_->redrawHand();
+}
+
 void Game::printStatus() const
 {
   // Print info border
@@ -384,6 +396,14 @@ void Game::changeBoardStatus()
     board_active_ = true;
 
   printBoard();
+}
+
+void Game::processBattle(Command& command)
+{
+  //Syntax: battle <FIELD_SLOT> <BATTLE_SLOT>
+  //move current player's creature from the field zone slot to the battle zone slot, a creature that was played this round cant battle, unless it has haste
+  //check challenger, and haste
+
 }
 
 void Game::processCreature(Command& command) const

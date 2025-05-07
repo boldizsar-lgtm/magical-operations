@@ -19,7 +19,7 @@ protected:
   int current_health_;
   std::vector<std::shared_ptr<Trait>> current_traits_;
 
-  bool can_attack_;
+  bool entered_this_turn_;
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
@@ -43,6 +43,7 @@ public:
   std::string getAttackString() const;
   std::string getHealthString() const;
   void printCardLine(int row) const override;
+  bool creatureHasTrait(std::string name) const;
 };
 
 #endif //CREATURE_HPP

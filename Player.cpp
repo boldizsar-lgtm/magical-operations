@@ -100,7 +100,20 @@ void Player::printBattleZone() const
 
 void Player::redrawHand()
 {
-//TODO
+  int num_cards_to_pull = hand_.getSize() - 1;
+
+  //Discard player's hand
+  while (hand_.getSize() != 0)
+  {
+    deck_->addCardEnd(hand_.getPileTop());
+    hand_.removeTopCard();
+  }
+
+  //Draw one less card than the original hand
+  while (hand_.getSize() < num_cards_to_pull)
+  {
+    drawCard();
+  }
 }
 
 void Player::playCreature(Card* card, std::string field_slot)
@@ -195,6 +208,11 @@ const CardPile& Player::getGraveyard() const
 const CardPile& Player::getHand() const 
 {
   return hand_;
+}
+
+bool Player::getRedrawPossible()
+{
+  return redraw_possible_;
 }
 
 bool Player::getDoneStatus() const

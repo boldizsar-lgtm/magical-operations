@@ -79,6 +79,10 @@ int main(int argc, char* argv[])
       if (!continue_game)
         break;
 
+      continue_game = game.startRoundEnd();
+      if (!continue_game)
+        break;
+
     }
     catch(std::bad_alloc& e)
     {
