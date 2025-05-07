@@ -32,6 +32,7 @@ private:
   Zone field_zone_;
   Zone battle_zone_;
 
+  bool redraw_possible_;
   bool done_;
 
 public:
@@ -70,6 +71,7 @@ public:
 
   void setRole(Role role);
   void switchRole();
+  void setRedrawNotPossible();
   void setDoneStatus(bool status);
 };
 

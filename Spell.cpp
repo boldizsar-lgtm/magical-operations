@@ -18,13 +18,6 @@ void Spell::printCardLine(int row) const
     std::cout << " _______ ";
 } 
 
-void Spell::execute(const Game& game)
-{
-  // TODO:
-  // the idea is to make this command essentially function like processCommand where we check the spell name/id and then have a lot of further methods
-  // (one for each spell e.g. executeFireball(const Game& game)) that execute that specific spell
-}
-
 SpellType Spell::getSubtype() const
 {
   return subtype_;

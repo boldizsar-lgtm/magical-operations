@@ -44,7 +44,26 @@ public:
   void printStatus() const;
   void changeBoardStatus();
   void processCreature(Command& command) const;
-  void processSpell(Command& command) const;
+  void processSpell(Command& command);
+  void executeSpell(Command& command);
+
+  //the differentt spells
+  void executeBattleCry();
+  void executeMeteor();
+  void executeFireball();
+  void executeClone(std::string target);
+  void executeDeathCurse(std::string target);
+  void executeShock(std::string target);
+  void executeMobilize(std::string target);
+  void executeRapidRush(std::string target);
+  void executeShield(std::string target);
+  void executeAmputate(std::string target);
+  void executeFinalAct(std::string target);
+  void executeLoyalty(std::string target);
+  void executeZombify(std::string target);
+  void executeBloodlust(std::string target);
+  void executeHeroicMemory(std::string target);
+  void executeRevive(std::string target);
 };
 
 #endif //GAME_HPP

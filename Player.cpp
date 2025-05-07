@@ -3,7 +3,8 @@
 #include "Zone.hpp"
 
 
-Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}, done_{false}
+Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}, done_{false},
+                         redraw_possible_{true}
 {
   Config& config = Config::getInstance();
   deck_ = config.getDeck(id);
@@ -221,6 +222,10 @@ void Player::switchRole()
     role_ = Role::ATTACKER;
 }
 
+void Player::setRedrawNotPossible()
+{
+  redraw_possible_ = false;
+}
 
 void Player::setDoneStatus(bool status)
 {

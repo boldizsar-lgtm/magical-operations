@@ -145,8 +145,8 @@ void Game::processCommand(Command command)
   if (command_type == CommandType::REDRAW)
   {
     //redraw current player's hand with 1 less card, disable this command if DONE, BATTLE, CREATURE, or SPELL has been used once
-    // keine ahnung wie wir checken wollen welche commands schon benutzt wurden, entweder member variable vector wo benutzte hinzugefügt werden oder irgendwie in der main? - LENON
-    // anscheinend hat die Player Class auch einen redraw command, maybe dadurch? - LENON
+    //habe implementiert duch ein bool das gecheckt wird ob redraw möglich ist - Bobo
+    //redraw selbst ist noch nicht implementiert - Bobo
   }
 
   if (command_type == CommandType::STATUS)
@@ -158,6 +158,8 @@ void Game::processCommand(Command command)
     current_player_->setDoneStatus(true);
     printBoard();
     //check regenerate, and poisoned
+
+    current_player_->setRedrawNotPossible();
   }
 
   if (command_type == CommandType::BATTLE)
@@ -165,13 +167,25 @@ void Game::processCommand(Command command)
     //Syntax: battle <FIELD_SLOT> <BATTLE_SLOT>
     //move current player's creature from the field zone slot to the battle zone slot, a creature that was played this round cant battle, unless it has haste
     //check challenger, and haste
+
+    //hase doesn't need to be checked, we have a "can_battle" bool on creatures, it simply needs to be toggled "true" when a creature has or gains gaste, and when the round is over in which the creature entered - Bobo
+    
+    current_player_->setRedrawNotPossible();
   }
 
   if (command_type == CommandType::CREATURE)
+  {
     processCreature(command);
+    current_player_->setRedrawNotPossible();
+  }
+    
 
   if (command_type == CommandType::SPELL)
+  {
     processSpell(command);
+    current_player_->setRedrawNotPossible();
+  }
+    
 }
 
 int Game::getRound() const
@@ -346,14 +360,15 @@ void Game::changeBoardStatus()
   if (board_active_ == true)
     board_active_ = false;
   else if (board_active_ == false)
-  {
     board_active_ = true;
-    printBoard();
-  }
+
+  printBoard();
 }
 
 void Game::processCreature(Command& command) const
 {
+  // Syntax: creature <HAND_CARD_ID> <FIELD_SLOT>
+
   // Check if card exists:
   std::string card_id = command.getParameters().at(0);
   std::string field_slot = command.getParameters().at(1);
@@ -391,8 +406,10 @@ void Game::processCreature(Command& command) const
   current_player_->playCreature(card, field_slot);
 }
 
-void Game::processSpell(Command& command) const
+void Game::processSpell(Command& command)
 {
+  // Syntax: spell <HAND_CARD_ID> <OPTIONAL_ADDITIONAL_PARAMETER>
+
   // Check if parameter count is zero
   if (command.getParameters().size() == 0)
     throw CommandError("E_MISSING_CARD");
@@ -472,12 +489,140 @@ void Game::processSpell(Command& command) const
   current_player_->removeCardFromPile(PileType::HAND, spell_card->getId());
 
   // execute spell
-  spell_card->execute(*this);
+  executeSpell(command);
 
   // Take away mana
+  // we need to check x costs, and determine how much mana should get deduced
   current_player_->changeCurrentMana(0 - spell_card->getManaCost());
 
   // Print info
   std::string card_info_string = "I_" + card->getId();
   std::cout << Config::getInstance().getMessage(card_info_string) << std::endl; 
+}
+
+void Game::executeSpell(Command& command)
+{
+  //Syntax: spell <HAND_CARD_ID> <OPTIONAL_ADDITIONAL_PARAMETER>
+  std::string id = command.getParameters().at(0);
+  std::string target;
+  if (command.getParameters().size() == 2)
+    target = command.getParameters().at(1);
+  
+  //General Spells
+  if (id == "BTLCY")
+    executeBattleCry();
+  if (id == "METOR")
+    executeMeteor();
+  if (id == "FIRBL")
+    executeFireball();
+  
+  //Target Spells
+  if (id == "CLONE")
+    executeClone(target);
+  if (id == "CURSE")
+    executeDeathCurse(target);
+  if (id == "SHOCK")
+    executeShock(target);
+  if (id == "MOBLZ")
+    executeMobilize(target);
+  if (id == "RRUSH")
+    executeRapidRush(target);
+  if (id == "SHILD")
+    executeShield(target);
+  if (id == "AMPUT")
+    executeAmputate(target);
+  if (id == "FINAL")
+    executeFinalAct(target);
+  if (id == "LYLTY")
+    executeLoyalty(target);
+  if (id == "ZMBFY")
+    executeZombify(target);
+  if (id == "BLOOD")
+    executeBloodlust(target);
+
+  //Graveyard Spells
+  if (id == "MEMRY")
+    executeHeroicMemory(target);
+  if (id == "REVIV")
+    executeRevive(target);
+}
+
+void Game::executeBattleCry()
+{
+  //TODO
+}
+
+void Game::executeMeteor()
+{
+  //TODO
+}
+
+void Game::executeFireball()
+{
+  //TODO
+}
+
+void Game::executeClone(std::string target)
+{
+  //TODO
+}
+
+void Game::executeDeathCurse(std::string target)
+{
+  //TODO
+}
+
+void Game::executeShock(std::string target)
+{
+  //TODO
+}
+
+void Game::executeMobilize(std::string target)
+{
+  //TODO
+}
+
+void Game::executeRapidRush(std::string target)
+{
+  //TODO
+}
+
+void Game::executeShield(std::string target)
+{
+  //TODO
+}
+
+void Game::executeAmputate(std::string target)
+{
+  //TODO
+}
+
+void Game::executeFinalAct(std::string target)
+{
+  //TODO
+}
+
+void Game::executeLoyalty(std::string target)
+{
+  //TODO
+}
+
+void Game::executeZombify(std::string target)
+{
+  //TODO
+}
+
+void Game::executeBloodlust(std::string target)
+{
+  //TODO
+}
+
+void Game::executeHeroicMemory(std::string target)
+{
+  //TODO
+}
+
+void Game::executeRevive(std::string target)
+{
+  //TODO
 }

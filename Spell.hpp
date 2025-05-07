@@ -33,8 +33,6 @@ public:
   std::string getType() const override;
   void printCardLine(int row) const override;
 
-  void execute(const Game& game);
-
   SpellType getSubtype() const;
   std::string getEffect() const;
 };
