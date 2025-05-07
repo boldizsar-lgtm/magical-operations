@@ -3,8 +3,9 @@
 #include "Zone.hpp"
 
 
-Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}, done_{false},
-                         redraw_possible_{true}
+Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}, redraw_possible_{true},
+                         done_{false}
+                         
 {
   Config& config = Config::getInstance();
   deck_ = config.getDeck(id);
@@ -205,7 +206,7 @@ const Zone& Player::getZone(ZoneType type) const
 {
   if (type == ZoneType::BATTLE)
     return battle_zone_;
-  else if (type == ZoneType::FIELD)
+  else
     return field_zone_;
 }
 

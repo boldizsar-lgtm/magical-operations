@@ -1,9 +1,9 @@
 #include "Creature.hpp"
 
 Creature::Creature(std::string id, int mana_cost, std::string name, std::vector<std::shared_ptr<Trait>> base_traits,
-int base_attack, int base_health) : Card(id, mana_cost, name), base_traits_(base_traits), current_traits_(base_traits),
-base_attack_(base_attack), current_attack_(base_attack), base_health_(base_health), current_health_(base_health),
-can_attack_(false)
+int base_attack, int base_health) : Card(id, mana_cost, name), base_attack_(base_attack), base_health_(base_health),
+                                    base_traits_(base_traits), current_attack_(base_attack),
+                                    current_health_(base_health), current_traits_(base_traits), can_attack_(false)
 {
 }
 
@@ -19,7 +19,27 @@ void Creature::setCurrentHealth(int new_health)
 
 void Creature::addTrait(std::shared_ptr<Trait> trait)
 {
-  //TODO
+  //If the creature has no traits, just add the trait
+  if (current_traits_.empty())
+  {
+    current_traits_.push_back(trait);
+    return;
+  }
+
+  int insert_before = 0;
+  for (size_t i = 0; i < current_traits_.size(); i++)
+  {
+    //If the creature already has the trait return
+    if (current_traits_[i]->getId() == trait->getId())
+      return;
+    
+    //Save the number of the last trait that comes alphabetically before the one to be added
+    //Add 1 to it to save number of the trait that comes after
+    if (current_traits_[i]->getId() < trait->getId())
+      insert_before = i + 1;
+  }
+
+  current_traits_.insert(current_traits_.begin() + insert_before, trait);
 }
 
 std::string Creature::getType() const

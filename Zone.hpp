@@ -15,7 +15,7 @@ enum class ZoneType
 class Zone
 {
 private:
-    ZoneType type_;
+    ZoneType type_; //compiler warning that this isnt used
     std::vector<Creature*> slots_;
 
 public:
