@@ -44,7 +44,7 @@ public:
   bool startSetupPhase();
   bool doCommandLoop(CommandLine& cli);
   bool startBattlePhase();
-  bool startBattle();
+  bool startBattle(int column);
   bool startRoundEnd();
   void processCommand(Command command);
   int getRound() const;

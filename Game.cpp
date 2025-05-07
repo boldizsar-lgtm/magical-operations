@@ -183,6 +183,13 @@ bool Game::startBattle(int column)
   return true;
 }
 
+bool Game::startRoundEnd()
+{
+  //handle poisoned, and regenerate
+  //make all creature's "entered_this_turn" bool = false
+  return true;
+}
+
 
 void Game::processCommand(Command command)
 {
