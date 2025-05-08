@@ -210,7 +210,7 @@ void Game::processCommand(Command command)
 
   if (command_type == CommandType::REDRAW)
   {
-    processRedraw(command);
+    processRedraw();
   }
 
   if (command_type == CommandType::STATUS)
@@ -409,7 +409,7 @@ void Game::printInfo(Command& command) const
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 }
 
-void Game::processRedraw(Command& command)
+void Game::processRedraw()
 {
   if (!current_player_->getRedrawPossible())
     throw CommandError("E_REDRAW_DISABLED");
@@ -652,38 +652,94 @@ void Game::executeSpell(Command& command)
 
 void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type, int column)
 {
-  //target creature takes 1 damage
+  //target creature takes damage
   target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(- amount);
 
   //check if the creature would die and move it to the graveyard if it does
   if (target_player->getZone(zone_type).getCreature(column)->getHealth() < 1) //the if condition works poperly
     target_player->moveToGraveyard(zone_type, column); //this method doesnt work
-    
 }
 
 void Game::executeBattleCry()
 {
-  //TODO
+  //allied creatures gain haste, temporary, and + 3 attack
+  for (int i = 1; i <= 7; i++)
+  {
+    //check Field Zone
+    if (current_player_->getZone('F').isOccupied(i))
+    {
+      //gains haste
+      current_player_->getZone('F').getCreature(i)->addTrait(Config::getInstance().getTrait('H'));
+
+      //gains temporary
+      current_player_->getZone('F').getCreature(i)->addTrait(Config::getInstance().getTrait('T'));
+
+      //attack increases by 3
+      current_player_->getZone('F').getCreature(i)->changeCurrentAttack(3);
+    }
+
+    //check Battle Zone
+    if (current_player_->getZone('B').isOccupied(i))
+    {
+      //gains haste
+      current_player_->getZone('B').getCreature(i)->addTrait(Config::getInstance().getTrait('H'));
+
+      //gains temporary
+      current_player_->getZone('B').getCreature(i)->addTrait(Config::getInstance().getTrait('T'));
+
+      //attack increases by 3
+      current_player_->getZone('B').getCreature(i)->changeCurrentAttack(3);
+    }
+  }
 }
 
 void Game::executeMeteor()
 {
-  //TODO
+  //each creature takes 3 damage
+  for (int i = 1; i <= 7; i++)
+  {
+    if (opposing_player_->getZone('F').isOccupied(i))
+      creatureTakesDamage(3, opposing_player_, 'F', i);
+
+    if (opposing_player_->getZone('B').isOccupied(i))
+      creatureTakesDamage(3, opposing_player_, 'B', i);
+
+    if (current_player_->getZone('F').isOccupied(i))
+      creatureTakesDamage(3, current_player_, 'F', i);
+
+    if (current_player_->getZone('B').isOccupied(i))
+      creatureTakesDamage(3, current_player_, 'B', i);
+  }
 }
 
 void Game::executeFireball()
 {
-  //TODO
+  //enemy creatures take 2 damage
+  for (int i = 1; i <= 7; i++)
+  {
+    if (opposing_player_->getZone('F').isOccupied(i))
+      creatureTakesDamage(2, opposing_player_, 'F', i);
+
+    if (opposing_player_->getZone('B').isOccupied(i))
+      creatureTakesDamage(2, opposing_player_, 'B', i);
+  }
 }
 
 void Game::executeClone(std::string target)
 {
   //TODO
+  //X cost spell
+  /*A newly created creature of the same type as the target creature enters the board in the player's first empty Field
+  Zone slot. The new creature's current attack, current health and current traits are set to the target creature's
+  values, and it gains the Haste and Temporary traits. This spell's mana cost is equal to half the target creature's
+  mana cost (rounded up).*/
 }
 
 void Game::executeDeathCurse(std::string target)
 {
   //TODO
+  //X cost spell
+  /*The target creature gains the Temporary trait. This spell's mana cost is equal to the target creature's mana cost plus 1.*/
 }
 
 void Game::executeShock(std::string target)
@@ -695,60 +751,182 @@ void Game::executeShock(std::string target)
     target_player = opposing_player_;
     target.erase(0, 1);
   }
-
   char zone_type = target.at(0);
-  int column_of_creature = (target.at(1)) - '0';
+  int column = (target.at(1)) - '0';
 
   //target creature takes 1 damage
-  creatureTakesDamage(1, target_player, zone_type, column_of_creature);
+  creatureTakesDamage(1, target_player, zone_type, column);
 }
 
 void Game::executeMobilize(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //The target creature gains haste
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('H'));
+
+  //its attack increases by 1
+  target_player->getZone(zone_type).getCreature(column)->changeCurrentAttack(1);
 }
 
 void Game::executeRapidRush(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //The target creature gains first strike
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('F'));
+
+  //The target creature gains temporary
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('T'));
+
+  //its attack increases by 2
+  target_player->getZone(zone_type).getCreature(column)->changeCurrentAttack(2);
 }
 
 void Game::executeShield(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //its health increases by 2
+  target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(2);
 }
 
 void Game::executeAmputate(std::string target)
 {
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
   //TODO
+  //The target creature's first trait in alphabetical order is removed.
 }
 
 void Game::executeFinalAct(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //The target creature gains brutal
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('B'));
+
+  //The target creature gains temporary
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('T'));
+
+  //its attack increases by 3
+  target_player->getZone(zone_type).getCreature(column)->changeCurrentAttack(3);
 }
 
 void Game::executeLoyalty(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //The target creature gains haste
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('H'));
+
+  //its health increases by 1
+  target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(1);
 }
 
 void Game::executeZombify(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //The target creature gains venomous
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('V'));
+
+  //The target creature gains undying
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('U'));
 }
 
 void Game::executeBloodlust(std::string target)
 {
-  //TODO
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //The target creature gains brutal
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('B'));
+
+  //The target creature gains lifesteal
+  target_player->getZone(zone_type).getCreature(column)->addTrait(Config::getInstance().getTrait('L'));
+
+  //its health is set to half its current health (rounded up)
+  int new_health = target_player->getZone(zone_type).getCreature(column)->getHealth();
+  if (new_health % 2 != 0)
+    new_health++;
+  new_health /= 2;
+  target_player->getZone(zone_type).getCreature(column)->setCurrentHealth(new_health);
 }
 
 void Game::executeHeroicMemory(std::string target)
 {
   //TODO
+  //X cost spell
+  /*This spell moves a creature from the player's graveyard into their first empty Field Zone slot. It gains the Haste
+  and Temporary traits. This spell's mana cost is equal to half the moved creature's mana cost (rounded up).*/
 }
 
 void Game::executeRevive(std::string target)
 {
   //TODO
+  //This spell moves a creature from the player's graveyard into their hand.
 }

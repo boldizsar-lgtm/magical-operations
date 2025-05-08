@@ -55,7 +55,7 @@ public:
   // The different commands
   void printHelp() const;
   void printInfo(Command& command) const;
-  void processRedraw(Command& command);
+  void processRedraw();
   void printStatus() const;
   void changeBoardStatus();
   void processBattle(Command& command);

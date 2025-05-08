@@ -224,6 +224,14 @@ bool Config::readMessageConfig(std::string path)
   return true;
 }
 
+std::shared_ptr<Trait> Config::getTrait(char id)
+{
+  if (traits_.find(id) == traits_.end())
+    return nullptr;
+  else
+    return traits_[id];
+}
+
 Card* Config::getCard(std::string id)
 {
   if (cards_.find(id) == cards_.end())

@@ -44,6 +44,7 @@ public:
   void saveCards(std::string path);
   bool readGameConfig(std::string path);
   bool readMessageConfig(std::string path);
+  std::shared_ptr<Trait> getTrait(char id);
   Card* getCard(std::string id);
   std::string getMessage(std::string key);
   int getMaxRounds() const;
