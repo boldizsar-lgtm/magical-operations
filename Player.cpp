@@ -118,18 +118,17 @@ void Player::redrawHand()
 
 void Player::moveToGraveyard(char zone, int column)
 {
-  if (zone == 'f')
-  {
-    graveyard_.addCardTop(field_zone_.getCreature(column));
-    field_zone_.removeCreature(column);
-  }
-  
-  else
+  if (zone == 'B')
   {
     graveyard_.addCardTop(battle_zone_.getCreature(column));
     battle_zone_.removeCreature(column);
   }
-    
+  
+  else
+  {
+    graveyard_.addCardTop(field_zone_.getCreature(column));
+    field_zone_.removeCreature(column);
+  }
 }
 
 void Player::playCreature(Card* card, std::string field_slot)

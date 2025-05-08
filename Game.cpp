@@ -650,6 +650,17 @@ void Game::executeSpell(Command& command)
     executeRevive(target);
 }
 
+void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type, int column)
+{
+  //target creature takes 1 damage
+  target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(- amount);
+
+  //check if the creature would die and move it to the graveyard if it does
+  if (target_player->getZone(zone_type).getCreature(column)->getHealth() < 1) //the if condition works poperly
+    target_player->moveToGraveyard(zone_type, column); //this method doesnt work
+    
+}
+
 void Game::executeBattleCry()
 {
   //TODO
@@ -689,12 +700,7 @@ void Game::executeShock(std::string target)
   int column_of_creature = (target.at(1)) - '0';
 
   //target creature takes 1 damage
-  target_player->getZone(zone_type).getCreature(column_of_creature)->changeCurrentHealth(-1);
-
-  //check if the creature would die and move it to the graveyard if it does
-  //THIS DOESNT WORK PROPERLY
-  if (target_player->getZone(zone_type).getCreature(column_of_creature)->getHealth() < 1)
-    target_player->moveToGraveyard(zone_type, column_of_creature);
+  creatureTakesDamage(1, target_player, zone_type, column_of_creature);
 }
 
 void Game::executeMobilize(std::string target)

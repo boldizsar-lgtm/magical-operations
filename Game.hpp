@@ -62,6 +62,7 @@ public:
   void processCreature(Command& command) const;
   void processSpell(Command& command);
   void executeSpell(Command& command);
+  void creatureTakesDamage(int  amount, Player* target_player, char zone_type, int column);
 
   //the differentt spells
   void executeBattleCry();
