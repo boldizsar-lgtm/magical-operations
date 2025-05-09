@@ -40,6 +40,14 @@ Creature* Zone::getCreature(int column) const
   return slots_[column - 1];
 }
 
+void Zone::turnZoneEnteredOff()
+{
+  for (auto creature : slots_)
+  {
+    if (creature != nullptr)
+      creature->setEnter(false);
+  }
+}
 
 Zone::~Zone()
 {

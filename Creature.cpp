@@ -180,3 +180,13 @@ bool Creature::creatureHasTrait(std::string name) const
   
   return false;
 }
+
+bool Creature::getEnter() const
+{
+  return entered_this_turn_;
+}
+
+void Creature::setEnter(bool enter_value)
+{
+  entered_this_turn_ = enter_value;
+}

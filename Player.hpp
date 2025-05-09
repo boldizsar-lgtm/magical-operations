@@ -56,6 +56,7 @@ public:
   void playCreature(Card* card, std::string field_slot);
   void moveToGraveyard(char zone, int column);
   void removeCardFromPile(PileType pile_type, std::string id);
+  void moveToBattle(std::string field_slot, std::string battle_slot);
   bool isFieldSlotOccupied(std::string field_slot);
 
   std::string getRoleString() const;
@@ -74,6 +75,7 @@ public:
 
   void setRole(Role role);
   void switchRole();
+  void turnAllEnteredOff();
   void setRedrawNotPossible();
   void setDoneStatus(bool status);
 };

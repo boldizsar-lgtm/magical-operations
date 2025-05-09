@@ -142,15 +142,21 @@ void Player::playCreature(Card* card, std::string field_slot)
   // Remove card from hand
   removeCardFromPile(PileType::HAND, card->getId());
 
+  // Make card a creature
+  Creature* creature = dynamic_cast<Creature*>(card);
+
   // Add card to field zone slot
-  field_zone_.addCreature(dynamic_cast<Creature*>(card), zone_column);
+  field_zone_.addCreature(creature, zone_column);
+
+  // Make card entered_this_turn true
+  creature->setEnter(true);
+  
+  // take away mana
+  current_mana_ -= creature->getManaCost();
 
   // Print info
-  std::string card_info_string = "I_" + card->getId();
+  std::string card_info_string = "I_" + creature->getId();
   std::cout << Config::getInstance().getMessage(card_info_string) << std::endl; 
-
-  // take away mana
-  current_mana_ -= card->getManaCost();
 }
 
 void Player::removeCardFromPile(PileType pile_type, std::string id)
@@ -161,6 +167,22 @@ void Player::removeCardFromPile(PileType pile_type, std::string id)
     deck_->removeCard(id);
   else if (pile_type == PileType::GRAVEYARD)
     graveyard_.removeCard(id);
+}
+
+void Player::moveToBattle(std::string field_slot, std::string battle_slot)
+{
+  // See zone_column usage in playCreature() for credit
+  int field_column = field_slot.at(1) - '0';
+  int battle_column = battle_slot.at(1) - '0';
+
+  // Find creature card
+  Creature* creature = field_zone_.getCreature(field_column);
+
+  // Add card to battle zone
+  battle_zone_.addCreature(creature, battle_column);
+
+  // Remove from field zone
+  field_zone_.removeCreature(field_column);
 }
 
 bool Player::isFieldSlotOccupied(std::string field_slot)
@@ -262,6 +284,12 @@ void Player::switchRole()
     role_ = Role::DEFENDER;
   else
     role_ = Role::ATTACKER;
+}
+
+void Player::turnAllEnteredOff()
+{
+  field_zone_.turnZoneEnteredOff();
+  battle_zone_.turnZoneEnteredOff();
 }
 
 void Player::setRedrawNotPossible()

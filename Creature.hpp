@@ -46,6 +46,8 @@ public:
   std::string getHealthString() const;
   void printCardLine(int row) const override;
   bool creatureHasTrait(std::string name) const;
+  bool getEnter() const;
+  void setEnter(bool enter_value);
 };
 
 #endif //CREATURE_HPP

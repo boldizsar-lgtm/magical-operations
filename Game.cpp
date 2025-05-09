@@ -145,7 +145,9 @@ bool Game::startBattlePhase()
   }
 
   std::cout << Config::getInstance().getMessage("D_BORDER_BATTLE_END") << '\n';
-
+  
+  player1_.turnAllEnteredOff();
+  player2_.turnAllEnteredOff();
   return true;
 }
 
@@ -185,7 +187,6 @@ bool Game::startBattle(int column)
   //check undying
 
   //make all creature's "entered_this_turn" bool = false
-
   return true;
 }
 
@@ -209,9 +210,7 @@ void Game::processCommand(Command command)
     printInfo(command);
 
   if (command_type == CommandType::REDRAW)
-  {
     processRedraw();
-  }
 
   if (command_type == CommandType::STATUS)
     printStatus();
@@ -462,6 +461,57 @@ void Game::processBattle(Command& command)
   //move current player's creature from the field zone slot to the battle zone slot, a creature that was played this round cant battle, unless it has haste
   //check challenger, and haste
 
+  std::string field_slot = command.getParameters().at(0);
+  std::string battle_slot = command.getParameters().at(1);
+
+  // Check if field or battle ares playable
+  if (!std::regex_match(field_slot, std::regex("O?(F|B)[1-7]")) || !std::regex_match(battle_slot, std::regex("O?(F|B)[1-7]")) )
+    throw CommandError("E_INVALID_SLOT");
+
+  // Check if field zone is valid
+  if (field_slot.at(0) == 'O' || field_slot.at(0) == 'B')
+    throw CommandError("E_NOT_IN_FIELD");
+
+  // Check if field slot has a creature
+  if (current_player_->isFieldSlotOccupied(field_slot) == false)
+    throw CommandError("E_FIELD_EMPTY");
+
+  // Check if creature entered board the same round and does not have haste
+  Creature* creature = current_player_->getZone(ZoneType::FIELD).getCreature(field_slot.at(1) - '0');
+  bool has_haste = creature->creatureHasTrait("Haste");
+  bool has_challenger = creature->creatureHasTrait("Challenger");
+
+  if (creature->getEnter() == true && has_haste == false)
+    throw CommandError("E_CREATURE_CANNOT_BATTLE");
+
+  // Check if battle Zone is valid
+  if (battle_slot.at(0) == 'O' || battle_slot.at(0) == 'F')
+    throw CommandError("E_NOT_IN_BATTLE");
+
+  // Check if battle zone is occupied
+  if (current_player_->isFieldSlotOccupied(battle_slot) == true)
+    throw CommandError("E_BATTLE_OCCUPIED");
+
+  current_player_->moveToBattle(field_slot, battle_slot);
+
+  // Print Haste
+  if (has_haste == true)
+    std::cout << Config::getInstance().getMessage("I_HASTE") << std::endl;
+
+  // Execute Challenger Trait
+  if (has_challenger == true)
+  {
+    std::string opponent_battle = battle_slot;
+    battle_slot.at(0) = 'F';
+    std::string opponent_field = battle_slot;
+
+    if (opposing_player_->isFieldSlotOccupied(opponent_field) == true &&
+        opposing_player_->isFieldSlotOccupied(opponent_battle) == false)
+    {
+      opposing_player_->moveToBattle(opponent_field, opponent_battle);
+      std::cout << Config::getInstance().getMessage("I_CHALLENGER") << std::endl;
+    }
+  }
 }
 
 void Game::processCreature(Command& command) const
