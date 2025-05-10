@@ -612,7 +612,7 @@ bool Game::startFinalPhase(std::string file_path)
   //print result (if 0 -> tie (set in game constructor and not changed))
   if (winner_id_ == 0)
   {
-    result = Config::getInstance().getMessage("D_TIE");
+    result = Config::getInstance().getMessage("D_TIE") + '\n';
   }
   else
   {
