@@ -128,7 +128,7 @@ bool Game::doCommandLoop(CommandLine& cli)
     }
   }
 
-  //TODO: check refresh trait for creatures of current player
+  //TODO: check refresh trait for creatures of current player, poisoned
 
   return true;
 }

@@ -51,6 +51,11 @@ Command CommandLine::readCommand()
   //print "<CURRENT_PLAYER>> "
   std::string input;
   std::getline(std::cin, input);
+
+  //if input is EOF program determines like quit command
+  if(input.empty())
+    input = "quit";
+
   removeWhitespacesAtEnds(input);
   Utils::toUpper(input);
   std::vector<std::string> vectorised_string;
