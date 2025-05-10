@@ -60,40 +60,44 @@ int main(int argc, char* argv[])
     return INVALID_FILE;
   }
 
-  Game game(config.getMaxRounds());
-
-  bool continue_game = true;
-  while (continue_game)
+  try
   {
-    try
-    {
-      continue_game = game.startRound();
-      if (!continue_game)
-        break;
+    Game game(config.getMaxRounds());
 
-      continue_game = game.startSetupPhase();
-      if (!continue_game)
-        break;
+    bool continue_game = true;
+    while (continue_game)
+    {
+      try
+      {
+        continue_game = game.startRound();
+        if (!continue_game)
+          break;
 
-      continue_game = game.startBattlePhase();
-      if (!continue_game)
-        break;
+        continue_game = game.startSetupPhase();
+        if (!continue_game)
+          break;
+
+        continue_game = game.startBattlePhase();
+        if (!continue_game)
+          break;
+      }
+      catch(CommandError& e)
+      {
+        //TODO: do we need this here?
+        std::cout << e.what() << std::endl;
+      }
     }
-    catch(std::bad_alloc& e)
+
+    //start final phase and check if written to file
+    if (!game.startFinalPhase(argv[1]))
     {
-      std::cout << "[ERROR] Not enough memory!\n" << std::endl;
-      return NOT_ENOUGH_MEMORY;
-    }
-    catch(CommandError& e)
-    {
-      std::cout << e.what() << std::endl;
+      std::cout << Config::getInstance().getMessage("I_FILE_WRITE_FAILED");
     }
   }
-
-  //start final phase and check if written to file
-  if (!game.startFinalPhase(argv[1]))
+  catch(std::bad_alloc& e)
   {
-    std::cout << Config::getInstance().getMessage("I_FILE_WRITE_FAILED");
+    std::cout << "[ERROR] Not enough memory!\n" << std::endl;
+    return NOT_ENOUGH_MEMORY;
   }
 
   return SUCCESSFUL;
