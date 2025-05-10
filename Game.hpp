@@ -12,6 +12,7 @@
 
 enum class EndCondition
 {
+  DEFAULT,
   DEFEAT,
   DRAW,
   MAX_ROUNDS,

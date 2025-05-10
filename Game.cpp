@@ -5,7 +5,7 @@
 
 Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), defender_(&player2_),
                              max_rounds_{max_rounds}, round_count_{0}, board_active_{true}
-                             , winner_id_{0}
+                             , end_condition_{EndCondition::DEFAULT}, winner_id_{0}
 {
   //set default roles of players
   player1_.setRole(Role::ATTACKER);
@@ -294,7 +294,7 @@ bool Game::creatureFight(int column)
   amount = creature_2->getHealth() - creature_1->getAttack();
 
   //check if first attacking creature has brutal trait
-  processBattleTraits(creature_1, empty_creature, brutal, "Brutal");
+  processBattleTraits(creature_1, creature_2, brutal, "Brutal");
 
   //check if first attacking creature has venomous trait and add poisoned trait
   processBattleTraits(creature_1, creature_2, empty_trait, "Venomous");
@@ -306,6 +306,8 @@ bool Game::creatureFight(int column)
   //but battle continues
   if (amount <= 0)
   {
+    creature_2->setCurrentHealth(0);
+
     if (first_strike)
     {
       //end battle early
@@ -320,7 +322,10 @@ bool Game::creatureFight(int column)
       {
         winner_id_ = attacking_creature_owner->getId();
         end_condition_ = EndCondition::DEFEAT;
-        return false;
+
+        //TODO: (idk if second attack should still happen) if first strike defeats the opposing player return
+        // if (first_strike)
+        //   return false;
       }
       brutal = false;
     }
@@ -328,9 +333,8 @@ bool Game::creatureFight(int column)
     temporary_trait = Config::getInstance().getTrait('T');
     creature_2->addTrait(temporary_trait);
   }
-
-  //change second attacker health
-  creature_2->changeCurrentHealth(-creature_1->getAttack());
+  else
+    creature_2->changeCurrentHealth(-creature_1->getAttack());
 
   //if second creature is dead because of first strike trait, battle does not continue
   if (continue_battle)
@@ -354,7 +358,7 @@ bool Game::creatureFight(int column)
     amount = creature_1->getHealth() - creature_2->getAttack();
 
     //check if second creature has brutal trait
-    processBattleTraits(creature_2, empty_creature, brutal, "Brutal");
+    processBattleTraits(creature_2, creature_1, brutal, "Brutal");
 
     //check if second creature has venomous trait and add poisoned trait
     processBattleTraits(creature_2, creature_1, empty_trait, "Venomous");
@@ -364,6 +368,7 @@ bool Game::creatureFight(int column)
 
     if (amount <= 0)
     {
+      creature_1->setCurrentHealth(0);
       temporary_trait = Config::getInstance().getTrait('T');
       creature_1->addTrait(temporary_trait);
       if (brutal)
@@ -373,13 +378,15 @@ bool Game::creatureFight(int column)
         {
           winner_id_ = attacking_creature_owner->getId();
           end_condition_ = EndCondition::DEFEAT;
-          return false;
         }
       }
     }
-
-    creature_1->changeCurrentHealth(-creature_2->getAttack());
+    else
+      creature_1->changeCurrentHealth(-creature_2->getAttack());
   }
+
+  if (end_condition_ == EndCondition::DEFEAT)
+    return false;
 
   return true;
 }
@@ -416,7 +423,8 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
   {
     if (creature_1->creatureHasTrait("Brutal"))
     {
-      std::cout << Config::getInstance().getMessage("I_BRUTAL") << std::endl;
+      if ((creature_2->getHealth() - creature_1->getAttack()) <= 0)
+        std::cout << Config::getInstance().getMessage("I_BRUTAL") << std::endl;
       trait = true;
     }
   }
@@ -434,7 +442,9 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
     if (creature_1->creatureHasTrait("Lifesteal"))
     {
       //increase current health of attacking creature
+      std::cout << creature_1->getHealth();
       creature_1->changeCurrentHealth(2);
+      std::cout << creature_1->getHealth() << std::endl;
       std::cout << Config::getInstance().getMessage("I_LIFESTEAL") << std::endl;
     }
   }
