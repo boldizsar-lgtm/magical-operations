@@ -1,6 +1,8 @@
 #include "Game.hpp"
 #include <fstream>
 
+#define ZONE_WIDTH (7)
+
 Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), defender_(&player2_),
                              max_rounds_{max_rounds}, round_count_{0}, board_active_{true}
                              , winner_id_{0}
@@ -126,14 +128,17 @@ bool Game::doCommandLoop(CommandLine& cli)
     }
   }
 
+  //TODO: check refresh trait for creatures of current player
+
   return true;
 }
+
 
 bool Game::startBattlePhase()
 {
   std::cout << '\n' << Config::getInstance().getMessage("D_BORDER_BATTLE_PHASE") << '\n';
 
-  for (int i = 1; i <= 7; i++)
+  for (int i = 1; i <= ZONE_WIDTH; i++)
   {
     std::cout << "---------------------------------------- SLOT " << i;
     std::cout << " -----------------------------------------\n";
@@ -141,52 +146,222 @@ bool Game::startBattlePhase()
     {
       if (!startBattle(i))
         return false;
+      //return creatures from battle zone to first available field slot
     }
   }
 
   std::cout << Config::getInstance().getMessage("D_BORDER_BATTLE_END") << '\n';
-  
+
+//TODO: besser strukturieren? -> processTraits(Player* player, Phase game_phase, char trait_type)
+  removeTemporaryCreatures(attacker_);
+  removeTemporaryCreatures(defender_);
+
+  returnCreaturesToField();
+
+  //undying creatures come back
+  undeadCreaturesReenter(attacker_);
+  undeadCreaturesReenter(defender_);
+
   player1_.turnAllEnteredOff();
   player2_.turnAllEnteredOff();
   return true;
 }
 
 
-bool Game::startBattle(int column)
+void Game::undeadCreaturesReenter(Player* player)
+{
+  Creature* creature;
+  Card* card;
+
+  for (int i = 0; i < player->getGraveyard().getSize(); i++)
+  {
+    if ((card = player->getGraveyard().getPile().at(i)) != nullptr)
+    {
+      creature = dynamic_cast<Creature*>(card);
+      if (creature != nullptr && creature->creatureHasTrait("Undying"))
+      {
+        player->moveToField(creature);
+        std::cout << Config::getInstance().getMessage("I_UNDYING") << std::endl;
+      }
+    }
+  }
+}
+
+
+void Game::removeTemporaryCreatures(Player* player)
+{
+  bool zones_have_temporary{false};
+
+  //remove out of battle zone
+  for (int i = 1; i <= ZONE_WIDTH; i++)
+  {
+    if (player->getZone(ZoneType::BATTLE).isOccupied(i))
+    {
+      if (player->getZone(ZoneType::BATTLE).getCreature(i)->creatureHasTrait("Temporary"))
+      {
+        player->moveToGraveyard('B', i);
+        zones_have_temporary = true;
+      }
+    }
+  }
+
+  //remove out of field zone
+  for (int i = 1; i <= ZONE_WIDTH; i++)
+  {
+    if (player->getZone(ZoneType::FIELD).isOccupied(i))
+    {
+      if (player->getZone(ZoneType::FIELD).getCreature(i)->creatureHasTrait("Temporary"))
+      {
+        player->moveToGraveyard('F', i);
+        zones_have_temporary = true;
+      }
+    }
+  }
+
+  if (zones_have_temporary)
+    std::cout << Config::getInstance().getMessage("I_TEMPORARY") << std::endl;
+}
+
+void Game::returnCreaturesToField()
+{
+  for (int i = 1; i <= ZONE_WIDTH; i++)
+  {
+    if (attacker_->getZone(ZoneType::BATTLE).isOccupied(i))
+    attacker_->moveToField(i);
+    if (defender_->getZone(ZoneType::BATTLE).isOccupied(i))
+      defender_->moveToField(i);
+  }
+}
+
+
+bool Game::directHitBattle(int column)
 {
   int amount{0};
+
+  amount = defender_->getCurrentHealth() - attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack();
+
+  //reduce defenders health
+  defender_->changeCurrentHealth((-attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack()));
+  std::cout << Config::getInstance().getMessage("I_DIRECT") << std::endl;
+
+  //end condition DEFEAT reached
+  if (amount <= 0)
+  {
+    end_condition_ = EndCondition::DEFEAT;
+    winner_id_ = attacker_->getId();
+    return false;
+  }
+
+  return true;
+}
+
+
+bool Game::creatureFight(int column)
+{
+  bool continue_battle{true};
+  int amount{0};
+  Creature* creature_1 = attacker_->getZone(ZoneType::BATTLE).getCreature(column);
+  Creature* creature_2 = defender_->getZone(ZoneType::BATTLE).getCreature(column);
+  Creature* temp;
+  bool first_strike{false};
+
+  //Fight between two creatures begins
+  std::cout << Config::getInstance().getMessage("I_FIGHT") << std::endl;
+
+
+  //Check if only one of the fighting creatures has First Strike trait and change attack order accordingly
+  if (creature_1->creatureHasTrait("First Strike") && !creature_2->creatureHasTrait("First Strike"))
+  {
+    first_strike = true;
+  }
+  else if (creature_2->creatureHasTrait("First Strike") && !creature_1->creatureHasTrait("First Strike"))
+  {
+    first_strike = true;
+    //switch attack order
+    temp = creature_1;
+    creature_1 = creature_2;
+    creature_2 = temp;
+  }
+
+  std::shared_ptr<Trait> temporary_trait;
+
+  //start Attack 1 (creature 1 attacks creature 2)
+  std::cout << Config::getInstance().getMessage("D_ATTACK_1") << std::endl;
+
+  amount = creature_2->getHealth() - creature_1->getAttack();
+
+  //print First Strike message
+  if (first_strike)
+  {
+    std::cout << Config::getInstance().getMessage("I_FIRST_STRIKE") << std::endl;
+  }
+
+  //if no first strike trait is active and creatures health is below 0, creature gains temporary trait,
+  //but battle continues
+  if (amount <= 0)
+  {
+    if (first_strike)
+    {
+      //end battle early
+      continue_battle = false;
+    }
+    temporary_trait = Config::getInstance().getTrait('T');
+    creature_2->addTrait(temporary_trait);
+  }
+
+  //change second attacker health
+  creature_2->changeCurrentHealth(-creature_1->getAttack());
+
+
+
+  //if second creature is dead because of first strike trait, battle does not continue
+  if (continue_battle)
+  {
+    //start Attack 2 (creature 2 attacks creature 1)
+    std::cout << Config::getInstance().getMessage("D_ATTACK_2") << std::endl;
+
+    amount = creature_1->getHealth() - creature_2->getAttack();
+
+    if (amount <= 0)
+    {
+      temporary_trait = Config::getInstance().getTrait('T');
+      creature_1->addTrait(temporary_trait);
+    }
+
+    creature_1->changeCurrentHealth(-creature_2->getAttack());
+  }
+
+  return true;
+}
+
+
+bool Game::startBattle(int column)
+{
+  bool continue_battle{true};
 
   //Direct hit battle
   if (!defender_->getZone(ZoneType::BATTLE).isOccupied(column))
   {
-    amount = defender_->getCurrentHealth() - attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack();
-
-    //end condition DEFEAT reached
-    if (amount <= 0)
-    {
-      end_condition_ = EndCondition::DEFEAT;
-      winner_id_ = attacker_->getId();
+    //return false if end condition is reached
+    if(!directHitBattle(column))
       return false;
-    }
-
-    //reduce defenders health
-    defender_->changeCurrentHealth((-attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack()));
-    std::cout << Config::getInstance().getMessage("I_DIRECT");
-    return true;
+    else
+      return true;
   }
 
   //Fight between two creatures
-  std::cout << Config::getInstance().getMessage("I_FIGHT");
+  creatureFight(column);
+
+
+  //move dead creatures to graveyard (different from temporary creatures)
+  if (attacker_->getZone(ZoneType::BATTLE).getCreature(column)->creatureHasTrait("Temporary"))
+    attacker_->moveToGraveyard('B',column);
+  if (defender_->getZone(ZoneType::BATTLE).getCreature(column)->creatureHasTrait("Temporary"))
+    defender_->moveToGraveyard('B',column);
+
 
   //resolve fights and check brutal, first strike, lifesteal, venomous
 
-  //check temporary trait
-
-  //return creatures to field zones
-
-  //check undying
-
-  //make all creature's "entered_this_turn" bool = false
   return true;
 }
 
@@ -495,7 +670,7 @@ void Game::processBattle(Command& command)
   current_player_->moveToBattle(field_slot, battle_slot);
 
   // Print Haste
-  if (has_haste == true)
+  if (has_haste == true && creature->getEnter() == true)
     std::cout << Config::getInstance().getMessage("I_HASTE") << std::endl;
 
   // Execute Challenger Trait
@@ -713,7 +888,7 @@ void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type
 void Game::executeBattleCry()
 {
   //allied creatures gain haste, temporary, and + 3 attack
-  for (int i = 1; i <= 7; i++)
+  for (int i = 1; i <= ZONE_WIDTH; i++)
   {
     //check Field Zone
     if (current_player_->getZone('F').isOccupied(i))
@@ -746,7 +921,7 @@ void Game::executeBattleCry()
 void Game::executeMeteor()
 {
   //each creature takes 3 damage
-  for (int i = 1; i <= 7; i++)
+  for (int i = 1; i <= ZONE_WIDTH; i++)
   {
     if (opposing_player_->getZone('F').isOccupied(i))
       creatureTakesDamage(3, opposing_player_, 'F', i);
@@ -765,7 +940,7 @@ void Game::executeMeteor()
 void Game::executeFireball()
 {
   //enemy creatures take 2 damage
-  for (int i = 1; i <= 7; i++)
+  for (int i = 1; i <= ZONE_WIDTH; i++)
   {
     if (opposing_player_->getZone('F').isOccupied(i))
       creatureTakesDamage(2, opposing_player_, 'F', i);

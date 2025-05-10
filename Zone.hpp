@@ -27,6 +27,7 @@ public:
     // Methods
     void removeCreature(int column);
     void addCreature(Creature* creature,int column);
+    void switchCreaturePlace(Creature* creature, int column);
     void printZone(int format) const;
     bool isOccupied(int column) const;
     Creature* getCreature(int column) const;

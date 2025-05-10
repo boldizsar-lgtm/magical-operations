@@ -179,10 +179,44 @@ void Player::moveToBattle(std::string field_slot, std::string battle_slot)
   Creature* creature = field_zone_.getCreature(field_column);
 
   // Add card to battle zone
-  battle_zone_.addCreature(creature, battle_column);
+  battle_zone_.switchCreaturePlace(creature, battle_column);
 
   // Remove from field zone
   field_zone_.removeCreature(field_column);
+}
+
+void Player::moveToField(int battle_column)
+{
+  //get the first free field zone and insert creature, if no slot is free add to graveyard
+  for (int i = 1; i <= 7; i++)
+  {
+    if (!field_zone_.isOccupied(i))
+    {
+      field_zone_.switchCreaturePlace(battle_zone_.getCreature(battle_column), i);
+      battle_zone_.removeCreature(battle_column);
+      return;
+    }
+  }
+  moveToGraveyard('B', battle_column);
+}
+
+
+void Player::moveToField(Creature* creature)
+{
+  for (int i = 1; i <= 7; i++)
+  {
+    if (!field_zone_.isOccupied(i))
+    {
+      //move card from graveyard to field zone and remove undying trait if creature has this trait
+      field_zone_.addCreature(creature, i);
+      graveyard_.removeCard(creature->getId());
+      if (creature->creatureHasTrait("Undying"))
+      {
+        creature->removeTrait("Undying");
+      }
+      return;
+    }
+  }
 }
 
 bool Player::isFieldSlotOccupied(std::string field_slot)

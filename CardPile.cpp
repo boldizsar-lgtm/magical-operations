@@ -73,6 +73,13 @@ Card* CardPile::searchCard(std::string id) const
   return nullptr;
 }
 
+
+std::vector<Card*> CardPile::getPile() const
+{
+  return pile_;
+}
+
+
 void CardPile::removeEndCard()
 {
   if (pile_.size() != 0)

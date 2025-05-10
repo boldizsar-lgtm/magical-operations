@@ -44,6 +44,11 @@ public:
   bool startSetupPhase();
   bool doCommandLoop(CommandLine& cli);
   bool startBattlePhase();
+  void undeadCreaturesReenter(Player* player);
+  void removeTemporaryCreatures(Player* player);
+  void returnCreaturesToField();
+  bool directHitBattle(int column);
+  bool creatureFight(int column);
   bool startBattle(int column);
   bool startRoundEnd();
   void processCommand(Command command);

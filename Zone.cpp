@@ -13,6 +13,11 @@ void Zone::addCreature(Creature* creature, int column)
   slots_[column - 1] = creature;
 }
 
+void Zone::switchCreaturePlace(Creature* creature, int column)
+{
+  slots_[column - 1] = creature;
+}
+
 void Zone::printZone(int row) const
 {
   for (auto& creature : slots_)

@@ -53,6 +53,20 @@ void Creature::addTrait(std::shared_ptr<Trait> trait)
   current_traits_.insert(current_traits_.begin() + insert_before, trait);
 }
 
+
+void Creature::removeTrait(std::string trait)
+{
+  for (size_t i = 0; i < current_traits_.size(); i++)
+  {
+    if (current_traits_[i]->getName() == trait)
+    {
+      current_traits_.erase(current_traits_.begin() + i);
+      return;
+    }
+  }
+}
+
+
 std::string Creature::getType() const
 {
   return "Creature";

@@ -34,6 +34,7 @@ public:
   void changeCurrentAttack(int amount);
   void changeCurrentHealth(int amount);
   void addTrait(std::shared_ptr<Trait> trait);
+  void removeTrait(std::string trait);
   std::string getType() const override;
   std::string getTraitIds() const;
   void printBaseTraitList() const;

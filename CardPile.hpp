@@ -29,6 +29,7 @@ public:
   void addCardTop(Card* card);
   void removeCard(std::string id);
   Card* searchCard(std::string id) const;
+  std::vector<Card*> getPile() const;
   void removeTopCard();
   void removeEndCard();
   void printCardPile() const;
