@@ -258,47 +258,49 @@ bool Game::directHitBattle(int column)
 
 bool Game::creatureFight(int column)
 {
+   //TODO: maybe split this function into to attacks with parameter int attack (1 or 2)??
+
   bool continue_battle{true};
   int amount{0};
   Player* opposing_creature_owner = defender_;
+  Player* attacking_creature_owner = attacker_;
   Creature* creature_1 = attacker_->getZone(ZoneType::BATTLE).getCreature(column);
   Creature* creature_2 = defender_->getZone(ZoneType::BATTLE).getCreature(column);
-  Creature* empty = nullptr;
+  Creature* empty_creature = nullptr;
   Role first_attacker_role = Role::ATTACKER;
+  bool empty_trait;
   bool first_strike{false};
   bool brutal{false};
-  bool venomous{false};
-  bool lifesteal{false};
 
   //Fight between two creatures begins
   std::cout << Config::getInstance().getMessage("I_FIGHT") << std::endl;
 
-  //check which creatures have the first strike trait, change attack order accordingly
-  checkBattleTraits(creature_1, creature_2, first_strike, "First Strike", first_attacker_role);
+  //start Attack 1 (creature 1 attacks creature 2)
+  std::cout << Config::getInstance().getMessage("D_ATTACK_1") << std::endl;
+
+  //check which creatures have the first strike trait, change attack order accordingly (for the whole fight)
+  first_attacker_role = processBattleTraits(creature_1, creature_2, first_strike, "First Strike");
 
   //switch who owns first opposing creature after first strike check
   if (first_attacker_role == Role::DEFENDER)
+  {
     opposing_creature_owner = attacker_;
+    attacking_creature_owner = defender_;
+  }
 
   std::shared_ptr<Trait> temporary_trait;
-
-  //start Attack 1 (creature 1 attacks creature 2)
-  std::cout << Config::getInstance().getMessage("D_ATTACK_1") << std::endl;
 
   //calculate remaining health/excess damage
   amount = creature_2->getHealth() - creature_1->getAttack();
 
   //check if first attacking creature has brutal trait
-  checkBattleTraits(creature_1, empty, brutal, "Brutal", first_attacker_role);
+  processBattleTraits(creature_1, empty_creature, brutal, "Brutal");
 
   //check if first attacking creature has venomous trait and add poisoned trait
-  checkBattleTraits(creature_1, creature_2, venomous, "Venomous", first_attacker_role);
+  processBattleTraits(creature_1, creature_2, empty_trait, "Venomous");
 
-  //print First Strike message
-  if (first_strike)
-  {
-    std::cout << Config::getInstance().getMessage("I_FIRST_STRIKE") << std::endl;
-  }
+  //check if second creature has lifesteal and processes it
+  processBattleTraits(creature_1, empty_creature, empty_trait, "Lifesteal");
 
   //if no first strike trait is active and creatures health is below 0, creature gains temporary trait,
   //but battle continues
@@ -314,6 +316,12 @@ bool Game::creatureFight(int column)
     if (brutal)
     {
       opposing_creature_owner->changeCurrentHealth(amount);
+      if (opposing_creature_owner->getCurrentHealth() <= 0)
+      {
+        winner_id_ = attacking_creature_owner->getId();
+        end_condition_ = EndCondition::DEFEAT;
+        return false;
+      }
       brutal = false;
     }
 
@@ -324,8 +332,6 @@ bool Game::creatureFight(int column)
   //change second attacker health
   creature_2->changeCurrentHealth(-creature_1->getAttack());
 
-
-
   //if second creature is dead because of first strike trait, battle does not continue
   if (continue_battle)
   {
@@ -334,18 +340,27 @@ bool Game::creatureFight(int column)
 
     //switch opposing creature_owner
     if (first_attacker_role == Role::DEFENDER)
+    {
       opposing_creature_owner = defender_;
+      attacking_creature_owner = attacker_;
+    }
     else
+    {
       opposing_creature_owner = attacker_;
+      attacking_creature_owner = defender_;
+    }
 
     //calculate remaining health/excess damage
     amount = creature_1->getHealth() - creature_2->getAttack();
 
     //check if second creature has brutal trait
-    checkBattleTraits(creature_2, empty, brutal, "Brutal", first_attacker_role);
+    processBattleTraits(creature_2, empty_creature, brutal, "Brutal");
 
     //check if second creature has venomous trait and add poisoned trait
-    checkBattleTraits(creature_2, creature_1, venomous, "Venomous", first_attacker_role);
+    processBattleTraits(creature_2, creature_1, empty_trait, "Venomous");
+
+    //check if second creature has lifesteal and processes it
+    processBattleTraits(creature_2, empty_creature, empty_trait, "Lifesteal");
 
     if (amount <= 0)
     {
@@ -354,6 +369,12 @@ bool Game::creatureFight(int column)
       if (brutal)
       {
         opposing_creature_owner->changeCurrentHealth(amount);
+        if (opposing_creature_owner->getCurrentHealth() <= 0)
+        {
+          winner_id_ = attacking_creature_owner->getId();
+          end_condition_ = EndCondition::DEFEAT;
+          return false;
+        }
       }
     }
 
@@ -364,9 +385,9 @@ bool Game::creatureFight(int column)
 }
 
 
-void Game::checkBattleTraits(Creature*& creature_1, Creature*& creature_2, bool& trait, std::string trait_name,
-Role& first_attacker_role)
+Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, bool& trait, std::string trait_name)
 {
+  Role first_attacker_role = Role::ATTACKER;
 
   if (trait_name == "First Strike")
   {
@@ -386,6 +407,10 @@ Role& first_attacker_role)
       creature_1 = creature_2;
       creature_2 = temp;
     }
+    if (trait)
+    {
+      std::cout << Config::getInstance().getMessage("I_FIRST_STRIKE") << std::endl;
+    }
   }
   else if (trait_name == "Brutal")
   {
@@ -399,20 +424,22 @@ Role& first_attacker_role)
   {
     if (creature_1->creatureHasTrait("Venomous"))
     {
+      //add trait poisoned to opposing creature
       creature_2->addTrait(Config::getInstance().getTrait('P'));
       std::cout << Config::getInstance().getMessage("I_VENOMOUS") << std::endl;
-      trait = true;
     }
   }
   else if (trait_name == "Lifesteal")
   {
-    if (creature_1->creatureHasTrait("Lifesteal") || creature_2->creatureHasTrait("Lifesteal"))
+    if (creature_1->creatureHasTrait("Lifesteal"))
     {
-      //TODO: do trait specific things here and in creatureFight() (this is a first setup)
-      trait = true;
+      //increase current health of attacking creature
+      creature_1->changeCurrentHealth(2);
+      std::cout << Config::getInstance().getMessage("I_LIFESTEAL") << std::endl;
     }
   }
 
+  return first_attacker_role;
 }
 
 
@@ -423,25 +450,22 @@ bool Game::startBattle(int column)
   //Direct hit battle
   if (!defender_->getZone(ZoneType::BATTLE).isOccupied(column))
   {
-    //return false if end condition is reached
+    //returns false if end condition DEFEAT is reached
     if(!directHitBattle(column))
       return false;
     else
       return true;
   }
 
-  //Fight between two creatures
-  creatureFight(column);
-
+  //Fight between two creatures, returns false if end condition DEFEAT is reached
+  if (!creatureFight(column))
+    return false;
 
   //move dead creatures to graveyard (different from temporary creatures)
   if (attacker_->getZone(ZoneType::BATTLE).getCreature(column)->creatureHasTrait("Temporary"))
     attacker_->moveToGraveyard('B',column);
   if (defender_->getZone(ZoneType::BATTLE).getCreature(column)->creatureHasTrait("Temporary"))
     defender_->moveToGraveyard('B',column);
-
-
-  //resolve fights and check brutal, first strike, lifesteal, venomous
 
   return true;
 }
