@@ -15,7 +15,7 @@ class CommandError : public std::exception
       //getting the correct error message out of the messages map
       message_ = Config::getInstance().getMessage(key);
     };
-    CommandError(const CommandError& error) = delete;
+    CommandError(const CommandError& error) = default;
     ~CommandError() = default;
     virtual const char* what() const noexcept override
     {
