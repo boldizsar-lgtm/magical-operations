@@ -262,26 +262,15 @@ bool Game::creatureFight(int column)
   int amount{0};
   Creature* creature_1 = attacker_->getZone(ZoneType::BATTLE).getCreature(column);
   Creature* creature_2 = defender_->getZone(ZoneType::BATTLE).getCreature(column);
-  Creature* temp;
   bool first_strike{false};
+  bool brutal{false};
+  bool venomous{false};
+  bool lifesteal{false};
 
   //Fight between two creatures begins
   std::cout << Config::getInstance().getMessage("I_FIGHT") << std::endl;
 
-
-  //Check if only one of the fighting creatures has First Strike trait and change attack order accordingly
-  if (creature_1->creatureHasTrait("First Strike") && !creature_2->creatureHasTrait("First Strike"))
-  {
-    first_strike = true;
-  }
-  else if (creature_2->creatureHasTrait("First Strike") && !creature_1->creatureHasTrait("First Strike"))
-  {
-    first_strike = true;
-    //switch attack order
-    temp = creature_1;
-    creature_1 = creature_2;
-    creature_2 = temp;
-  }
+  checkBattleTraits(creature_1, creature_2, first_strike, "First Strike");
 
   std::shared_ptr<Trait> temporary_trait;
 
@@ -332,6 +321,56 @@ bool Game::creatureFight(int column)
   }
 
   return true;
+}
+
+
+void Game::checkBattleTraits(Creature*& creature_1, Creature*& creature_2, bool& trait, std::string trait_name)
+{
+  //TODO change parameters to creatue_1, creature_2, bool& trait, string trait_name;
+
+  if (trait_name == "First Strike")
+  {
+    Creature* temp;
+    //Check if only one of the fighting creatures has First Strike trait and change attack order accordingly
+    if (creature_1->creatureHasTrait("First Strike") && !creature_2->creatureHasTrait("First Strike"))
+    {
+      trait = true;
+    }
+    else if (creature_2->creatureHasTrait("First Strike") && !creature_1->creatureHasTrait("First Strike"))
+    {
+      trait = true;
+      //switch attack order
+      temp = creature_1;
+      creature_1 = creature_2;
+      creature_2 = temp;
+    }
+  }
+  else if (trait_name == "Brutal")
+  {
+    if (creature_1->creatureHasTrait("Brutal") || creature_2->creatureHasTrait("Brutal"))
+    {
+      //TODO: do trait specific things here and in creatureFight() (this is a first setup)
+      trait = true;
+    }
+  }
+  else if (trait_name == "Venomous")
+  {
+    if (creature_1->creatureHasTrait("Venomous") || creature_2->creatureHasTrait("Venomous"))
+    {
+      //maybe add the poisened trait in here
+      //TODO: do trait specific things here and in creatureFight() (this is a first setup)
+      trait = true;
+    }
+  }
+  else if (trait_name == "Lifesteal")
+  {
+    if (creature_1->creatureHasTrait("Lifesteal") || creature_2->creatureHasTrait("Lifesteal"))
+    {
+      //TODO: do trait specific things here and in creatureFight() (this is a first setup)
+      trait = true;
+    }
+  }
+
 }
 
 

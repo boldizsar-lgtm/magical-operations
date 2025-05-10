@@ -49,6 +49,7 @@ public:
   void returnCreaturesToField();
   bool directHitBattle(int column);
   bool creatureFight(int column);
+  void checkBattleTraits(Creature*& creature_1, Creature*& creature_2, bool& trait, std::string trait_name);
   bool startBattle(int column);
   bool startRoundEnd();
   void processCommand(Command command);
