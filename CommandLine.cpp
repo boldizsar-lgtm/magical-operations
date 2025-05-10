@@ -52,11 +52,12 @@ Command CommandLine::readCommand()
   std::string input;
   std::getline(std::cin, input);
 
+  removeWhitespacesAtEnds(input);
+
   //if input is EOF program determines like quit command
   if(input.empty())
-    input = "quit";
+    input = "QUIT";
 
-  removeWhitespacesAtEnds(input);
   Utils::toUpper(input);
   std::vector<std::string> vectorised_string;
   stringToVector(input, vectorised_string, ' ');
