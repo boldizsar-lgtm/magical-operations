@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
     //start final phase and check if written to file
     if (!game.startFinalPhase(argv[1]))
     {
-      std::cout << Config::getInstance().getMessage("I_FILE_WRITE_FAILED");
+      std::cout << Config::getInstance().getMessage("I_FILE_WRITE_FAILED") << std::endl;
     }
   }
   catch(std::bad_alloc& e)
