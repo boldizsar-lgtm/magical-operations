@@ -2,18 +2,14 @@
 #include <iostream>
 #include "Config.hpp"
 
-//Singleton Requirements
+//explained by and coded with the help of ChatGPT, and https://refactoring.guru/design-patterns/singleton/cpp/example
 Config& Config::getInstance()
 {
   static Config instance;
   return instance;
 }
+//end of help of ChatGPT, and the website
 
-//read in the traits config file we created
-//
-//param: path, the path of the traits config file
-//
-//return: false if memory allocation error occurs, true if successful
 bool Config::saveTraits(std::string path)
 {
   //open file
@@ -38,9 +34,6 @@ bool Config::saveTraits(std::string path)
   return true;
 }
 
-//read in the cards config file we created
-//
-//param: path, the path of the cards config file
 void Config::saveCards(std::string path)
 {
   //open file
@@ -100,7 +93,7 @@ void Config::saveCards(std::string path)
   {
     int mana_cost = 0;
     if (mana_cost_str == "x")
-      mana_cost = -1; //MY THOUGHT WAS TO SAVE X COSTED SPELLS AS -1 AND DEAL WITH THEM IN THE SPELL CLASS
+      mana_cost = -1; //x cost spells are saved as -1 mana cost
     else 
       Utils::decimalStringToInt(mana_cost_str, mana_cost);
 

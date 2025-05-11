@@ -65,6 +65,8 @@ public:
   //------------------------------------------------------------------------------------------------------------------
   // set the type of the command
   //
+  // @param type, enum classs CommandType. new type of the command.
+  //
   void setType(CommandType type);
 
 //End of copying

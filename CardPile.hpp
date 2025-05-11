@@ -24,14 +24,14 @@ public:
   ~CardPile();
 
   //------------------------------------------------------------------------------------------------------------------
-  // create a deep copy of a card stored in the cards map in config, add add it to the bottom/end of the pile
+  // creates a deep copy of a card stored in the cards map in config, add add it to the bottom/end of the pile
   //
   // @param id, the id/key of the card that should be copied from thhe map
   //
   void createCard(std::string id);
 
   //------------------------------------------------------------------------------------------------------------------
-  // add a card to the bottom/end of the pile
+  // adds a card to the bottom/end of the pile
   //
   // @param card, pointer to the card that should be addded
   //
@@ -45,14 +45,14 @@ public:
   void addCardTop(Card* card);
 
   //------------------------------------------------------------------------------------------------------------------
-  // remove the first card with a given id from the pile
+  // removes the first card with a given id from the pile
   //
   // @param id, the id of the card that should be removed
   //
   void removeCard(std::string id);
 
   //------------------------------------------------------------------------------------------------------------------
-  // search the pile for a card with a given id
+  // searches the pile for a card with a given id
   //
   // @param id, the id of the card that should found
   //
@@ -62,19 +62,19 @@ public:
   Card* searchCard(std::string id) const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // return the pile of cards
+  // returns the pile of cards
   //
   // @return a vector of card pointers
   //
   std::vector<Card*> getPile() const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // remove the top/beginning card of the pile
+  // removes the top/beginning card of the pile
   //
   void removeTopCard();
 
   //------------------------------------------------------------------------------------------------------------------
-  // remove the bottom/end card of the pile
+  // removes the bottom/end card of the pile
   //
   void removeEndCard();
 

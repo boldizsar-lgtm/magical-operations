@@ -33,28 +33,29 @@ public:
   virtual std::string getType() const = 0;
 
   //------------------------------------------------------------------------------------------------------------------
-  // return the 5 letter id of the card as a string
+  // returns the 5 letter id of the card as a string
   //
   // @return "ANGRT", if used on the Angry Rat card
   //
   std::string getId() const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // return the name of the card as a string
+  // returns the name of the card as a string
   //
   // @return "Angry Rat", if used on the card with the id ANGRT
   //
   std::string getName() const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // return the mana cost of the card
+  // returns the mana cost of the card
   //
   // @return -1, if the mana cost is x, or the normal integer if the mana cost is anything else
   //          (we saved x spells as -1 cost)
+  //
   int getManaCost() const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // return the the mana cost as a string
+  // returns the the mana cost as a string, for the card prints
   //
   // @return "01", if the mana cost is 1
   //         "10", if the mana cost is 10
@@ -63,7 +64,7 @@ public:
   std::string getManaCostString() const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // return the the mana cost as a string
+  // returns the the mana cost as a string, for the info command
   //
   // @return "1", if the mana cost is 1
   //         "10", if the mana cost is 10
