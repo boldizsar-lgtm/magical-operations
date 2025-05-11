@@ -139,6 +139,11 @@ int Creature::getBaseHealth() const
   return base_health_;
 }
 
+int Creature::getCurrentHealth() const
+{
+  return current_health_;
+}
+
 std::vector<std::shared_ptr<Trait>> Creature::getBaseTraits() const
 {
   return base_traits_;

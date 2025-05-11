@@ -49,6 +49,16 @@ std::vector<Creature*> Zone::getSlots() const
   return slots_;
 }
 
+int Zone::searchCreature(Creature* creature)
+{
+  for (int slot = 0; slot < 7; slot++)
+  {
+    if (creature == slots_[slot])
+      return slot + 1;
+  }
+  return -1;
+}
+
 void Zone::turnZoneEnteredOff()
 {
   for (auto creature : slots_)

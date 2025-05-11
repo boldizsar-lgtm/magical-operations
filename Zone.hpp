@@ -33,6 +33,8 @@ public:
     Creature* getCreature(int column) const;
     std::vector<Creature*> getSlots() const;
     
+    
+    int searchCreature(Creature* creature);
     void turnZoneEnteredOff();
 };
 

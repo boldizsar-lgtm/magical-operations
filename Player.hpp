@@ -56,6 +56,7 @@ public:
   void playCreature(Card* card, std::string field_slot);
   void addToFirstEmptyField(Creature* creature);
   void moveToGraveyard(char zone, int column);
+  void moveToGraveyard(Creature* creature);
   void removeCardFromPile(PileType pile_type, std::string id);
   void moveToBattle(std::string field_slot, std::string battle_slot);
   void moveToField(int battle_column);

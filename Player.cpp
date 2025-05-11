@@ -132,6 +132,23 @@ void Player::moveToGraveyard(char zone, int column)
   }
 }
 
+void Player::moveToGraveyard(Creature* creature)
+{
+  // Add creature to graveyard
+  graveyard_.addCardTop(creature);
+
+  // Remove Creature from wherever it is
+  int column = 0;
+  column = field_zone_.searchCreature(creature);
+  if (column == -1)
+  {
+    battle_zone_.searchCreature(creature);
+    battle_zone_.removeCreature(column);
+  }
+  else
+    field_zone_.removeCreature(column);
+}
+
 void Player::playCreature(Card* card, std::string field_slot)
 {
   // user Binary Worrier, stackoverflow comment
@@ -233,7 +250,7 @@ void Player::moveToHand(Creature* creature)
 {
   // Set values to default values
   *creature = *dynamic_cast<Creature*>(Config::getInstance().getCard(creature->getId()));
-  
+
   hand_.addCardEnd(creature);
   graveyard_.removeCard(creature->getId());
 }

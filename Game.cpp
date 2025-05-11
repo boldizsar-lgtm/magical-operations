@@ -451,6 +451,51 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
   return first_attacker_role;
 }
 
+void Game::processTurnTraits()
+{
+  for (auto& creature : current_player_->getZone(ZoneType::FIELD).getSlots())
+  {
+    if (creature != nullptr)
+    {
+      int current_health = creature->getCurrentHealth();
+      int base_health = creature->getBaseHealth();
+
+      if (creature->creatureHasTrait("Poisoned"))
+      {
+        creatureTakesDamage(1, creature, current_player_);
+        std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
+      }
+
+      if (creature->creatureHasTrait("Regenerate") && (round_count_ % 2) == 1 && current_health < base_health)
+      {
+        creature->setCurrentHealth(base_health);
+        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
+      }
+    }
+  }
+
+  // TODO: nothing todo, just wondering if this could even happen in battle stage here?
+  for (auto& creature : current_player_->getZone(ZoneType::BATTLE).getSlots())
+  {
+    if (creature != nullptr)
+    {
+      int current_health = creature->getCurrentHealth();
+      int base_health = creature->getBaseHealth();
+
+      if (creature->creatureHasTrait("Poisoned"))
+      {
+        creatureTakesDamage(1, creature, current_player_);
+        std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
+      }
+
+      if (creature->creatureHasTrait("Regenerate") && round_count_ % 2 == 1 && current_health < base_health)
+      {
+        creature->setCurrentHealth(base_health);
+        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
+      }
+    }
+  }
+}
 
 bool Game::startBattle(int column)
 {
@@ -508,17 +553,14 @@ void Game::processCommand(Command command)
   {
     //player ends their turn, the board is printed,
     current_player_->setDoneStatus(true);
+    processTurnTraits();
     printBoard();
-    //check poisoned
-    //check regenerate if round_counter is odd
-
     current_player_->setRedrawNotPossible();
   }
 
   if (command_type == CommandType::BATTLE)
   {
     processBattle(command);
-    
     current_player_->setRedrawNotPossible();
   }
 
@@ -655,6 +697,33 @@ Creature* Game::getCreatureFromFieldString(std::string field_string)
   Creature* creature = target_player->getZone(zone_type).getCreature(column);
 
   return creature;
+}
+
+int Game::calculateXMana(Spell* spell_card, std::string second_param)
+{
+  Creature* target;
+
+  if (spell_card->getId() == "MEMRY")
+  {
+    target = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(second_param));
+
+    float mana_cost = target->getManaCost() / 2;
+    return (int)(mana_cost + 1);
+  }
+
+  target = getCreatureFromFieldString(second_param);
+
+  if (spell_card->getId() == "CLONE")
+  {
+    float mana_cost = target->getManaCost() / 2;
+    return (int)(mana_cost + 1);
+  }
+
+  if (spell_card->getId() == "CURSE")
+  {
+    int mana_cost = target->getManaCost() + 1;
+    return mana_cost;
+  }
 }
 
 void Game::printHelp() const
@@ -969,33 +1038,6 @@ void Game::processSpell(Command& command)
   std::cout << Config::getInstance().getMessage(card_info_string) << std::endl;
 }
 
-int Game::calculateXMana(Spell* spell_card, std::string second_param)
-{
-  Creature* target;
-
-  if (spell_card->getId() == "MEMRY")
-  {
-    target = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(second_param));
-
-    float mana_cost = target->getManaCost() / 2;
-    return (int)(mana_cost + 1);
-  }
-
-  target = getCreatureFromFieldString(second_param);
-
-  if (spell_card->getId() == "CLONE")
-  {
-    float mana_cost = target->getManaCost() / 2;
-    return (int)(mana_cost + 1);
-  }
-
-  if (spell_card->getId() == "CURSE")
-  {
-    int mana_cost = target->getManaCost() + 1;
-    return mana_cost;
-  }
-}
-
 void Game::executeSpell(Command& command)
 {
   //Syntax: spell <HAND_CARD_ID> <OPTIONAL_ADDITIONAL_PARAMETER>
@@ -1052,6 +1094,17 @@ void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type
   if (target_player->getZone(zone_type).getCreature(column)->getHealth() < 1) //the if condition works poperly
     target_player->moveToGraveyard(zone_type, column); //this method doesnt work
 }
+
+void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
+{
+  //target creature takes damage
+  creature->changeCurrentHealth(- amount);
+
+  //check if the creature would die and move it to the graveyard if it does
+  if (creature->getHealth() < 1) //the if condition works poperly
+    owner->moveToGraveyard(creature); //this method doesnt work
+}
+
 
 void Game::executeBattleCry()
 {
@@ -1139,18 +1192,9 @@ void Game::executeDeathCurse(std::string target)
 
 void Game::executeShock(std::string target)
 {
-  //determine if it targets opponent's creatures, or own creatures
-  Player* target_player = current_player_;
-  if (target.size() == 3)
-  {
-    target_player = opposing_player_;
-    target.erase(0, 1);
-  }
-  char zone_type = target.at(0);
-  int column = (target.at(1)) - '0';
-
-  //target creature takes 1 damage
-  creatureTakesDamage(1, target_player, zone_type, column);
+  Creature* creature = getCreatureFromFieldString(target);
+  
+  creatureTakesDamage(1, creature, current_player_);
 }
 
 void Game::executeMobilize(std::string target)

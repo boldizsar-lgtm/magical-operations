@@ -41,6 +41,7 @@ public:
   void printBaseTraitList() const;
   int getBaseAttack() const;
   int getBaseHealth() const;
+  int getCurrentHealth() const;
   std::vector<std::shared_ptr<Trait>> getBaseTraits() const;
   std::vector<std::shared_ptr<Trait>> getCurrentTraits() const;
   int getAttack() const;
