@@ -6,7 +6,6 @@
 
 Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible_{true},
                          done_{false}
-                         
 {
   Config& config = Config::getInstance();
   deck_ = config.getDeck(id);
@@ -19,7 +18,7 @@ Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible
   current_health_ = base_health_;
   current_mana_ = mana_pool_;
 
-  //draw 6 hand cards from the deck
+  //draw 7 hand cards from the deck
   for (int i = 0; i < 6; i++)
   {
     drawCard();

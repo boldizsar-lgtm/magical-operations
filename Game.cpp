@@ -791,7 +791,7 @@ void Game::processRedraw()
   if (!current_player_->getRedrawPossible())
     throw CommandError("E_REDRAW_DISABLED");
 
-  if (current_player_->getDeckSize() < 2)
+  if (current_player_->getHand().getSize() < 2)
     throw CommandError("E_REDRAW_NOT_ENOUGH_CARDS");
   
   current_player_->redrawHand();
