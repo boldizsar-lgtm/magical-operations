@@ -4,7 +4,7 @@
 
 #define ZONE_WIDTH (7)
 
-Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}, redraw_possible_{true},
+Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible_{true},
                          done_{false}
                          
 {
@@ -179,8 +179,6 @@ void Player::playCreature(Card* card, std::string field_slot)
 
 void Player::addToFirstEmptyField(Creature* creature)
 {
-  int column = 0;
-
   for (int slot = 0; slot < ZONE_WIDTH; slot++)
     if (field_zone_.getSlots()[slot] == nullptr)
       field_zone_.addCreature(creature, slot + 1);
@@ -335,9 +333,11 @@ const Zone& Player::getZone(char type) const
     return field_zone_;
 }
 
-const Zone& Player::getZone(ZoneType type) const
+const Zone& Player::getZone(std::string type) const
 {
-  if (type == ZoneType::BATTLE)
+  Utils::toUpper(type);
+
+  if (type == "BATTLE")
     return battle_zone_;
   else
     return field_zone_;

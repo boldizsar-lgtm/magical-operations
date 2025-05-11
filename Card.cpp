@@ -32,3 +32,12 @@ std::string Card::getManaCostString() const
   return mana_cost_string;
 }
 
+std::string Card::getManaCostStringInfo() const
+{
+  //x costed spells are saved with -1 mana cost
+  if (mana_cost_ == -1)
+    return "XX";
+
+  return std::to_string(mana_cost_);
+}
+

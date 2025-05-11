@@ -15,7 +15,6 @@ Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), def
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
   std::cout << Config::getInstance().getMessage("D_WELCOME") << std::endl;
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
-
 }
 
 
@@ -142,7 +141,7 @@ bool Game::startBattlePhase()
   {
     std::cout << "---------------------------------------- SLOT " << i;
     std::cout << " -----------------------------------------\n";
-    if (attacker_->getZone(ZoneType::BATTLE).isOccupied(i))
+    if (attacker_->getZone("BATTLE").isOccupied(i))
     {
       if (!startBattle(i))
         return false;
@@ -194,9 +193,9 @@ void Game::removeTemporaryCreatures(Player* player)
   //remove out of battle zone
   for (int i = 1; i <= ZONE_WIDTH; i++)
   {
-    if (player->getZone(ZoneType::BATTLE).isOccupied(i))
+    if (player->getZone("BATTLE").isOccupied(i))
     {
-      if (player->getZone(ZoneType::BATTLE).getCreature(i)->creatureHasTrait("Temporary"))
+      if (player->getZone("BATTLE").getCreature(i)->creatureHasTrait("Temporary"))
       {
         player->moveToGraveyard('B', i);
         zones_have_temporary = true;
@@ -207,9 +206,9 @@ void Game::removeTemporaryCreatures(Player* player)
   //remove out of field zone
   for (int i = 1; i <= ZONE_WIDTH; i++)
   {
-    if (player->getZone(ZoneType::FIELD).isOccupied(i))
+    if (player->getZone("FIELD").isOccupied(i))
     {
-      if (player->getZone(ZoneType::FIELD).getCreature(i)->creatureHasTrait("Temporary"))
+      if (player->getZone("FIELD").getCreature(i)->creatureHasTrait("Temporary"))
       {
         player->moveToGraveyard('F', i);
         zones_have_temporary = true;
@@ -225,9 +224,9 @@ void Game::returnCreaturesToField()
 {
   for (int i = 1; i <= ZONE_WIDTH; i++)
   {
-    if (attacker_->getZone(ZoneType::BATTLE).isOccupied(i))
+    if (attacker_->getZone("BATTLE").isOccupied(i))
       attacker_->moveToField(i);
-    if (defender_->getZone(ZoneType::BATTLE).isOccupied(i))
+    if (defender_->getZone("BATTLE").isOccupied(i))
       defender_->moveToField(i);
   }
 }
@@ -237,10 +236,10 @@ bool Game::directHitBattle(int column)
 {
   int amount{0};
 
-  amount = defender_->getCurrentHealth() - attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack();
+  amount = defender_->getCurrentHealth() - attacker_->getZone("BATTLE").getCreature(column)->getAttack();
 
   //reduce defenders health
-  defender_->changeCurrentHealth((-attacker_->getZone(ZoneType::BATTLE).getCreature(column)->getAttack()));
+  defender_->changeCurrentHealth((-attacker_->getZone("BATTLE").getCreature(column)->getAttack()));
   std::cout << Config::getInstance().getMessage("I_DIRECT") << std::endl;
 
   //end condition DEFEAT reached
@@ -263,8 +262,8 @@ bool Game::creatureFight(int column)
   int amount{0};
   Player* opposing_creature_owner = defender_;
   Player* attacking_creature_owner = attacker_;
-  Creature* creature_1 = attacker_->getZone(ZoneType::BATTLE).getCreature(column);
-  Creature* creature_2 = defender_->getZone(ZoneType::BATTLE).getCreature(column);
+  Creature* creature_1 = attacker_->getZone("BATTLE").getCreature(column);
+  Creature* creature_2 = defender_->getZone("BATTLE").getCreature(column);
   Creature* empty_creature = nullptr;
   Role first_attacker_role = Role::ATTACKER;
   bool empty_trait;
@@ -453,7 +452,7 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
 
 void Game::processTurnTraits()
 {
-  for (auto& creature : current_player_->getZone(ZoneType::FIELD).getSlots())
+  for (auto& creature : current_player_->getZone("FIELD").getSlots())
   {
     if (creature != nullptr)
     {
@@ -475,7 +474,7 @@ void Game::processTurnTraits()
   }
 
   // TODO: nothing todo, just wondering if this could even happen in battle stage here?
-  for (auto& creature : current_player_->getZone(ZoneType::BATTLE).getSlots())
+  for (auto& creature : current_player_->getZone("BATTLE").getSlots())
   {
     if (creature != nullptr)
     {
@@ -499,10 +498,8 @@ void Game::processTurnTraits()
 
 bool Game::startBattle(int column)
 {
-  bool continue_battle{true};
-
   //Direct hit battle
-  if (!defender_->getZone(ZoneType::BATTLE).isOccupied(column))
+  if (!defender_->getZone("BATTLE").isOccupied(column))
   {
     //returns false if end condition DEFEAT is reached
     if(!directHitBattle(column))
@@ -516,9 +513,9 @@ bool Game::startBattle(int column)
     return false;
 
   //move dead creatures to graveyard (different from temporary creatures)
-  if (attacker_->getZone(ZoneType::BATTLE).getCreature(column)->creatureHasTrait("Temporary"))
+  if (attacker_->getZone("BATTLE").getCreature(column)->creatureHasTrait("Temporary"))
     attacker_->moveToGraveyard('B',column);
-  if (defender_->getZone(ZoneType::BATTLE).getCreature(column)->creatureHasTrait("Temporary"))
+  if (defender_->getZone("BATTLE").getCreature(column)->creatureHasTrait("Temporary"))
     defender_->moveToGraveyard('B',column);
 
   return true;
@@ -677,7 +674,6 @@ Creature* Game::getCreatureFromFieldString(std::string field_string)
 {
   // Handle field parameter
   Player* target_player = current_player_;
-  ZoneType zone_type;
 
   if (field_string.at(0) == 'O')
   {
@@ -687,11 +683,8 @@ Creature* Game::getCreatureFromFieldString(std::string field_string)
     field_string.erase(field_string.begin());
   }
 
-  if (field_string.at(0) == 'F')
-    zone_type = ZoneType::FIELD;
-  else
-    zone_type = ZoneType::BATTLE;
-
+  char zone_type = field_string.at(0);
+  
   int column = (field_string.at(1)) - '0';
 
   Creature* creature = target_player->getZone(zone_type).getCreature(column);
@@ -719,7 +712,7 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
     return (int)(mana_cost + 1);
   }
 
-  if (spell_card->getId() == "CURSE")
+  else //(spell_card->getId() == "CURSE")
   {
     int mana_cost = target->getManaCost() + 1;
     return mana_cost;
@@ -766,8 +759,8 @@ void Game::printInfo(Command& command) const
   std::cout << Config::getInstance().getMessage("D_BORDER_INFO") << std::endl;
 
   // Print Card info
-  std::cout << card->getName() << " [" << card->getId() << "] (" << card->getManaCost() << " mana)" << std::endl;
-  std::cout << "Type: " << card->getType() << std::endl;
+  std::cout << card->getName() << " [" << card->getId() << "] (" << card->getManaCostStringInfo() << " mana)";
+  std::cout << std::endl << "Type: " << card->getType() << std::endl;
 
   // Print card specifics
   if (card->getType() == "Creature")
@@ -860,7 +853,7 @@ void Game::processBattle(Command& command)
     throw CommandError("E_FIELD_EMPTY");
 
   // Check if creature entered board the same round and does not have haste
-  Creature* creature = current_player_->getZone(ZoneType::FIELD).getCreature(field_slot.at(1) - '0');
+  Creature* creature = current_player_->getZone("FIELD").getCreature(field_slot.at(1) - '0');
   bool has_haste = creature->creatureHasTrait("Haste");
   bool has_challenger = creature->creatureHasTrait("Challenger");
 

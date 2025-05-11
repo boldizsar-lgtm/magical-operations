@@ -15,12 +15,11 @@ enum class ZoneType
 class Zone
 {
 private:
-    ZoneType type_; //compiler warning that this isnt used, we could remove it
     std::vector<Creature*> slots_;
 
 public:
     // Constructor, Copy-Assignment-Operator, Destructor
-    Zone(ZoneType type) : type_{type}, slots_(7, nullptr) {}
+    Zone() : slots_(7, nullptr) {}
     Zone(Zone&) = default;
     ~Zone();
 

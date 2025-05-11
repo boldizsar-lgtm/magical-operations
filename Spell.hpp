@@ -29,11 +29,34 @@ public:
   Spell(Spell&) = default;
   ~Spell() = default;
 
-  //Method
-  std::string getType() const override;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // prints one of the four lines required to display a single card.
+  //
+  // @param row - an integer between 1 and 4, dictating which of the four lines should be printed
+  //
   void printCardLine(int row) const override;
 
+  //------------------------------------------------------------------------------------------------------------------
+  // returns the type of the card as a string
+  //
+  // @return "Spell"
+  //
+  std::string getType() const override;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // returns the subtype of the spell as an enum class SpellType
+  //
+  // @return GENERAL, TARGET, or GRAVEYARD
+  //
   SpellType getSubtype() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // returns the effect of the spell
+  //
+  // @return "All of the player's own creatures on the board gain the Haste and Temporary traits, and their current
+  //          attack is increased by 3.", if used on the Battle Cry spell.
+  //
   std::string getEffect() const;
 };
 

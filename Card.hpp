@@ -15,7 +15,7 @@ public:
   Card(std::string id, int mana_cost, std::string name) : id_{id}, mana_cost_{mana_cost}, name_{name} {}
   Card(Card&) = default;
   virtual ~Card() = default;
-  
+
 
   //------------------------------------------------------------------------------------------------------------------
   // prints one of the four lines required to display a single card.
@@ -61,6 +61,15 @@ public:
   //         "XX", if the mana cost is x
   //
   std::string getManaCostString() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // return the the mana cost as a string
+  //
+  // @return "1", if the mana cost is 1
+  //         "10", if the mana cost is 10
+  //         "XX", if the mana cost is x
+  //
+  std::string getManaCostStringInfo() const;
 };
 
 #endif //CARD_HPP

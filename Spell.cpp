@@ -1,11 +1,6 @@
 #include "Spell.hpp"
 #include "Game.hpp"
 
-std::string Spell::getType() const
-{
-  return "Spell";
-}
-
 void Spell::printCardLine(int row) const
 {
   if (row == 1)
@@ -17,6 +12,11 @@ void Spell::printCardLine(int row) const
   else if (row == 4)
     std::cout << " _______ ";
 } 
+
+std::string Spell::getType() const
+{
+  return "Spell";
+}
 
 SpellType Spell::getSubtype() const
 {

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include "Utils.hpp"
 #include "CardPile.hpp"
 #include "Zone.hpp"
 
@@ -76,7 +77,7 @@ public:
   bool getRedrawPossible();
   bool getDoneStatus() const;
   const Zone& getZone(char type) const;
-  const Zone& getZone(ZoneType type) const;
+  const Zone& getZone(std::string type) const;
 
   void setRole(Role role);
   void switchRole();

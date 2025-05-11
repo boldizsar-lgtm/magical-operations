@@ -3,18 +3,9 @@
 
 #include <string>
 
-enum class TraitType
-{
-  PRE_BATTLE,
-  MID_BATTLE,
-  POST_BATTLE,
-  SPECIAL
-};
-
 class Trait
 {
 private:
-  TraitType type_;
   char id_;
   std::string name_;
 
@@ -24,9 +15,19 @@ public:
   Trait(Trait&) = default;
   ~Trait() = default;
 
-  //Methods
+  
+  //------------------------------------------------------------------------------------------------------------------
+  // returns the one letter id of the trait
+  //
+  // @return 'H', if used on Haste
+  //
   char getId() const;
-  TraitType getType() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // returns the name of the trait
+  //
+  // @return "Haste", if used on the trait with the id H
+  //
   std::string getName() const;
 };
 
