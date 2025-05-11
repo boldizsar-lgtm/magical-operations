@@ -15,13 +15,51 @@ public:
   Card(std::string id, int mana_cost, std::string name) : id_{id}, mana_cost_{mana_cost}, name_{name} {}
   Card(Card&) = default;
   virtual ~Card() = default;
+  
 
-  // Methods
+  //------------------------------------------------------------------------------------------------------------------
+  // prints one of the four lines required to display a single card.
+  //
+  // @param row - an integer between 1 and 4, dictating which of the four lines should be printed
+  //
   virtual void printCardLine(int row) const = 0;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // returns the type of the card as a string
+  //
+  // @return "Creature", if its a creature card
+  //         "Spell", if its a spell card
+  //
   virtual std::string getType() const = 0;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // return the 5 letter id of the card as a string
+  //
+  // @return "ANGRT", if used on the Angry Rat card
+  //
   std::string getId() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // return the name of the card as a string
+  //
+  // @return "Angry Rat", if used on the card with the id ANGRT
+  //
   std::string getName() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // return the mana cost of the card
+  //
+  // @return -1, if the mana cost is x, or the normal integer if the mana cost is anything else
+  //          (we saved x spells as -1 cost)
   int getManaCost() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // return the the mana cost as a string
+  //
+  // @return "01", if the mana cost is 1
+  //         "10", if the mana cost is 10
+  //         "XX", if the mana cost is x
+  //
   std::string getManaCostString() const;
 };
 
