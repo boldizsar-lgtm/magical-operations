@@ -145,7 +145,6 @@ bool Game::startBattlePhase()
     {
       if (!startBattle(i))
         return false;
-      //return creatures from battle zone to first available field slot
     }
   }
 
@@ -442,9 +441,10 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
     if (creature_1->creatureHasTrait("Lifesteal"))
     {
       //increase current health of attacking creature
-      std::cout << creature_1->getHealth();
       creature_1->changeCurrentHealth(2);
-      std::cout << creature_1->getHealth() << std::endl;
+      //if creatures health is now above zero it loses the temporary trait
+      if (creature_1->getHealth() > 0 && creature_1->creatureHasTrait("Temporary"))
+        creature_1->removeTrait("Temporary");
       std::cout << Config::getInstance().getMessage("I_LIFESTEAL") << std::endl;
     }
   }
