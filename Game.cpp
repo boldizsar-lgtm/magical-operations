@@ -1192,9 +1192,18 @@ void Game::executeDeathCurse(std::string target)
 
 void Game::executeShock(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
-  
-  creatureTakesDamage(1, creature, current_player_);
+  //determine if it targets opponent's creatures, or own creatures
+  Player* target_player = current_player_;
+  if (target.size() == 3)
+  {
+    target_player = opposing_player_;
+    target.erase(0, 1);
+  }
+  char zone_type = target.at(0);
+  int column = (target.at(1)) - '0';
+
+  //target creature takes 1 damage
+  creatureTakesDamage(1, target_player, zone_type, column);
 }
 
 void Game::executeMobilize(std::string target)
