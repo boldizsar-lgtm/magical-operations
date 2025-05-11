@@ -57,6 +57,7 @@ public:
   int getRound() const;
   void printBoard() const;
   bool startFinalPhase(std::string file_path);
+  Creature* getCreatureFromFieldString(std::string field_string);
   //bool checkEndConditions();
 
   // The different commands
@@ -68,6 +69,7 @@ public:
   void processBattle(Command& command);
   void processCreature(Command& command) const;
   void processSpell(Command& command);
+  int calculateXMana(Spell* spell_card, std::string second_param);
   void executeSpell(Command& command);
   void creatureTakesDamage(int  amount, Player* target_player, char zone_type, int column);
 

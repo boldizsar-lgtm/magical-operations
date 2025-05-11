@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "Zone.hpp"
 
+#define ZONE_WIDTH (7)
 
 Player::Player(int id) : id_{id}, field_zone_{ZoneType::FIELD}, battle_zone_{ZoneType::BATTLE}, redraw_possible_{true},
                          done_{false}
@@ -159,6 +160,15 @@ void Player::playCreature(Card* card, std::string field_slot)
   std::cout << Config::getInstance().getMessage(card_info_string) << std::endl; 
 }
 
+void Player::addToFirstEmptyField(Creature* creature)
+{
+  int column = 0;
+
+  for (int slot = 0; slot < ZONE_WIDTH; slot++)
+    if (field_zone_.getSlots()[slot] == nullptr)
+      field_zone_.addCreature(creature, slot + 1);
+}
+
 void Player::removeCardFromPile(PileType pile_type, std::string id)
 {
   if (pile_type == PileType::HAND)
@@ -217,6 +227,15 @@ void Player::moveToField(Creature* creature)
       return;
     }
   }
+}
+
+void Player::moveToHand(Creature* creature)
+{
+  // Set values to default values
+  *creature = *dynamic_cast<Creature*>(Config::getInstance().getCard(creature->getId()));
+  
+  hand_.addCardEnd(creature);
+  graveyard_.removeCard(creature->getId());
 }
 
 bool Player::isFieldSlotOccupied(std::string field_slot)

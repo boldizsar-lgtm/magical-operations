@@ -54,11 +54,13 @@ public:
   void printBattleZone() const;
   void redrawHand();
   void playCreature(Card* card, std::string field_slot);
+  void addToFirstEmptyField(Creature* creature);
   void moveToGraveyard(char zone, int column);
   void removeCardFromPile(PileType pile_type, std::string id);
   void moveToBattle(std::string field_slot, std::string battle_slot);
   void moveToField(int battle_column);
   void moveToField(Creature* creature);
+  void moveToHand(Creature* creature);
   bool isFieldSlotOccupied(std::string field_slot);
 
   std::string getRoleString() const;

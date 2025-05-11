@@ -66,6 +66,10 @@ void Creature::removeTrait(std::string trait)
   }
 }
 
+void Creature::removeFirstTrait()
+{
+  current_traits_.erase(current_traits_.begin());
+}
 
 std::string Creature::getType() const
 {
@@ -138,6 +142,11 @@ int Creature::getBaseHealth() const
 std::vector<std::shared_ptr<Trait>> Creature::getBaseTraits() const
 {
   return base_traits_;
+}
+
+std::vector<std::shared_ptr<Trait>> Creature::getCurrentTraits() const
+{
+  return current_traits_;
 }
 
 int Creature::getAttack() const
