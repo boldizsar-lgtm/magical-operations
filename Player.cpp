@@ -183,7 +183,7 @@ void Player::addToFirstEmptyField(Creature* creature)
   {
     if (field_zone_.getSlots()[slot] == nullptr)
     {
-      field_zone_.addCreature(creature, slot + 1);
+      field_zone_.switchCreaturePlace(creature, slot + 1);
       return;
     }
   }
