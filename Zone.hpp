@@ -31,6 +31,7 @@ public:
     void printZone(int format) const;
     bool isOccupied(int column) const;
     Creature* getCreature(int column) const;
+    std::vector<Creature*> getSlots() const;
     
     void turnZoneEnteredOff();
 };

@@ -39,10 +39,14 @@ bool Zone::isOccupied(int column) const
     return false;
 }
 
-
 Creature* Zone::getCreature(int column) const
 {
   return slots_[column - 1];
+}
+
+std::vector<Creature*> Zone::getSlots() const
+{
+  return slots_;
 }
 
 void Zone::turnZoneEnteredOff()
