@@ -68,7 +68,8 @@ void Creature::removeTrait(std::string trait)
 
 void Creature::removeFirstTrait()
 {
-  current_traits_.erase(current_traits_.begin());
+  if (current_traits_.size() > 0)
+    current_traits_.erase(current_traits_.begin());
 }
 
 std::string Creature::getType() const

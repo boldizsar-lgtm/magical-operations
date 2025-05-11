@@ -717,6 +717,8 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
     int mana_cost = target->getManaCost() + 1;
     return mana_cost;
   }
+
+  return 0;
 }
 
 void Game::printHelp() const
@@ -968,7 +970,8 @@ void Game::processSpell(Command& command)
   }
 
   if (sub_type != SpellType::GENERAL)
-    second_param = command.getParameters().at(1);
+    if(command.getParameters().size() > 1)
+      second_param = command.getParameters().at(1);
 
   if (sub_type == SpellType::TARGET)
   {

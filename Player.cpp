@@ -180,8 +180,13 @@ void Player::playCreature(Card* card, std::string field_slot)
 void Player::addToFirstEmptyField(Creature* creature)
 {
   for (int slot = 0; slot < ZONE_WIDTH; slot++)
+  {
     if (field_zone_.getSlots()[slot] == nullptr)
+    {
       field_zone_.addCreature(creature, slot + 1);
+      return;
+    }
+  }
 }
 
 void Player::removeCardFromPile(PileType pile_type, std::string id)
