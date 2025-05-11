@@ -155,6 +155,7 @@ bool Game::startBattlePhase()
   removeTemporaryCreatures(attacker_);
   removeTemporaryCreatures(defender_);
 
+  //all surviving creatures return to the first free field slot
   returnCreaturesToField();
 
   //undying creatures come back
@@ -288,9 +289,6 @@ bool Game::creatureFight(int column)
 
   std::shared_ptr<Trait> temporary_trait;
 
-  //calculate remaining health/excess damage
-  amount = creature_2->getHealth() - creature_1->getAttack();
-
   //check if first attacking creature has brutal trait
   processBattleTraits(creature_1, creature_2, brutal, "Brutal");
 
@@ -300,12 +298,16 @@ bool Game::creatureFight(int column)
   //check if second creature has lifesteal and processes it
   processBattleTraits(creature_1, empty_creature, empty_trait, "Lifesteal");
 
+  //calculate remaining health/excess damage
+  amount = creature_2->getHealth() - creature_1->getAttack();
+
+  //decreasing creature health
+  creature_2->changeCurrentHealth(-creature_1->getAttack());
+
   //if no first strike trait is active and creatures health is below 0, creature gains temporary trait,
   //but battle continues
   if (amount <= 0)
   {
-    creature_2->setCurrentHealth(0);
-
     if (first_strike)
     {
       //end battle early
@@ -331,8 +333,7 @@ bool Game::creatureFight(int column)
     temporary_trait = Config::getInstance().getTrait('T');
     creature_2->addTrait(temporary_trait);
   }
-  else
-    creature_2->changeCurrentHealth(-creature_1->getAttack());
+
 
   //if second creature is dead because of first strike trait, battle does not continue
   if (continue_battle)
@@ -352,9 +353,6 @@ bool Game::creatureFight(int column)
       attacking_creature_owner = defender_;
     }
 
-    //calculate remaining health/excess damage
-    amount = creature_1->getHealth() - creature_2->getAttack();
-
     //check if second creature has brutal trait
     processBattleTraits(creature_2, creature_1, brutal, "Brutal");
 
@@ -364,9 +362,14 @@ bool Game::creatureFight(int column)
     //check if second creature has lifesteal and processes it
     processBattleTraits(creature_2, empty_creature, empty_trait, "Lifesteal");
 
+    //calculate remaining health/excess damage
+    amount = creature_1->getHealth() - creature_2->getAttack();
+
+    //decrease creature health
+    creature_1->changeCurrentHealth(-creature_2->getAttack());
+
     if (amount <= 0)
     {
-      creature_1->setCurrentHealth(0);
       temporary_trait = Config::getInstance().getTrait('T');
       creature_1->addTrait(temporary_trait);
       if (brutal)
@@ -379,8 +382,7 @@ bool Game::creatureFight(int column)
         }
       }
     }
-    else
-      creature_1->changeCurrentHealth(-creature_2->getAttack());
+
   }
 
   if (end_condition_ == EndCondition::DEFEAT)
