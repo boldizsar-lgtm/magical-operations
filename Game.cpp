@@ -986,10 +986,7 @@ void Game::processSpell(Command& command)
     // Check if the target slot has a creature
     if (second_param.at(0) == 'O')
     {
-      // Remove the 'O'
-      second_param.erase(second_param.begin());
-
-      if (opposing_player_->isFieldSlotOccupied(second_param) == false)
+      if (opposing_player_->isFieldSlotOccupied(second_param.substr(1)) == false)
         throw CommandError("E_TARGET_EMPTY");
     }
     else
