@@ -236,10 +236,10 @@ bool Game::directHitBattle(int column)
 {
   int amount{0};
 
-  amount = defender_->getCurrentHealth() - attacker_->getZone("BATTLE").getCreature(column)->getAttack();
+  amount = defender_->getCurrentHealth() - attacker_->getZone("BATTLE").getCreature(column)->getCurrentAttack();
 
   //reduce defenders health
-  defender_->changeCurrentHealth((-attacker_->getZone("BATTLE").getCreature(column)->getAttack()));
+  defender_->changeCurrentHealth((-attacker_->getZone("BATTLE").getCreature(column)->getCurrentAttack()));
   std::cout << Config::getInstance().getMessage("I_DIRECT") << std::endl;
 
   //end condition DEFEAT reached
@@ -298,10 +298,10 @@ bool Game::creatureFight(int column)
   processBattleTraits(creature_1, empty_creature, empty_trait, "Lifesteal");
 
   //calculate remaining health/excess damage
-  amount = creature_2->getHealth() - creature_1->getAttack();
+  amount = creature_2->getCurrentHealth() - creature_1->getCurrentAttack();
 
   //decreasing creature health
-  creature_2->changeCurrentHealth(-creature_1->getAttack());
+  creature_2->changeCurrentHealth(-creature_1->getCurrentAttack());
 
   //if no first strike trait is active and creatures health is below 0, creature gains temporary trait,
   //but battle continues
@@ -362,10 +362,10 @@ bool Game::creatureFight(int column)
     processBattleTraits(creature_2, empty_creature, empty_trait, "Lifesteal");
 
     //calculate remaining health/excess damage
-    amount = creature_1->getHealth() - creature_2->getAttack();
+    amount = creature_1->getCurrentHealth() - creature_2->getCurrentAttack();
 
     //decrease creature health
-    creature_1->changeCurrentHealth(-creature_2->getAttack());
+    creature_1->changeCurrentHealth(-creature_2->getCurrentAttack());
 
     if (amount <= 0)
     {
@@ -422,7 +422,7 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
   {
     if (creature_1->creatureHasTrait("Brutal"))
     {
-      if ((creature_2->getHealth() - creature_1->getAttack()) <= 0)
+      if ((creature_2->getCurrentHealth() - creature_1->getCurrentAttack()) <= 0)
         std::cout << Config::getInstance().getMessage("I_BRUTAL") << std::endl;
       trait = true;
     }
@@ -443,7 +443,7 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
       //increase current health of attacking creature
       creature_1->changeCurrentHealth(2);
       //if creatures health is now above zero it loses the temporary trait
-      if (creature_1->getHealth() > 0 && creature_1->creatureHasTrait("Temporary"))
+      if (creature_1->getCurrentHealth() > 0 && creature_1->creatureHasTrait("Temporary"))
         creature_1->removeTrait("Temporary");
       std::cout << Config::getInstance().getMessage("I_LIFESTEAL") << std::endl;
     }
@@ -1086,7 +1086,7 @@ void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type
   target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(- amount);
 
   //check if the creature would die and move it to the graveyard if it does
-  if (target_player->getZone(zone_type).getCreature(column)->getHealth() < 1) //the if condition works poperly
+  if (target_player->getZone(zone_type).getCreature(column)->getCurrentHealth() < 1) //the if condition works poperly
     target_player->moveToGraveyard(zone_type, column); //this method doesnt work
 }
 
@@ -1096,7 +1096,7 @@ void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
   creature->changeCurrentHealth(- amount);
 
   //check if the creature would die and move it to the graveyard if it does
-  if (creature->getHealth() < 1) //the if condition works poperly
+  if (creature->getCurrentHealth() < 1) //the if condition works poperly
     owner->moveToGraveyard(creature); //this method doesnt work
 }
 
@@ -1288,7 +1288,7 @@ void Game::executeBloodlust(std::string target)
   creature->addTrait(Config::getInstance().getTrait('L'));
 
   //its health is set to half its current health (rounded up)
-  int new_health = creature->getHealth();
+  int new_health = creature->getCurrentHealth();
   if (new_health % 2 != 0)
     new_health++;
   new_health /= 2;

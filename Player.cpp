@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include "Zone.hpp"
 
+#define STARTING_HAND_SIZE (6)
 #define ZONE_WIDTH (7)
 
 Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible_{true},
@@ -19,7 +20,7 @@ Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible
   current_mana_ = mana_pool_;
 
   //draw 7 hand cards from the deck
-  for (int i = 0; i < 6; i++)
+  for (int i = 0; i < STARTING_HAND_SIZE; i++)
   {
     drawCard();
   }

@@ -135,6 +135,11 @@ int Creature::getBaseAttack() const
   return base_attack_;
 }
 
+int Creature::getCurrentAttack() const
+{
+  return current_attack_;
+}
+
 int Creature::getBaseHealth() const
 {
   return base_health_;
@@ -153,16 +158,6 @@ std::vector<std::shared_ptr<Trait>> Creature::getBaseTraits() const
 std::vector<std::shared_ptr<Trait>> Creature::getCurrentTraits() const
 {
   return current_traits_;
-}
-
-int Creature::getAttack() const
-{
-  return current_attack_;
-}
-
-int Creature::getHealth() const
-{
-  return current_health_;
 }
 
 std::string Creature::getAttackString() const
