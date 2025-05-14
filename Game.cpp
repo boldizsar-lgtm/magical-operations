@@ -460,17 +460,17 @@ void Game::processTurnTraits()
     {
       int current_health = creature->getCurrentHealth();
       int base_health = creature->getBaseHealth();
+      
+      if (creature->creatureHasTrait("Regenerate") && (round_count_ % 2) == 1 && current_health < base_health)
+      {
+        creature->setCurrentHealth(base_health);
+        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
+      }
 
       if (creature->creatureHasTrait("Poisoned"))
       {
         creatureTakesDamage(1, creature, current_player_);
         std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
-      }
-
-      if (creature->creatureHasTrait("Regenerate") && (round_count_ % 2) == 1 && current_health < base_health)
-      {
-        creature->setCurrentHealth(base_health);
-        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
       }
     }
   }
@@ -482,17 +482,17 @@ void Game::processTurnTraits()
     {
       int current_health = creature->getCurrentHealth();
       int base_health = creature->getBaseHealth();
+      
+      if (creature->creatureHasTrait("Regenerate") && round_count_ % 2 == 1 && current_health < base_health)
+      {
+        creature->setCurrentHealth(base_health);
+        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
+      }
 
       if (creature->creatureHasTrait("Poisoned"))
       {
         creatureTakesDamage(1, creature, current_player_);
         std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
-      }
-
-      if (creature->creatureHasTrait("Regenerate") && round_count_ % 2 == 1 && current_health < base_health)
-      {
-        creature->setCurrentHealth(base_health);
-        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
       }
     }
   }
