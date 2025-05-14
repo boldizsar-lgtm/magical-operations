@@ -1235,6 +1235,9 @@ void Game::executeFinalAct(std::string target)
   //The target creature gains brutal
   creature->addTrait(Config::getInstance().getTrait('B'));
 
+  //The target creature gains haste
+  creature->addTrait(Config::getInstance().getTrait('H'));
+
   //The target creature gains temporary
   creature->addTrait(Config::getInstance().getTrait('T'));
 
