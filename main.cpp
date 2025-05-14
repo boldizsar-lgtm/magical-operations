@@ -52,13 +52,13 @@ int main(int argc, char* argv[])
 
     if (!config.readGameConfig(argv[1]))
     {
-      std::cout << "[ERROR] Invalid file " << argv[1] << '.' << std::endl;
+      std::cout << "[ERROR] Invalid file (" << argv[1] << ")." << std::endl;
       return INVALID_FILE;
     }
 
     if (!config.readMessageConfig(argv[2]))
     {
-      std::cout << "[ERROR] Invalid file " << argv[2] << '.' << std::endl;
+      std::cout << "[ERROR] Invalid file (" << argv[2] << ")." << std::endl;
       return INVALID_FILE;
     }
 
