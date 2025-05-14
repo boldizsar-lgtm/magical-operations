@@ -4,7 +4,7 @@ Creature::Creature(std::string id, int mana_cost, std::string name, std::vector<
 int base_attack, int base_health) : Card(id, mana_cost, name), base_attack_(base_attack), base_health_(base_health),
                                     base_traits_(base_traits), current_attack_(base_attack),
                                     current_health_(base_health), current_traits_(base_traits),
-                                    entered_this_turn_(false)
+                                    entered_this_turn_(false), is_dead_(false)
 {
 }
 
@@ -16,6 +16,11 @@ void Creature::setCurrentAttack(int new_attack)
 void Creature::setCurrentHealth(int new_health)
 {
   current_health_ = new_health;
+}
+
+void Creature::setDeadStatus(bool status)
+{
+  is_dead_ = status;
 }
 
 void Creature::changeCurrentAttack(int amount)
@@ -143,6 +148,11 @@ int Creature::getCurrentAttack() const
 int Creature::getBaseHealth() const
 {
   return base_health_;
+}
+
+bool Creature::getDeadStatus()
+{
+  return is_dead_;
 }
 
 int Creature::getCurrentHealth() const

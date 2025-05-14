@@ -255,7 +255,7 @@ bool Game::directHitBattle(int column)
 
 
 bool Game::startAttack(Creature*& creature_1, Creature*& creature_2, bool first_strike, bool& continue_battle,
-Player*& attacking_creature_owner, bool& creature_dead)
+Player*& attacking_creature_owner)
 {
   int amount{0};
   Player* opposing_creature_owner = defender_;
@@ -277,7 +277,7 @@ Player*& attacking_creature_owner, bool& creature_dead)
   processBattleTraits(creature_1, creature_2, brutal, "Brutal");
 
   //check if second creature has lifesteal and processes it
-  processBattleTraits(creature_1, empty_creature, creature_dead, "Lifesteal");
+  processBattleTraits(creature_1, empty_creature, empty_trait, "Lifesteal");
 
   //check if first attacking creature has venomous trait and add poisoned trait
   processBattleTraits(creature_1, creature_2, empty_trait, "Venomous");
@@ -314,7 +314,7 @@ Player*& attacking_creature_owner, bool& creature_dead)
       brutal = false;
     }
 
-    creature_dead = true;
+    creature_2->setDeadStatus(true);
   }
   return true;
 }
@@ -330,8 +330,6 @@ bool Game::creatureFight(int column)
   Creature* creature_2 = defender_->getZone("BATTLE").getCreature(column);
   Role first_attacker_role = Role::ATTACKER;
   bool first_strike{false};
-  bool creature_1_dead{false};
-  bool creature_2_dead{false};
 
   //Fight between two creatures begins
   std::cout << Config::getInstance().getMessage("I_FIGHT") << std::endl;
@@ -342,7 +340,7 @@ bool Game::creatureFight(int column)
   //check which creatures have the first strike trait, change attack order accordingly (for the whole fight)
   first_attacker_role = processBattleTraits(creature_1, creature_2, first_strike, "First Strike");
 
-  startAttack(creature_1, creature_2, first_strike, continue_battle, attacking_creature_owner, creature_2_dead);
+  startAttack(creature_1, creature_2, first_strike, continue_battle, attacking_creature_owner);
 
   //if second creature is dead because of first strike trait, battle does not continue
   if (continue_battle)
@@ -360,7 +358,7 @@ bool Game::creatureFight(int column)
       attacking_creature_owner = defender_;
     }
 
-    startAttack(creature_2, creature_1, first_strike, continue_battle, attacking_creature_owner, creature_1_dead);
+    startAttack(creature_2, creature_1, first_strike, continue_battle, attacking_creature_owner);
   }
 
   if (end_condition_ == EndCondition::DEFEAT)
@@ -369,16 +367,16 @@ bool Game::creatureFight(int column)
 
   if (first_attacker_role == Role::ATTACKER)
   {
-    if (creature_2_dead)
+    if (creature_2->getDeadStatus())
       defender_->moveToGraveyard('B', column);
-    if (creature_1_dead)
+    if (creature_1->getDeadStatus())
       attacker_->moveToGraveyard('B', column);
   }
   else
   {
-    if (creature_2_dead)
+    if (creature_2->getDeadStatus())
       attacker_->moveToGraveyard('B', column);
-    if (creature_1_dead)
+    if (creature_1->getDeadStatus())
       defender_->moveToGraveyard('B', column);
   }
 
@@ -439,7 +437,7 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
       creature_1->changeCurrentHealth(2);
       //if creatures health is now above zero, the creature dead trait gets set to false
       if (creature_1->getCurrentHealth() > 0)
-        trait = false;
+        creature_1->setDeadStatus(false);
       std::cout << Config::getInstance().getMessage("I_LIFESTEAL") << std::endl;
     }
   }

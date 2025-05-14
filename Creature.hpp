@@ -20,6 +20,7 @@ protected:
   std::vector<std::shared_ptr<Trait>> current_traits_;
 
   bool entered_this_turn_;
+  bool is_dead_;
 
 public:
   //Constructor, Copy-Assignment-Operator, Destructor
@@ -41,6 +42,9 @@ public:
   // @param new_health, the new health value of the creature
   //
   void setCurrentHealth(int new_health);
+
+  //TODO: Header
+  void setDeadStatus(bool status);
 
   //------------------------------------------------------------------------------------------------------------------
   // adds "amount" to the creature's current attack (if amount is negative, it is subtracted)
@@ -92,6 +96,9 @@ public:
   //         "BCFH+" if the creature has Brutal, Challenger, First Strike, Haste, Lifesteal, Poisoned
   //
   std::string getTraitIds() const;
+
+  //TODO: HEader
+  bool getDeadStatus();
 
   //------------------------------------------------------------------------------------------------------------------
   // prints all namess of a creature's base_traits_

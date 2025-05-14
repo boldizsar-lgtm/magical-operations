@@ -50,7 +50,7 @@ public:
   void returnCreaturesToField();
   bool directHitBattle(int column);
   bool startAttack(Creature*& creature_1, Creature*& creature_2, bool first_strike, bool& continue_battle,
-  Player*& attacking_creature_owner, bool& creature_dead);
+  Player*& attacking_creature_owner);
   bool creatureFight(int column);
   Role processBattleTraits(Creature*& creature_1, Creature*& creature_2, bool& trait, std::string trait_name);
   void processTurnTraits();
