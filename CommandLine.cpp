@@ -54,10 +54,6 @@ Command CommandLine::readCommand()
 
   removeWhitespacesAtEnds(input);
 
-  //if input is EOF program determines like quit command
-  if(input.empty())
-    input = "QUIT";
-
   Utils::toUpper(input);
   std::vector<std::string> vectorised_string;
   stringToVector(input, vectorised_string, ' ');
