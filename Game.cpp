@@ -1289,7 +1289,7 @@ void Game::executeHeroicMemory(std::string target)
 {
   Creature* creature = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(target));
   current_player_->moveToField(creature);
-
+  
   //The target creature gains Haste
   creature->addTrait(Config::getInstance().getTrait('H'));
 
