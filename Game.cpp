@@ -171,11 +171,10 @@ bool Game::startBattlePhase()
 void Game::undeadCreaturesReenter(Player* player)
 {
   Creature* creature;
-  Card* card;
 
-  for (int i = 0; i < player->getGraveyard().getSize(); i++)
+  for (auto card : player->getGraveyard().getPile())
   {
-    if ((card = player->getGraveyard().getPile().at(i)) != nullptr)
+    if (card != nullptr)
     {
       creature = dynamic_cast<Creature*>(card);
       if (creature != nullptr && creature->creatureHasTrait("Undying"))
