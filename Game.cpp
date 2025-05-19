@@ -243,7 +243,6 @@ bool Game::directHitBattle(int column)
   if (amount <= 0)
   {
     end_condition_ = EndCondition::DEFEAT;
-    winner_id_ = attacker_->getId();
     return false;
   }
 
@@ -295,7 +294,6 @@ Player*& attacking_creature_owner)
       opposing_creature_owner->changeCurrentHealth(amount);
       if (opposing_creature_owner->getCurrentHealth() <= 0)
       {
-        winner_id_ = attacking_creature_owner->getId();
         end_condition_ = EndCondition::DEFEAT;
       }
       brutal = false;
@@ -599,6 +597,13 @@ bool Game::startFinalPhase(std::string file_path)
 
   case EndCondition::DEFEAT:
     std::cout << Config::getInstance().getMessage("D_END_PLAYER_DEFEATED") << std::endl;
+
+    //determine winner with who has more health left
+    if (player1_.getCurrentHealth() > player2_.getCurrentHealth())
+      winner_id_ = 1;
+    else if (player1_.getCurrentHealth() < player2_.getCurrentHealth())
+      winner_id_ = 2;
+
     break;
 
   case EndCondition::DRAW:
