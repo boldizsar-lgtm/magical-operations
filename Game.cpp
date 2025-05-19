@@ -169,20 +169,16 @@ void Game::undeadCreaturesReenter(Player* player)
 
   for (auto card : player->getGraveyard().getPile())
   {
-    if (card != nullptr)
-    {
       creature = dynamic_cast<Creature*>(card);
-      if (creature != nullptr && creature->creatureHasTrait("Undying"))
+      if (creature != nullptr)
       {
         // printing I_UNDYING only if creature was moved back to the field zone
-        if (player->moveToField(creature) && creature->creatureHasTrait("Undying"))
+        if (player->moveToField(creature))
         {
-          creature->removeTrait("Undying");
+          if (creature->creatureHasTrait("Undying"))
+            creature->removeTrait("Undying");
           std::cout << Config::getInstance().getMessage("I_UNDYING") << std::endl;
         }
-        else
-          std::cout << Config::getInstance().getMessage("I_UNDYING") << std::endl;
-      }
     }
   }
 }
