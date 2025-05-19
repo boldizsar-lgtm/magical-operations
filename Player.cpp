@@ -237,14 +237,10 @@ void Player::moveToField(Creature* creature)
   {
     if (!field_zone_.isOccupied(i))
     {
-      //move card from graveyard to field zone and remove undying trait if creature has this trait
+      //move card from graveyard to field zone
       field_zone_.addCreature(creature, i);
       creature->setEnter(true);
       graveyard_.removeCard(creature->getId());
-      if (creature->creatureHasTrait("Undying"))
-      {
-        creature->removeTrait("Undying");
-      }
       return;
     }
   }

@@ -181,6 +181,10 @@ void Game::undeadCreaturesReenter(Player* player)
       if (creature != nullptr && creature->creatureHasTrait("Undying"))
       {
         player->moveToField(creature);
+        if (creature->creatureHasTrait("Undying"))
+        {
+          creature->removeTrait("Undying");
+        }
         std::cout << Config::getInstance().getMessage("I_UNDYING") << std::endl;
       }
     }
