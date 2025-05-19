@@ -444,27 +444,6 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
 
 void Game::processTurnTraits()
 {
-  for (auto& creature : current_player_->getZone("FIELD").getSlots())
-  {
-    if (creature != nullptr)
-    {
-      int current_health = creature->getCurrentHealth();
-      int base_health = creature->getBaseHealth();
-      
-      if (creature->creatureHasTrait("Regenerate") && (round_count_ % 2) == 1 && current_health < base_health)
-      {
-        creature->setCurrentHealth(base_health);
-        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
-      }
-
-      if (creature->creatureHasTrait("Poisoned"))
-      {
-        creatureTakesDamage(1, creature, current_player_);
-        std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
-      }
-    }
-  }
-
   // TODO: nothing todo, just wondering if this could even happen in battle stage here?
   for (auto& creature : current_player_->getZone("BATTLE").getSlots())
   {
@@ -486,6 +465,28 @@ void Game::processTurnTraits()
       }
     }
   }
+  
+  for (auto& creature : current_player_->getZone("FIELD").getSlots())
+  {
+    if (creature != nullptr)
+    {
+      int current_health = creature->getCurrentHealth();
+      int base_health = creature->getBaseHealth();
+      
+      if (creature->creatureHasTrait("Regenerate") && (round_count_ % 2) == 1 && current_health < base_health)
+      {
+        creature->setCurrentHealth(base_health);
+        std::cout << Config::getInstance().getMessage("I_REGENERATE") << std::endl;
+      }
+
+      if (creature->creatureHasTrait("Poisoned"))
+      {
+        creatureTakesDamage(1, creature, current_player_);
+        std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
+      }
+    }
+  }
+
 }
 
 bool Game::startBattle(int column)
