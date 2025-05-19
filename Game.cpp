@@ -188,8 +188,6 @@ void Game::undeadCreaturesReenter(Player* player)
 
 void Game::removeTemporaryCreatures(Player* player)
 {
-  bool zones_have_temporary{false};
-
   //remove out of battle zone
   for (int i = 1; i <= ZONE_WIDTH; i++)
   {
@@ -198,7 +196,7 @@ void Game::removeTemporaryCreatures(Player* player)
       if (player->getZone("BATTLE").getCreature(i)->creatureHasTrait("Temporary"))
       {
         player->moveToGraveyard('B', i);
-        zones_have_temporary = true;
+        std::cout << Config::getInstance().getMessage("I_TEMPORARY") << std::endl;
       }
     }
   }
@@ -211,13 +209,11 @@ void Game::removeTemporaryCreatures(Player* player)
       if (player->getZone("FIELD").getCreature(i)->creatureHasTrait("Temporary"))
       {
         player->moveToGraveyard('F', i);
-        zones_have_temporary = true;
+        std::cout << Config::getInstance().getMessage("I_TEMPORARY") << std::endl;
       }
     }
   }
-
-  if (zones_have_temporary)
-    std::cout << Config::getInstance().getMessage("I_TEMPORARY") << std::endl;
+    
 }
 
 void Game::returnCreaturesToField()
