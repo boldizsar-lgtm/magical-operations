@@ -174,12 +174,12 @@ void Game::undeadCreaturesReenter(Player* player)
       creature = dynamic_cast<Creature*>(card);
       if (creature != nullptr && creature->creatureHasTrait("Undying"))
       {
-        player->moveToField(creature);
-        if (creature->creatureHasTrait("Undying"))
+        // printing I_UNDYING only if creature was moved back to the field zone
+        if (player->moveToField(creature) && creature->creatureHasTrait("Undying"))
         {
           creature->removeTrait("Undying");
+          std::cout << Config::getInstance().getMessage("I_UNDYING") << std::endl;
         }
-        std::cout << Config::getInstance().getMessage("I_UNDYING") << std::endl;
       }
     }
   }
@@ -303,6 +303,25 @@ Player*& attacking_creature_owner)
 }
 
 
+void Game::removeDeadCreatures(Role& first_attacker_role, Creature*& creature_1, Creature*& creature_2, int column)
+{
+  if (first_attacker_role == Role::ATTACKER)
+  {
+    if (creature_2->getDeadStatus())
+      defender_->moveToGraveyard('B', column);
+    if (creature_1->getDeadStatus())
+      attacker_->moveToGraveyard('B', column);
+  }
+  else
+  {
+    if (creature_2->getDeadStatus())
+      attacker_->moveToGraveyard('B', column);
+    if (creature_1->getDeadStatus())
+      defender_->moveToGraveyard('B', column);
+  }
+}
+
+
 bool Game::creatureFight(int column)
 {
   bool continue_battle{true};
@@ -349,20 +368,7 @@ bool Game::creatureFight(int column)
     return false;
 
 
-  if (first_attacker_role == Role::ATTACKER)
-  {
-    if (creature_2->getDeadStatus())
-      defender_->moveToGraveyard('B', column);
-    if (creature_1->getDeadStatus())
-      attacker_->moveToGraveyard('B', column);
-  }
-  else
-  {
-    if (creature_2->getDeadStatus())
-      attacker_->moveToGraveyard('B', column);
-    if (creature_1->getDeadStatus())
-      defender_->moveToGraveyard('B', column);
-  }
+  removeDeadCreatures(first_attacker_role, creature_1, creature_2, column);
 
   return true;
 }

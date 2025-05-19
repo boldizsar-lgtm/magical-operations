@@ -231,7 +231,7 @@ void Player::moveToField(int battle_column)
 }
 
 
-void Player::moveToField(Creature* creature)
+bool Player::moveToField(Creature* creature)
 {
   for (int i = 1; i <= 7; i++)
   {
@@ -241,9 +241,10 @@ void Player::moveToField(Creature* creature)
       field_zone_.addCreature(creature, i);
       creature->setEnter(true);
       graveyard_.removeCard(creature->getId());
-      return;
+      return true;
     }
   }
+  return false;
 }
 
 void Player::moveToHand(Creature* creature)

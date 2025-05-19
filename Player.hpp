@@ -61,7 +61,7 @@ public:
   void removeCardFromPile(PileType pile_type, std::string id);
   void moveToBattle(std::string field_slot, std::string battle_slot);
   void moveToField(int battle_column);
-  void moveToField(Creature* creature);
+  bool moveToField(Creature* creature);
   void moveToHand(Creature* creature);
   bool isFieldSlotOccupied(std::string field_slot);
 
