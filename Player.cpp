@@ -230,8 +230,7 @@ void Player::moveToField(int battle_column)
   moveToGraveyard('B', battle_column);
 }
 
-
-bool Player::moveToField(Creature* creature)
+void Player::moveToField(Creature* creature)
 {
   for (int i = 1; i <= 7; i++)
   {
@@ -241,10 +240,9 @@ bool Player::moveToField(Creature* creature)
       field_zone_.addCreature(creature, i);
       creature->setEnter(true);
       graveyard_.removeCard(creature->getId());
-      return true;
+      return;
     }
   }
-  return false;
 }
 
 void Player::moveToHand(Creature* creature)
@@ -267,6 +265,34 @@ bool Player::isFieldSlotOccupied(std::string field_slot)
     return battle_zone_.isOccupied(zone_column);
   else
     return field_zone_.isOccupied(zone_column);
+}
+
+bool Player::isZoneFull(char zone_type)
+{
+  int creature_amount = 0;
+
+  if (zone_type == 'F')
+  {
+    for (int slot = 1; slot <= ZONE_WIDTH; slot++)
+    {
+      if (field_zone_.isOccupied(slot))
+        creature_amount++;
+    }
+  }
+
+  else if (zone_type == 'B')
+  {
+    for (int slot = 1; slot <= ZONE_WIDTH; slot++)
+    {
+      if (battle_zone_.isOccupied(slot))
+        creature_amount++;
+    }
+  }
+
+  if (creature_amount == ZONE_WIDTH)
+    return true;
+  else
+    return false;
 }
 
 std::string Player::getRoleString() const

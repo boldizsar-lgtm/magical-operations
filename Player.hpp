@@ -61,9 +61,10 @@ public:
   void removeCardFromPile(PileType pile_type, std::string id);
   void moveToBattle(std::string field_slot, std::string battle_slot);
   void moveToField(int battle_column);
-  bool moveToField(Creature* creature);
+  void moveToField(Creature* creature);
   void moveToHand(Creature* creature);
   bool isFieldSlotOccupied(std::string field_slot);
+  bool isZoneFull(char zone_type);
 
   std::string getRoleString() const;
   int getCurrentHealth() const;
