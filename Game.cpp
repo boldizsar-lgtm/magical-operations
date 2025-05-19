@@ -261,14 +261,8 @@ Player*& attacking_creature_owner)
   bool brutal{false};
 
   //switch who owns first opposing creature after first strike check
-  if (attacking_creature_owner->getId() == 1)
-  {
-    opposing_creature_owner = &player2_;
-  }
-  else
-  {
-    opposing_creature_owner = &player1_;
-  }
+  if (attacking_creature_owner == opposing_creature_owner)
+    opposing_creature_owner = attacker_;
 
   //check if first attacking creature has brutal trait
   processBattleTraits(creature_1, creature_2, brutal, "Brutal");
@@ -303,10 +297,6 @@ Player*& attacking_creature_owner)
       {
         winner_id_ = attacking_creature_owner->getId();
         end_condition_ = EndCondition::DEFEAT;
-
-        //TODO: (idk if second attack should still happen) if first strike defeats the opposing player return
-        // if (first_strike)
-        //   return false;
       }
       brutal = false;
     }
@@ -319,8 +309,6 @@ Player*& attacking_creature_owner)
 
 bool Game::creatureFight(int column)
 {
-  //TODO: maybe split this function into to attacks with parameter int attack (1 or 2)??
-
   bool continue_battle{true};
   Player* attacking_creature_owner = attacker_;
   Creature* creature_1 = attacker_->getZone("BATTLE").getCreature(column);
@@ -465,7 +453,7 @@ void Game::processTurnTraits()
       }
     }
   }
-  
+
   for (auto& creature : current_player_->getZone("FIELD").getSlots())
   {
     if (creature != nullptr)
