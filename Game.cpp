@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include <fstream>
+#include <cmath>
 
 #define ZONE_WIDTH (7)
 
@@ -685,24 +686,18 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
   {
     target = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(second_param));
 
-    float mana_cost = target->getManaCost() / 2;
+    float mana_cost = (float)(target->getManaCost()) / 2.0;
 
-    if (mana_cost > (int)(mana_cost))
-      mana_cost = (int)(mana_cost + 1);
-
-    return (int)(mana_cost);
+    return (int)(ceil(mana_cost));
   }
 
   target = getCreatureFromFieldString(second_param);
 
   if (spell_card->getId() == "CLONE")
   {
-    float mana_cost = target->getManaCost() / 2;
+    float mana_cost = (float)(target->getManaCost()) / 2.0;
 
-    if (mana_cost > (int)(mana_cost))
-      mana_cost = (int)(mana_cost + 1);
-
-    return (int)(mana_cost);
+    return (int)(ceil(mana_cost));
   }
 
   else //(spell_card->getId() == "CURSE")
