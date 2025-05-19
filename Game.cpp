@@ -690,7 +690,11 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
     target = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(second_param));
 
     float mana_cost = target->getManaCost() / 2;
-    return (int)(mana_cost + 1);
+
+    if (mana_cost > (int)(mana_cost))
+      mana_cost = (int)(mana_cost + 1);
+
+    return (int)(mana_cost);
   }
 
   target = getCreatureFromFieldString(second_param);
@@ -698,7 +702,11 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
   if (spell_card->getId() == "CLONE")
   {
     float mana_cost = target->getManaCost() / 2;
-    return (int)(mana_cost + 1);
+
+    if (mana_cost > (int)(mana_cost))
+      mana_cost = (int)(mana_cost + 1);
+
+    return (int)(mana_cost);
   }
 
   else //(spell_card->getId() == "CURSE")
@@ -1289,7 +1297,7 @@ void Game::executeHeroicMemory(std::string target)
 {
   Creature* creature = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(target));
   current_player_->moveToField(creature);
-  
+
   //The target creature gains Haste
   creature->addTrait(Config::getInstance().getTrait('H'));
 
