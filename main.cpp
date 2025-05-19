@@ -67,8 +67,6 @@ int main(int argc, char* argv[])
     bool continue_game = true;
     while (continue_game)
     {
-      try
-      {
         continue_game = game.startRound();
         if (!continue_game)
           break;
@@ -80,12 +78,6 @@ int main(int argc, char* argv[])
         continue_game = game.startBattlePhase();
         if (!continue_game)
           break;
-      }
-      catch(CommandError& e)
-      {
-        //TODO: do we need this here?
-        std::cout << e.what() << std::endl;
-      }
     }
 
     //start final phase and check if written to file

@@ -102,8 +102,6 @@ bool Game::startSetupPhase()
   if (doCommandLoop(cli) == false)
     return false;
 
-  //TODO: check traits?
-
   return true;
 }
 
@@ -128,8 +126,6 @@ bool Game::doCommandLoop(CommandLine& cli)
     }
   }
 
-  //TODO: check refresh trait for creatures of current player, poisoned
-
   return true;
 }
 
@@ -151,7 +147,6 @@ bool Game::startBattlePhase()
 
   std::cout << Config::getInstance().getMessage("D_BORDER_BATTLE_END") << '\n';
 
-//TODO: besser strukturieren? -> processTraits(Player* player, Phase game_phase, char trait_type)
   removeTemporaryCreatures(attacker_);
   removeTemporaryCreatures(defender_);
 

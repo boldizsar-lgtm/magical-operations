@@ -7,9 +7,6 @@ void CardPile::createCard(std::string id)
   Card* card = Config::getInstance().getCard(id);
   Card* new_card;
 
-  //TODO: throw exeption if allocation failed
-  //alternatives for this code: implement copy constructor Card(const Card&) accordingly OR use std::unique_ptr
-
   //creating deep copy of a card object from the map and saving it to a card pile
   if(card != nullptr)
   {
@@ -22,9 +19,7 @@ void CardPile::createCard(std::string id)
         new_card = new Creature(*dynamic_cast<Creature*>(card));
     }
 
-    if (new_card)
-      pile_.push_back(new_card);
-    //TODO: else throw exeption
+    pile_.push_back(new_card);
   }
 }
 
@@ -56,9 +51,6 @@ void CardPile::removeCard(std::string id)
     }
     index++;
   }
-
-  //TODO: throw error if card is not found?
-
 }
 
 Card* CardPile::searchCard(std::string id) const

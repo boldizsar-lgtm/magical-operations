@@ -43,7 +43,11 @@ public:
   //
   void setCurrentHealth(int new_health);
 
-  //TODO: Header
+  //------------------------------------------------------------------------------------------------------------------
+  // sets the creature's dead status to status
+  //
+  // @param status, the new dead status
+  //
   void setDeadStatus(bool status);
 
   //------------------------------------------------------------------------------------------------------------------
@@ -97,7 +101,11 @@ public:
   //
   std::string getTraitIds() const;
 
-  //TODO: HEader
+  //------------------------------------------------------------------------------------------------------------------
+  // returns dead status of the creature
+  //
+  // @return dead_status_ member variable
+  //
   bool getDeadStatus();
 
   //------------------------------------------------------------------------------------------------------------------
