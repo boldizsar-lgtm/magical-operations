@@ -327,6 +327,9 @@ bool Game::creatureFight(int column)
   //check which creatures have the first strike trait, change attack order accordingly (for the whole fight)
   first_attacker_role = processBattleTraits(creature_1, creature_2, first_strike, "First Strike");
 
+  if (first_attacker_role == Role::DEFENDER)
+    attacking_creature_owner = defender_;
+
   startAttack(creature_1, creature_2, first_strike, continue_battle, attacking_creature_owner);
 
   //if second creature is dead because of first strike trait, battle does not continue
