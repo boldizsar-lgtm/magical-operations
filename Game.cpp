@@ -643,22 +643,22 @@ bool Game::startFinalPhase(std::string file_path)
   return true;
 }
 
-Creature* Game::getCreatureFromFieldString(std::string field_string)
+Creature* Game::getCreatureFromInputString(std::string input_string)
 {
   // Handle field parameter
   Player* target_player = current_player_;
 
-  if (field_string.at(0) == 'O')
+  if (input_string.at(0) == 'O')
   {
     target_player = opposing_player_;
 
     // Remove the 'O'
-    field_string.erase(field_string.begin());
+    input_string.erase(input_string.begin());
   }
 
-  char zone_type = field_string.at(0);
+  char zone_type = input_string.at(0);
   
-  int column = (field_string.at(1)) - '0';
+  int column = (input_string.at(1)) - '0';
 
   Creature* creature = target_player->getZone(zone_type).getCreature(column);
 
@@ -678,7 +678,7 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
     return static_cast<int>(ceil(mana_cost));
   }
 
-  target = getCreatureFromFieldString(second_param);
+  target = getCreatureFromInputString(second_param);
 
   if (spell_card->getId() == "CLONE")
   {
@@ -1130,7 +1130,7 @@ void Game::executeFireball()
 
 void Game::executeClone(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   Creature* clone = new Creature(*creature);
 
@@ -1142,14 +1142,14 @@ void Game::executeClone(std::string target)
 
 void Game::executeDeathCurse(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   creature->addTrait(Config::getInstance().getTrait('T'));
 }
 
 void Game::executeShock(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //target creature takes 1 damage
    creature->changeCurrentHealth(SHOCK_DAMAGE);
@@ -1157,7 +1157,7 @@ void Game::executeShock(std::string target)
 
 void Game::executeMobilize(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //The target creature gains haste
   creature->addTrait(Config::getInstance().getTrait('H'));
@@ -1168,7 +1168,7 @@ void Game::executeMobilize(std::string target)
 
 void Game::executeRapidRush(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //The target creature gains first strike
   creature->addTrait(Config::getInstance().getTrait('F'));
@@ -1182,7 +1182,7 @@ void Game::executeRapidRush(std::string target)
 
 void Game::executeShield(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //its health increases by 2
   creature->changeCurrentHealth(SHIELD_HEALTH_GAIN);
@@ -1190,14 +1190,14 @@ void Game::executeShield(std::string target)
 
 void Game::executeAmputate(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   creature->removeFirstTrait();
 }
 
 void Game::executeFinalAct(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //The target creature gains brutal
   creature->addTrait(Config::getInstance().getTrait('B'));
@@ -1214,7 +1214,7 @@ void Game::executeFinalAct(std::string target)
 
 void Game::executeLoyalty(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //The target creature gains haste
   creature->addTrait(Config::getInstance().getTrait('H'));
@@ -1225,7 +1225,7 @@ void Game::executeLoyalty(std::string target)
 
 void Game::executeZombify(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //The target creature gains venomous
   creature->addTrait(Config::getInstance().getTrait('V'));
@@ -1236,7 +1236,7 @@ void Game::executeZombify(std::string target)
 
 void Game::executeBloodlust(std::string target)
 {
-  Creature* creature = getCreatureFromFieldString(target);
+  Creature* creature = getCreatureFromInputString(target);
 
   //The target creature gains brutal
   creature->addTrait(Config::getInstance().getTrait('B'));
