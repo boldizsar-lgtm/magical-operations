@@ -178,7 +178,7 @@ void Player::addToFirstEmptyField(Creature* creature)
 {
   for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (field_zone_.getSlots()[column + 1] == nullptr)
+    if (field_zone_.getSlots()[column - 1] == nullptr)
     {
       field_zone_.switchCreaturePlace(creature, column);
       return;
