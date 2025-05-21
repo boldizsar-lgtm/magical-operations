@@ -73,7 +73,7 @@ public:
   Game(Game&) = default;
   ~Game() = default;
 
-  // Methods
+  
   bool startRound();
   bool startSetupPhase();
   bool doCommandLoop(CommandLine& cli);
@@ -96,37 +96,207 @@ public:
   bool startFinalPhase(std::string file_path);
   Creature* getCreatureFromFieldString(std::string field_string);
   int calculateXMana(Spell* spell_card, std::string second_param);
-  //bool checkEndConditions();
-
-  // The different commands
-  void printHelp() const;
-  void printInfo(Command& command) const;
-  void processRedraw();
-  void printStatus() const;
-  void changeBoardStatus();
-  void processBattle(Command& command);
-  void processCreature(Command& command) const;
-  void processSpell(Command& command);
-  void executeSpell(Command& command);
-  void creatureTakesDamage(int  amount, Player* target_player, char zone_type, int column);
+  void creatureTakesDamage(int amount, Player* target_player, char zone_type, int column);
   void creatureTakesDamage(int amount, Creature* creature, Player* owner);
 
-  //the differentt spells
+
+  ///COMMANDS
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the help command, printing all possible command options
+  // 
+  void printHelp() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the info command, printing information about a specific card
+  //
+  // @param command, a refrence to the Commmand class to refer to the user's command and parameters input
+  // 
+  void printInfo(Command& command) const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the redraw command
+  // 
+  void processRedraw();
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the status command, printing general information about the game
+  // 
+  void printStatus() const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // switches the board_active_ bool to true if its false, or vice versa
+  // 
+  void changeBoardStatus();
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the battle command
+  //
+  // @param command, a refrence to the Commmand class to refer to the user's command and parameters input
+  // 
+  void processBattle(Command& command);
+  
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the creature command, putting a creature on the plaayer's field zone
+  //
+  // @param command, a refrence to the Commmand class to refer to the user's command and parameters input
+  // 
+  void processCreature(Command& command) const;
+
+  //------------------------------------------------------------------------------------------------------------------
+  //TODO
+  void processSpell(Command& command);
+
+  //------------------------------------------------------------------------------------------------------------------
+  //TODO
+  void executeSpell(Command& command, Card* card, int mana_cost);
+
+
+  ///SPELLS
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Battle Cry
+  // 
   void executeBattleCry();
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Meteor
+  // 
   void executeMeteor();
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Fireball
+  // 
   void executeFireball();
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Meteor
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeClone(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Death Curse
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeDeathCurse(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Shock
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeShock(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Mobilize
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeMobilize(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Rapid Rush
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeRapidRush(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Shield
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeShield(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Amputate
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeAmputate(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Final Act
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeFinalAct(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Loyalty
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeLoyalty(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Zombify
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeZombify(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Bloodlust
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeBloodlust(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Heroic Memory
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeHeroicMemory(std::string target);
+
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the spell Revive
+  // 
+  // @param target, a string taken from the user's input with the format: O?(F|B)[1-7]
+  //                O signaling if it target's the opponent's board or own board
+  //                F or B signaling Field zone or Battlle zone
+  //                1-7 signaling the column of the zone
+  //
   void executeRevive(std::string target);
 };
 

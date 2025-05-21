@@ -13,6 +13,13 @@
 // (Borrowed from a1 and adjusted)
 //----------------------------------------------------------------------------------------------------------------------
 
+// The following trick to convert digit characters into digit integers
+// was something we found online and used a lot throughout the documents: 
+//
+// user Binary Worrier, stackoverflow comment
+// from: https://stackoverflow.com/a/439589
+// e.g.: int zone_column = field_slot.at(1) - '0';
+
 #include <iostream>
 #include "Config.hpp"
 #include "Game.hpp"

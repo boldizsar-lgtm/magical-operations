@@ -7,89 +7,53 @@ Command::Command(const std::vector<std::string>& input)
   std::string command_string = input.at(0);
   Utils::toUpper(command_string);
 
-  if (command_string == "QUIT")
+  if (input.size() == 1)
   {
-    if (input.size() == 1)
+    if (command_string == "QUIT")
       type_ = CommandType::QUIT;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "HELP")
-  {
-    if (input.size() == 1)
+    else if (command_string == "HELP")
       type_ = CommandType::HELP;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "GRAVEYARD")
-  {
-    if (input.size() == 1)
+    else if (command_string == "GRAVEYARD")
       type_ = CommandType::GRAVEYARD;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "BOARD")
-  {
-    if (input.size() == 1)
+    else if (command_string == "BOARD")
       type_ = CommandType::BOARD;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "HAND")
-  {
-    if (input.size() == 1)
+    else if (command_string == "HAND")
       type_ = CommandType::HAND;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "INFO")
-  {
-    if (input.size() == 2)
-      type_ = CommandType::INFO;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "REDRAW")
-  {
-    if (input.size() == 1)
+    else if (command_string == "REDRAW")
       type_ = CommandType::REDRAW;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "STATUS")
-  {
-    if (input.size() == 1)
+    else if (command_string == "STATUS")
       type_ = CommandType::STATUS;
-    else
-      type_ = CommandType::WRONG_PARAM;
-  }
-  else if (command_string == "DONE")
-  {
-    if (input.size() == 1)
+    else if (command_string == "DONE")
       type_ = CommandType::DONE;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "BATTLE")
+  else if (input.size() == 2)
   {
-    if (input.size() == 3)
-      type_ = CommandType::BATTLE;
+    if (command_string == "INFO")
+      type_ = CommandType::INFO;
     else
       type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "CREATURE")
+  else if (input.size() == 3)
   {
-    if (input.size() == 3)
+    if (command_string == "BATTLE")
+      type_ = CommandType::BATTLE;
+    else if (command_string == "CREATURE")
       type_ = CommandType::CREATURE;
     else
       type_ = CommandType::WRONG_PARAM;
   }
+  else
+    type_ = CommandType::WRONG_PARAM;
 
-  // Spell Command needs different handling of parameter
-  else if (command_string == "SPELL")
+  if (command_string == "SPELL")
     type_ = CommandType::SPELL;
 
-  else
+  if (command_string != "QUIT" && command_string != "STATUS" && command_string != "GRAVEYARD" &&
+      command_string != "HAND" && command_string != "BOARD"  && command_string != "CREATURE"  && 
+      command_string != "DONE" && command_string != "INFO"   && command_string != "BATTLE"    &&
+      command_string != "HELP" && command_string != "REDRAW" && command_string != "SPELL") 
     type_ = CommandType::INVALID;
 
   parameters_ = std::vector<std::string>(input.begin() + 1, input.end());

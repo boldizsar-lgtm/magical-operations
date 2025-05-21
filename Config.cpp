@@ -3,6 +3,8 @@
 #include "Config.hpp"
 
 const int X_MANA_COST (-1);
+const int GENERAL_SPELL_AMOUNT (3);
+const int TARGET_SPELL_AMOUNT (11);
 
 //explained by and coded with the help of ChatGPT, and https://refactoring.guru/design-patterns/singleton/cpp/example
 Config& Config::getInstance()
@@ -100,9 +102,9 @@ void Config::saveCards(std::string path)
       Utils::decimalStringToInt(mana_cost_str, mana_cost);
 
     // Change spelltype based on which card gets added
-    if (type_counter < 4)
+    if (type_counter <= GENERAL_SPELL_AMOUNT)
       spell_type = SpellType::GENERAL;
-    else if (type_counter < 15)
+    else if (type_counter <= (GENERAL_SPELL_AMOUNT + TARGET_SPELL_AMOUNT))
       spell_type = SpellType::TARGET;
     else
       spell_type = SpellType::GRAVEYARD;
@@ -114,11 +116,6 @@ void Config::saveCards(std::string path)
   }
 }
 
-//Open and read in the game config file
-//
-//param: path, the path of the game config file
-//
-//return: false if file couldn't be opened or wrong Magic Number, true if successful
 bool Config::readGameConfig(std::string path)
 {
   /*Syntax:
@@ -182,11 +179,6 @@ bool Config::readGameConfig(std::string path)
   return true;
 }
 
-//Open and read in the messages config file
-//
-//param: path, the path of the message config file
-//
-//return: false if file couldn't be opened or wrong Magic Number, true if successful
 bool Config::readMessageConfig(std::string path)
 {
   //Syntax: <Key>:<Message>
@@ -248,18 +240,15 @@ int Config::getMaxRounds() const
   return max_rounds_;
 }
 
-
 int Config::getBaseHealth() const
 {
   return player_health_;
 }
 
-
 int Config::getBaseMana() const
 {
   return mana_pool_size_;
 }
-
 
 CardPile* Config::getDeck(int player_id)
 {
@@ -273,7 +262,6 @@ CardPile* Config::getDeck(int player_id)
   }
 }
 
-
 Config::~Config()
 {
   for (auto& [key, card] : cards_)
@@ -281,4 +269,3 @@ Config::~Config()
     delete card;
   }
 }
-

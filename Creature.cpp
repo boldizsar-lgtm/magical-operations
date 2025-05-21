@@ -1,5 +1,8 @@
 #include "Creature.hpp"
 
+const int MAX_LETTERS (5);
+const int TWO_DIGITS (10);
+
 Creature::Creature(std::string id, int mana_cost, std::string name, std::vector<std::shared_ptr<Trait>> base_traits,
 int base_attack, int base_health) : Card(id, mana_cost, name), base_attack_(base_attack), base_health_(base_health),
                                     base_traits_(base_traits), current_attack_(base_attack),
@@ -90,7 +93,7 @@ std::string Creature::getTraitIds() const
 
   for (auto trait : current_traits_)
   {
-    if (letter_amount == 5)
+    if (letter_amount == MAX_LETTERS)
     {
       more_than_five = true;
       break;
@@ -101,11 +104,11 @@ std::string Creature::getTraitIds() const
   }
 
   if (more_than_five == true)
-    traits_string.at(4) = '+';
+    traits_string.at(MAX_LETTERS - 1) = '+';
 
   else
   {
-    while (letter_amount < 5)
+    while (letter_amount < MAX_LETTERS)
     {
       traits_string += ' ';
       letter_amount++;
@@ -174,7 +177,7 @@ std::string Creature::getAttackString() const
 {
   std::string attack_string;
 
-  if (current_attack_ < 10)
+  if (current_attack_ < TWO_DIGITS)
     attack_string += '0';
 
   attack_string += std::to_string(current_attack_);
@@ -186,7 +189,7 @@ std::string Creature::getHealthString() const
 {
   std::string health_string;
 
-  if (current_health_ < 10)
+  if (current_health_ < TWO_DIGITS)
     health_string += '0';
 
   health_string += std::to_string(current_health_);

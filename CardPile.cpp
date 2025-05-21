@@ -2,6 +2,9 @@
 #include "CardPile.hpp"
 #include "Config.hpp"
 
+const int ZONE_WIDTH (7);
+const int CARD_PRINT_HEIGHT (4);
+
 void CardPile::createCard(std::string id)
 {
   Card* card = Config::getInstance().getCard(id);
@@ -29,13 +32,11 @@ void CardPile::addCardEnd(Card* card)
   pile_.push_back(card);
 }
 
-
 void CardPile::addCardTop(Card* card)
 {
   //adding and existing card to top of the pile
   pile_.insert(pile_.begin(), card);
 }
-
 
 void CardPile::removeCard(std::string id)
 {
@@ -65,12 +66,10 @@ Card* CardPile::searchCard(std::string id) const
   return nullptr;
 }
 
-
 std::vector<Card*> CardPile::getPile() const
 {
   return pile_;
 }
-
 
 void CardPile::removeEndCard()
 {
@@ -78,36 +77,34 @@ void CardPile::removeEndCard()
     pile_.pop_back();
 }
 
-
 void CardPile::removeTopCard()
 {
   if (pile_.size() != 0)
     pile_.erase(pile_.begin());
 }
 
-
 void CardPile::printCardPile() const
 {
-  float required_card_rows = (pile_.size() + 6) / 7;
+  float required_card_rows = (pile_.size() + (ZONE_WIDTH - 1)) / ZONE_WIDTH;
 
-  size_t current_card_rows = 0;
+  size_t card_rows = 0;
 
-  while (current_card_rows < required_card_rows)
+  while (card_rows < required_card_rows)
   {
-    for (int print_row = 1; print_row <= 4; print_row++)
+    for (int print_row = 1; print_row <= CARD_PRINT_HEIGHT; print_row++)
     {
       std::cout << ' ';
-      for (size_t i = current_card_rows * 7; i < (current_card_rows + 1) * 7 && i < pile_.size(); i++)
+      for (size_t card = card_rows * ZONE_WIDTH; card < (card_rows + 1) * ZONE_WIDTH && card < pile_.size(); card++)
       {
         //print first 3 empty spaces
         std::cout << "   ";
-        pile_[i]->printCardLine(print_row);
+        pile_[card]->printCardLine(print_row);
       }
 
       std::cout << std::endl;
     }
 
-    current_card_rows++;
+    card_rows++;
   }
 }
 
@@ -115,9 +112,9 @@ void CardPile::printGraveyard() const
 {
   if (pile_.size() > 0)
   {
-    for (size_t i = 0; i < pile_.size(); i++)
+    for (size_t card = 0; card < pile_.size(); card++)
     {
-      std::cout << pile_[i]->getId() << " | " << pile_[i]->getName() << std::endl;
+      std::cout << pile_[card]->getId() << " | " << pile_[card]->getName() << std::endl;
     }
   }
 }
@@ -146,7 +143,6 @@ int CardPile::getSize() const
 {
   return pile_.size();
 }
-
 
 CardPile::~CardPile()
 {
