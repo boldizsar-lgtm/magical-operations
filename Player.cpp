@@ -179,11 +179,11 @@ void Player::playCreature(Card* card, std::string field_slot)
 
 void Player::addToFirstEmptyField(Creature* creature)
 {
-  for (int slot = 1; slot <= ZONE_WIDTH; slot++)
+  for (int slot = 0; slot < ZONE_WIDTH; slot++)
   {
     if (field_zone_.getSlots()[slot] == nullptr)
     {
-      field_zone_.switchCreaturePlace(creature, slot);
+      field_zone_.switchCreaturePlace(creature, slot + 1);
       return;
     }
   }
