@@ -8,6 +8,7 @@ const int GENERAL_SPELL_PARAM_SIZE (1);
 const int TARGET_SPELL_PARAM_SIZE (2);
 const int GRAVEYARD_SPELL_PARAM_SIZE (2);
 const int X_MANA_COST (-1);
+const int MINIMUM_STARTING_HAND_SIZE (2);
 
 Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), defender_(&player2_),
                              max_rounds_{max_rounds}, round_count_{0}, board_active_{true}
@@ -787,7 +788,7 @@ void Game::processRedraw()
   if (!current_player_->getRedrawPossible())
     throw CommandError("E_REDRAW_DISABLED");
 
-  if (current_player_->getHand().getSize() < 2)
+  if (current_player_->getHand().getSize() < MINIMUM_STARTING_HAND_SIZE)
     throw CommandError("E_REDRAW_NOT_ENOUGH_CARDS");
 
   current_player_->redrawHand();
@@ -1148,18 +1149,10 @@ void Game::executeDeathCurse(std::string target)
 
 void Game::executeShock(std::string target)
 {
-  //determine if it targets opponent's creatures, or own creatures
-  Player* target_player = current_player_;
-  if (target.size() == 3)
-  {
-    target_player = opposing_player_;
-    target.erase(0, 1);
-  }
-  char zone_type = target.at(0);
-  int column = (target.at(1)) - '0';
+  Creature* creature = getCreatureFromFieldString(target);
 
   //target creature takes 1 damage
-  creatureTakesDamage(SHOCK_DAMAGE, target_player, zone_type, column);
+   creature->changeCurrentHealth(SHOCK_DAMAGE);
 }
 
 void Game::executeMobilize(std::string target)
