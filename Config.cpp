@@ -3,6 +3,8 @@
 #include "Config.hpp"
 
 const int X_MANA_COST (-1);
+const int GENERAL_SPELL_AMOUNT (3);
+const int TARGET_SPELL_AMOUNT (11);
 
 //explained by and coded with the help of ChatGPT, and https://refactoring.guru/design-patterns/singleton/cpp/example
 Config& Config::getInstance()
@@ -100,9 +102,9 @@ void Config::saveCards(std::string path)
       Utils::decimalStringToInt(mana_cost_str, mana_cost);
 
     // Change spelltype based on which card gets added
-    if (type_counter < 4)
+    if (type_counter <= GENERAL_SPELL_AMOUNT)
       spell_type = SpellType::GENERAL;
-    else if (type_counter < 15)
+    else if (type_counter <= (GENERAL_SPELL_AMOUNT + TARGET_SPELL_AMOUNT))
       spell_type = SpellType::TARGET;
     else
       spell_type = SpellType::GRAVEYARD;
@@ -267,4 +269,3 @@ Config::~Config()
     delete card;
   }
 }
-

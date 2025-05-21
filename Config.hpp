@@ -26,7 +26,7 @@ private:
   std::map<std::string, std::string> messages_;
 
 
-  //Singleton Requirement, this  and other singleton requirements were implemented and explained with the help of
+  //Singleton Requirement, this and other singleton requirements were implemented and explained with the help of
   //chatGPT and https://refactoring.guru/design-patterns/singleton/cpp/example
   static Config* instance_;
 
