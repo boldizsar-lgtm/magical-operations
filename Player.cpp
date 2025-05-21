@@ -4,6 +4,7 @@
 
 const int STARTING_HAND_SIZE (6);
 const int ZONE_WIDTH (7);
+const int CARD_PRINT_HEIGHT (4);
 const int CARD_NOT_FOUND (-1);
 
 Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible_{true},
@@ -82,7 +83,7 @@ void Player::printHand() const
 
 void Player::printFieldZone() const
 {
-  for (int i = 1; i <= 4; i++)
+  for (int i = 1; i <= CARD_PRINT_HEIGHT; i++)
   {
     std::cout << "F   ";
     field_zone_.printZone(i);
@@ -92,7 +93,7 @@ void Player::printFieldZone() const
 
 void Player::printBattleZone() const
 {
-  for (int i = 1; i <= 4; i++)
+  for (int i = 1; i <= CARD_PRINT_HEIGHT; i++)
   {
     std::cout << "B   ";
     battle_zone_.printZone(i);
@@ -324,7 +325,6 @@ int Player::getDeckSize() const
 {
   return deck_->getSize();
 }
-
 
 CardPile* Player::getDeck() const
 {

@@ -1,6 +1,7 @@
 #include "Card.hpp"
 
 const int X_MANA_COST (-1);
+const int TWO_DIGITS (10);
 
 std::string Card::getId() const
 {
@@ -26,7 +27,7 @@ std::string Card::getManaCostString() const
   std::string mana_cost_string;
 
   //add 0 before the cost if it is single digit
-  if (mana_cost_ < 10)
+  if (mana_cost_ < TWO_DIGITS)
     mana_cost_string += '0';
 
   mana_cost_string += std::to_string(mana_cost_);
