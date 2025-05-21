@@ -325,7 +325,6 @@ int Player::getDeckSize() const
   return deck_->getSize();
 }
 
-
 CardPile* Player::getDeck() const
 {
   return deck_;

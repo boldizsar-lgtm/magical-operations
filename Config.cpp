@@ -114,11 +114,6 @@ void Config::saveCards(std::string path)
   }
 }
 
-//Open and read in the game config file
-//
-//param: path, the path of the game config file
-//
-//return: false if file couldn't be opened or wrong Magic Number, true if successful
 bool Config::readGameConfig(std::string path)
 {
   /*Syntax:
@@ -182,11 +177,6 @@ bool Config::readGameConfig(std::string path)
   return true;
 }
 
-//Open and read in the messages config file
-//
-//param: path, the path of the message config file
-//
-//return: false if file couldn't be opened or wrong Magic Number, true if successful
 bool Config::readMessageConfig(std::string path)
 {
   //Syntax: <Key>:<Message>
@@ -248,18 +238,15 @@ int Config::getMaxRounds() const
   return max_rounds_;
 }
 
-
 int Config::getBaseHealth() const
 {
   return player_health_;
 }
 
-
 int Config::getBaseMana() const
 {
   return mana_pool_size_;
 }
-
 
 CardPile* Config::getDeck(int player_id)
 {
@@ -272,7 +259,6 @@ CardPile* Config::getDeck(int player_id)
     return &player_2_deck_;
   }
 }
-
 
 Config::~Config()
 {

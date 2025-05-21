@@ -29,13 +29,11 @@ void CardPile::addCardEnd(Card* card)
   pile_.push_back(card);
 }
 
-
 void CardPile::addCardTop(Card* card)
 {
   //adding and existing card to top of the pile
   pile_.insert(pile_.begin(), card);
 }
-
 
 void CardPile::removeCard(std::string id)
 {
@@ -65,12 +63,10 @@ Card* CardPile::searchCard(std::string id) const
   return nullptr;
 }
 
-
 std::vector<Card*> CardPile::getPile() const
 {
   return pile_;
 }
-
 
 void CardPile::removeEndCard()
 {
@@ -78,13 +74,11 @@ void CardPile::removeEndCard()
     pile_.pop_back();
 }
 
-
 void CardPile::removeTopCard()
 {
   if (pile_.size() != 0)
     pile_.erase(pile_.begin());
 }
-
 
 void CardPile::printCardPile() const
 {
@@ -146,7 +140,6 @@ int CardPile::getSize() const
 {
   return pile_.size();
 }
-
 
 CardPile::~CardPile()
 {
