@@ -245,7 +245,7 @@ bool Game::directHitBattle(int column)
 }
 
 bool Game::startAttack(Creature*& creature_1, Creature*& creature_2, bool first_strike, bool& continue_battle,
-Player*& attacking_creature_owner)
+  Player*& attacking_creature_owner)
 {
   int amount{0};
   Player* opposing_creature_owner = defender_;
@@ -686,7 +686,7 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
     return static_cast<int>(ceil(mana_cost));
   }
 
-  else //(spell_card->getId() == "CURSE")
+  else
   {
     int mana_cost = target->getManaCost() + 1;
     return mana_cost;
@@ -717,7 +717,6 @@ void Game::printHelp() const
   std::cout << "    <GRAVEYARD_CARD_ID>: The ID of a card in the graveyard to cast a graveyard spell on\n\n";
   std::cout << "- status\n    Prints general information about both players.\n\n";
   std::cout << "=========================================================================================\n";
-
 }
 
 void Game::printInfo(Command& command) const
@@ -992,22 +991,23 @@ void Game::processSpell(Command& command)
   current_player_->removeCardFromPile(PileType::HAND, spell_card->getId());
 
   // execute spell
-  executeSpell(command);
+  executeSpell(command, card, mana_cost);
+}
 
+void Game::executeSpell(Command& command, Card* card, int mana_cost)
+{
+  //Syntax: spell <HAND_CARD_ID> <OPTIONAL_ADDITIONAL_PARAMETER>
+
+  // Reduce player's mana
   current_player_->changeCurrentMana(0 - mana_cost);
 
   // Print info
   std::string card_info_string = "I_" + card->getId();
+  std::cout << Config::getInstance().getMessage(card_info_string) << std::endl;
 
   // Destroy spell after usage
   delete card;
 
-  std::cout << Config::getInstance().getMessage(card_info_string) << std::endl;
-}
-
-void Game::executeSpell(Command& command)
-{
-  //Syntax: spell <HAND_CARD_ID> <OPTIONAL_ADDITIONAL_PARAMETER>
   std::string id = command.getParameters().at(0);
   std::string target;
   if (command.getParameters().size() == 2)
