@@ -216,25 +216,6 @@ public:
   void printBoard() const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // processes the command entered by the current player and calls the appropriate methods or progresses the round
-  //
-  // @param command a class that stores user's command and parameters input
-  //
-  void processCommand(Command command);
-
-  //------------------------------------------------------------------------------------------------------------------
-  // returns the current round count
-  //
-  // @return round_count_
-  //
-  int getRound() const;
-
-  //------------------------------------------------------------------------------------------------------------------
-  // prints the board, consisting of each player's battle and field zone
-  //
-  void printBoard() const;
-
-  //------------------------------------------------------------------------------------------------------------------
   // begins the final phase of the game, determining a winner and printing the corresponding message
   //
   // @param file_path the path of the config file  thatt needs to be appended with the winner

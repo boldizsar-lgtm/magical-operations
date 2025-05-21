@@ -1149,10 +1149,14 @@ void Game::executeDeathCurse(std::string target)
 
 void Game::executeShock(std::string target)
 {
+  Player* owner = current_player_;
+  if (target.at(0) == 'O')
+    owner = opposing_player_;
+  
   Creature* creature = getCreatureFromInputString(target);
 
   //target creature takes 1 damage
-   creature->changeCurrentHealth(SHOCK_DAMAGE);
+   creatureTakesDamage(SHOCK_DAMAGE, creature, owner);
 }
 
 void Game::executeMobilize(std::string target)
