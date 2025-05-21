@@ -2,6 +2,8 @@
 #include <iostream>
 #include "Config.hpp"
 
+const int X_MANA_COST (-1);
+
 //explained by and coded with the help of ChatGPT, and https://refactoring.guru/design-patterns/singleton/cpp/example
 Config& Config::getInstance()
 {
@@ -93,8 +95,8 @@ void Config::saveCards(std::string path)
   {
     int mana_cost = 0;
     if (mana_cost_str == "x")
-      mana_cost = -1; //x cost spells are saved as -1 mana cost
-    else 
+      mana_cost = X_MANA_COST; //x cost spells are saved as -1 mana cost
+    else
       Utils::decimalStringToInt(mana_cost_str, mana_cost);
 
     // Change spelltype based on which card gets added

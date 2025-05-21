@@ -44,14 +44,6 @@ bool Utils::decimalStringToFloat(const std::string& str, float& floating)
   return position == str.length();
 }
 
-void Utils::toLower(std::string& string)
-{
-  for(char& character : string)
-  {
-    character = tolower(static_cast<unsigned char>(character));
-  }
-}
-
 void Utils::toUpper(std::string& string)
 {
   for(char& character : string)

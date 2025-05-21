@@ -2,11 +2,16 @@
 #include <fstream>
 #include <cmath>
 
-#define ZONE_WIDTH (7)
+const int TIE (0);
+const int ZONE_WIDTH (7);
+const int GENERAL_SPELL_PARAM_SIZE (1);
+const int TARGET_SPELL_PARAM_SIZE (2);
+const int GRAVEYARD_SPELL_PARAM_SIZE (2);
+const int X_MANA_COST (-1);
 
 Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), defender_(&player2_),
                              max_rounds_{max_rounds}, round_count_{0}, board_active_{true}
-                             , end_condition_{EndCondition::DEFAULT}, winner_id_{0}
+                             , end_condition_{EndCondition::DEFAULT}, winner_id_{TIE}
 {
   //set default roles of players
   player1_.setRole(Role::ATTACKER);
@@ -17,7 +22,6 @@ Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), def
   std::cout << Config::getInstance().getMessage("D_WELCOME") << std::endl;
   std::cout << Config::getInstance().getMessage("D_BORDER_D") << std::endl;
 }
-
 
 bool Game::startRound()
 {
@@ -80,7 +84,6 @@ bool Game::startRound()
   return true;
 }
 
-
 bool Game::startSetupPhase()
 {
   player1_.setDoneStatus(false);
@@ -129,18 +132,17 @@ bool Game::doCommandLoop(CommandLine& cli)
   return true;
 }
 
-
 bool Game::startBattlePhase()
 {
   std::cout << '\n' << Config::getInstance().getMessage("D_BORDER_BATTLE_PHASE") << '\n';
 
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    std::cout << "---------------------------------------- SLOT " << i;
+    std::cout << "---------------------------------------- SLOT " << column;
     std::cout << " -----------------------------------------\n";
-    if (attacker_->getZone("BATTLE").isOccupied(i))
+    if (attacker_->getZone("BATTLE").isOccupied(column))
     {
-      if (!startBattle(i))
+      if (!startBattle(column))
         return false;
     }
   }
@@ -157,17 +159,18 @@ bool Game::startBattlePhase()
   undeadCreaturesReenter(attacker_);
   undeadCreaturesReenter(defender_);
 
-  player1_.turnAllEnteredOff();
-  player2_.turnAllEnteredOff();
+  //the entered_this_round_ variable for all creatures is set to false
+  attacker_->turnAllEnteredOff();
+  defender_->turnAllEnteredOff();
+
   return true;
 }
-
 
 void Game::undeadCreaturesReenter(Player* player)
 {
   Creature* creature;
 
-  for (auto card : player->getGraveyard().getPile())
+  for (auto& card : player->getGraveyard().getPile())
   {
     if (player->isZoneFull('F'))
       return;
@@ -185,53 +188,50 @@ void Game::undeadCreaturesReenter(Player* player)
 void Game::removeTemporaryCreatures(Player* player)
 {
   //remove out of battle zone
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (player->getZone("BATTLE").isOccupied(i))
+    if (player->getZone("BATTLE").isOccupied(column))
     {
-      if (player->getZone("BATTLE").getCreature(i)->creatureHasTrait("Temporary"))
+      if (player->getZone("BATTLE").getCreature(column)->creatureHasTrait("Temporary"))
       {
-        player->moveToGraveyard('B', i);
+        player->moveToGraveyard('B', column);
         std::cout << Config::getInstance().getMessage("I_TEMPORARY") << std::endl;
       }
     }
   }
 
   //remove out of field zone
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (player->getZone("FIELD").isOccupied(i))
+    if (player->getZone("FIELD").isOccupied(column))
     {
-      if (player->getZone("FIELD").getCreature(i)->creatureHasTrait("Temporary"))
+      if (player->getZone("FIELD").getCreature(column)->creatureHasTrait("Temporary"))
       {
-        player->moveToGraveyard('F', i);
+        player->moveToGraveyard('F', column);
         std::cout << Config::getInstance().getMessage("I_TEMPORARY") << std::endl;
       }
     }
   }
-    
 }
 
 void Game::returnCreaturesToField()
 {
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (attacker_->getZone("BATTLE").isOccupied(i))
-      attacker_->moveToField(i);
-    if (defender_->getZone("BATTLE").isOccupied(i))
-      defender_->moveToField(i);
+    if (attacker_->getZone("BATTLE").isOccupied(column))
+      attacker_->moveToField(column);
+    if (defender_->getZone("BATTLE").isOccupied(column))
+      defender_->moveToField(column);
   }
 }
-
 
 bool Game::directHitBattle(int column)
 {
   int amount{0};
-
   amount = defender_->getCurrentHealth() - attacker_->getZone("BATTLE").getCreature(column)->getCurrentAttack();
 
   //reduce defenders health
-  defender_->changeCurrentHealth((-attacker_->getZone("BATTLE").getCreature(column)->getCurrentAttack()));
+  defender_->changeCurrentHealth(-attacker_->getZone("BATTLE").getCreature(column)->getCurrentAttack());
   std::cout << Config::getInstance().getMessage("I_DIRECT") << std::endl;
 
   //end condition DEFEAT reached
@@ -243,7 +243,6 @@ bool Game::directHitBattle(int column)
 
   return true;
 }
-
 
 bool Game::startAttack(Creature*& creature_1, Creature*& creature_2, bool first_strike, bool& continue_battle,
 Player*& attacking_creature_owner)
@@ -273,7 +272,7 @@ Player*& attacking_creature_owner)
   //decreasing creature health
   creature_2->changeCurrentHealth(-creature_1->getCurrentAttack());
 
-  //if no first strike trait is active and creatures health is below 0, creature gains temporary trait,
+  //if no first strike trait is active and creatures health is below 0, creatures dead_status_ set to true,
   //but battle continues
   if (amount <= 0)
   {
@@ -291,16 +290,14 @@ Player*& attacking_creature_owner)
       {
         end_condition_ = EndCondition::DEFEAT;
       }
-      brutal = false;
     }
-
     creature_2->setDeadStatus(true);
   }
+
   return true;
 }
 
-
-void Game::removeDeadCreatures(Role& first_attacker_role, Creature*& creature_1, Creature*& creature_2, int column)
+void Game::removeDeadCreatures(Creature*& creature_1, Creature*& creature_2, Role& first_attacker_role, int column)
 {
   if (first_attacker_role == Role::ATTACKER)
   {
@@ -318,15 +315,14 @@ void Game::removeDeadCreatures(Role& first_attacker_role, Creature*& creature_1,
   }
 }
 
-
 bool Game::creatureFight(int column)
 {
   bool continue_battle{true};
+  bool first_strike{false};
   Player* attacking_creature_owner = attacker_;
   Creature* creature_1 = attacker_->getZone("BATTLE").getCreature(column);
   Creature* creature_2 = defender_->getZone("BATTLE").getCreature(column);
   Role first_attacker_role = Role::ATTACKER;
-  bool first_strike{false};
 
   //Fight between two creatures begins
   std::cout << Config::getInstance().getMessage("I_FIGHT") << std::endl;
@@ -348,7 +344,7 @@ bool Game::creatureFight(int column)
     //start Attack 2 (creature 2 attacks creature 1)
     std::cout << Config::getInstance().getMessage("D_ATTACK_2") << std::endl;
 
-    //switch opposing creature_owner
+    //switch opposing creature owner
     if (first_attacker_role == Role::DEFENDER)
     {
       attacking_creature_owner = attacker_;
@@ -364,8 +360,7 @@ bool Game::creatureFight(int column)
   if (end_condition_ == EndCondition::DEFEAT)
     return false;
 
-
-  removeDeadCreatures(first_attacker_role, creature_1, creature_2, column);
+  removeDeadCreatures(creature_1, creature_2, first_attacker_role, column);
 
   return true;
 }
@@ -404,6 +399,7 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
     {
       if ((creature_2->getCurrentHealth() - creature_1->getCurrentAttack()) <= 0)
         std::cout << Config::getInstance().getMessage("I_BRUTAL") << std::endl;
+
       trait = true;
     }
   }
@@ -421,10 +417,12 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
     if (creature_1->creatureHasTrait("Lifesteal"))
     {
       //increase current health of attacking creature
-      creature_1->changeCurrentHealth(2);
+      creature_1->changeCurrentHealth(LIFESTEAL_HEALTH_GAIN);
+
       //if creatures health is now above zero, the creature dead trait gets set to false
       if (creature_1->getCurrentHealth() > 0)
         creature_1->setDeadStatus(false);
+
       std::cout << Config::getInstance().getMessage("I_LIFESTEAL") << std::endl;
     }
   }
@@ -434,14 +432,13 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
 
 void Game::processTurnTraits()
 {
-  // TODO: nothing todo, just wondering if this could even happen in battle stage here?
   for (auto& creature : current_player_->getZone("BATTLE").getSlots())
   {
     if (creature != nullptr)
     {
       int current_health = creature->getCurrentHealth();
       int base_health = creature->getBaseHealth();
-      
+
       if (creature->creatureHasTrait("Regenerate") && round_count_ % 2 == 1 && current_health < base_health)
       {
         creature->setCurrentHealth(base_health);
@@ -450,7 +447,7 @@ void Game::processTurnTraits()
 
       if (creature->creatureHasTrait("Poisoned"))
       {
-        creatureTakesDamage(1, creature, current_player_);
+        creatureTakesDamage(POISONED_DAMAGE, creature, current_player_);
         std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
       }
     }
@@ -462,7 +459,7 @@ void Game::processTurnTraits()
     {
       int current_health = creature->getCurrentHealth();
       int base_health = creature->getBaseHealth();
-      
+
       if (creature->creatureHasTrait("Regenerate") && (round_count_ % 2) == 1 && current_health < base_health)
       {
         creature->setCurrentHealth(base_health);
@@ -471,12 +468,11 @@ void Game::processTurnTraits()
 
       if (creature->creatureHasTrait("Poisoned"))
       {
-        creatureTakesDamage(1, creature, current_player_);
+        creatureTakesDamage(POISONED_DAMAGE, creature, current_player_);
         std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
       }
     }
   }
-
 }
 
 bool Game::startBattle(int column)
@@ -543,14 +539,12 @@ void Game::processCommand(Command command)
     processCreature(command);
     current_player_->setRedrawNotPossible();
   }
-    
 
   if (command_type == CommandType::SPELL)
   {
     processSpell(command);
     current_player_->setRedrawNotPossible();
   }
-    
 }
 
 int Game::getRound() const
@@ -586,7 +580,6 @@ void Game::printBoard() const
   }
 }
 
-
 bool Game::startFinalPhase(std::string file_path)
 {
   if (end_condition_ != EndCondition::QUIT)
@@ -595,44 +588,39 @@ bool Game::startFinalPhase(std::string file_path)
   //print game end message
   switch (end_condition_)
   {
-  case EndCondition::QUIT:
-    return true;
-  break;
+    case EndCondition::QUIT:
+      return true;
+    break;
 
-  case EndCondition::DEFEAT:
-    std::cout << Config::getInstance().getMessage("D_END_PLAYER_DEFEATED") << std::endl;
+    case EndCondition::DEFEAT:
+      std::cout << Config::getInstance().getMessage("D_END_PLAYER_DEFEATED") << std::endl;
+      break;
 
+    case EndCondition::DRAW:
+      std::cout << Config::getInstance().getMessage("D_END_DRAW_CARD") << std::endl;
+      break;
+
+    case EndCondition::MAX_ROUNDS:
+      std::cout << Config::getInstance().getMessage("D_END_MAX_ROUNDS") << std::endl;
+      break;
+
+    default:
+      break;
+  }
+
+  if (end_condition_ == EndCondition::DEFEAT || end_condition_ == EndCondition::MAX_ROUNDS)
+  {
     //determine winner with who has more health left
     if (player1_.getCurrentHealth() > player2_.getCurrentHealth())
       winner_id_ = 1;
     else if (player1_.getCurrentHealth() < player2_.getCurrentHealth())
       winner_id_ = 2;
-
-    break;
-
-  case EndCondition::DRAW:
-    std::cout << Config::getInstance().getMessage("D_END_DRAW_CARD") << std::endl;
-    break;
-
-  case EndCondition::MAX_ROUNDS:
-    std::cout << Config::getInstance().getMessage("D_END_MAX_ROUNDS") << std::endl;
-
-    //determine winner with who has more health left
-    if (player1_.getCurrentHealth() > player2_.getCurrentHealth())
-      winner_id_ = 1;
-    else if (player1_.getCurrentHealth() < player2_.getCurrentHealth())
-      winner_id_ = 2;
-
-    break;
-
-  default:
-    break;
   }
 
   std::string result;
 
-  //print result (if 0 -> tie (set in game constructor and not changed))
-  if (winner_id_ == 0)
+  //print result
+  if (winner_id_ == TIE)
   {
     result = Config::getInstance().getMessage("D_TIE") + '\n';
   }
@@ -662,7 +650,7 @@ Creature* Game::getCreatureFromFieldString(std::string field_string)
   if (field_string.at(0) == 'O')
   {
     target_player = opposing_player_;
-      
+
     // Remove the 'O'
     field_string.erase(field_string.begin());
   }
@@ -684,7 +672,7 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
   {
     target = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(second_param));
 
-    float mana_cost = (float)(target->getManaCost()) / 2.0;
+    float mana_cost = static_cast<float>(target->getManaCost()) / 2.0;
 
     return (int)(ceil(mana_cost));
   }
@@ -693,7 +681,7 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
 
   if (spell_card->getId() == "CLONE")
   {
-    float mana_cost = (float)(target->getManaCost()) / 2.0;
+    float mana_cost =  static_cast<float>(target->getManaCost()) / 2.0;
 
     return (int)(ceil(mana_cost));
   }
@@ -755,7 +743,7 @@ void Game::printInfo(Command& command) const
   {
     // Cast a creature and print everything
     // Traits are handled in Creature Class
-    Creature* creature = static_cast<Creature*>(card);
+    Creature* creature = dynamic_cast<Creature*>(card);
     std::cout << "Base Attack: " << creature->getBaseAttack() << std::endl;
     std::cout << "Base Health: " << creature->getBaseHealth() << std::endl;
     std::cout << "Base Traits: ";
@@ -764,7 +752,7 @@ void Game::printInfo(Command& command) const
   else
   {
     // Cast a spell (ba-dum-tss) and print everything
-    Spell* spell = static_cast<Spell*>(card);
+    Spell* spell = dynamic_cast<Spell*>(card);
     std::cout << "Effect: " << spell->getEffect() << std::endl;
   }
 
@@ -779,7 +767,7 @@ void Game::processRedraw()
 
   if (current_player_->getHand().getSize() < 2)
     throw CommandError("E_REDRAW_NOT_ENOUGH_CARDS");
-  
+
   current_player_->redrawHand();
 }
 
@@ -895,7 +883,7 @@ void Game::processCreature(Command& command) const
 
   // Check if the card is in the players hand
   Card* card = current_player_->getHand().searchCard(card_id);
-  
+
   if (card == nullptr)
     throw CommandError("E_NOT_IN_HAND");
 
@@ -951,7 +939,7 @@ void Game::processSpell(Command& command)
   {
     second_param = "";
     // Check if parameters are valid
-    if (command.getParameters().size() != 1)
+    if (command.getParameters().size() != GENERAL_SPELL_PARAM_SIZE)
       throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
   }
 
@@ -962,7 +950,7 @@ void Game::processSpell(Command& command)
   if (sub_type == SpellType::TARGET)
   {
     // Check if parameters are valid
-    if (command.getParameters().size() != 2)
+    if (command.getParameters().size() != TARGET_SPELL_PARAM_SIZE)
       throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
 
     // Check if the target slot has valid syntax
@@ -985,7 +973,7 @@ void Game::processSpell(Command& command)
   if (sub_type == SpellType::GRAVEYARD)
   {
     // Check if parameters are valid
-    if (command.getParameters().size() != 2)
+    if (command.getParameters().size() != GRAVEYARD_SPELL_PARAM_SIZE)
       throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
 
     // Check if Graveyard contains the Card ID
@@ -993,7 +981,7 @@ void Game::processSpell(Command& command)
       throw CommandError("E_NOT_IN_GRAVEYARD");
   }
 
-  if (mana_cost == -1)
+  if (mana_cost == X_MANA_COST)
     mana_cost = calculateXMana(spell_card, second_param);
 
   // Check player has enough mana
@@ -1024,7 +1012,7 @@ void Game::executeSpell(Command& command)
   std::string target;
   if (command.getParameters().size() == 2)
     target = command.getParameters().at(1);
-  
+
   //General Spells
   if (id == "BTLCY")
     executeBattleCry();
@@ -1032,7 +1020,7 @@ void Game::executeSpell(Command& command)
     executeMeteor();
   if (id == "FIRBL")
     executeFireball();
-  
+
   //Target Spells
   if (id == "CLONE")
     executeClone(target);
@@ -1070,8 +1058,8 @@ void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type
   target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(- amount);
 
   //check if the creature would die and move it to the graveyard if it does
-  if (target_player->getZone(zone_type).getCreature(column)->getCurrentHealth() < 1) //the if condition works poperly
-    target_player->moveToGraveyard(zone_type, column); //this method doesnt work
+  if (target_player->getZone(zone_type).getCreature(column)->getCurrentHealth() < 1)
+    target_player->moveToGraveyard(zone_type, column);
 }
 
 void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
@@ -1080,40 +1068,40 @@ void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
   creature->changeCurrentHealth(- amount);
 
   //check if the creature would die and move it to the graveyard if it does
-  if (creature->getCurrentHealth() < 1) //the if condition works poperly
-    owner->moveToGraveyard(creature); //this method doesnt work
+  if (creature->getCurrentHealth() < 1)
+    owner->moveToGraveyard(creature);
 }
 
 
 void Game::executeBattleCry()
 {
   //allied creatures gain haste, temporary, and + 3 attack
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
     //check Field Zone
-    if (current_player_->getZone('F').isOccupied(i))
+    if (current_player_->getZone('F').isOccupied(column))
     {
       //gains haste
-      current_player_->getZone('F').getCreature(i)->addTrait(Config::getInstance().getTrait('H'));
+      current_player_->getZone('F').getCreature(column)->addTrait(Config::getInstance().getTrait('H'));
 
       //gains temporary
-      current_player_->getZone('F').getCreature(i)->addTrait(Config::getInstance().getTrait('T'));
+      current_player_->getZone('F').getCreature(column)->addTrait(Config::getInstance().getTrait('T'));
 
       //attack increases by 3
-      current_player_->getZone('F').getCreature(i)->changeCurrentAttack(3);
+      current_player_->getZone('F').getCreature(column)->changeCurrentAttack(BATTLE_CRY_ATTACK_GAIN);
     }
 
     //check Battle Zone
-    if (current_player_->getZone('B').isOccupied(i))
+    if (current_player_->getZone('B').isOccupied(column))
     {
       //gains haste
-      current_player_->getZone('B').getCreature(i)->addTrait(Config::getInstance().getTrait('H'));
+      current_player_->getZone('B').getCreature(column)->addTrait(Config::getInstance().getTrait('H'));
 
       //gains temporary
-      current_player_->getZone('B').getCreature(i)->addTrait(Config::getInstance().getTrait('T'));
+      current_player_->getZone('B').getCreature(column)->addTrait(Config::getInstance().getTrait('T'));
 
       //attack increases by 3
-      current_player_->getZone('B').getCreature(i)->changeCurrentAttack(3);
+      current_player_->getZone('B').getCreature(column)->changeCurrentAttack(BATTLE_CRY_ATTACK_GAIN);
     }
   }
 }
@@ -1121,39 +1109,39 @@ void Game::executeBattleCry()
 void Game::executeMeteor()
 {
   //each creature takes 3 damage
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (opposing_player_->getZone('F').isOccupied(i))
-      creatureTakesDamage(3, opposing_player_, 'F', i);
+    if (opposing_player_->getZone('F').isOccupied(column))
+      creatureTakesDamage(METEOR_DAMAGE, opposing_player_, 'F', column);
 
-    if (opposing_player_->getZone('B').isOccupied(i))
-      creatureTakesDamage(3, opposing_player_, 'B', i);
+    if (opposing_player_->getZone('B').isOccupied(column))
+      creatureTakesDamage(METEOR_DAMAGE, opposing_player_, 'B', column);
 
-    if (current_player_->getZone('F').isOccupied(i))
-      creatureTakesDamage(3, current_player_, 'F', i);
+    if (current_player_->getZone('F').isOccupied(column))
+      creatureTakesDamage(METEOR_DAMAGE, current_player_, 'F', column);
 
-    if (current_player_->getZone('B').isOccupied(i))
-      creatureTakesDamage(3, current_player_, 'B', i);
+    if (current_player_->getZone('B').isOccupied(column))
+      creatureTakesDamage(METEOR_DAMAGE, current_player_, 'B', column);
   }
 }
 
 void Game::executeFireball()
 {
   //enemy creatures take 2 damage
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (opposing_player_->getZone('F').isOccupied(i))
-      creatureTakesDamage(2, opposing_player_, 'F', i);
+    if (opposing_player_->getZone('F').isOccupied(column))
+      creatureTakesDamage(FIREBALL_DAMAGE, opposing_player_, 'F', column);
 
-    if (opposing_player_->getZone('B').isOccupied(i))
-      creatureTakesDamage(2, opposing_player_, 'B', i);
+    if (opposing_player_->getZone('B').isOccupied(column))
+      creatureTakesDamage(FIREBALL_DAMAGE, opposing_player_, 'B', column);
   }
 }
 
 void Game::executeClone(std::string target)
 {
   Creature* creature = getCreatureFromFieldString(target);
-  
+
   Creature* clone = new Creature(*creature);
 
   current_player_->addToFirstEmptyField(clone);
@@ -1165,7 +1153,7 @@ void Game::executeClone(std::string target)
 void Game::executeDeathCurse(std::string target)
 {
   Creature* creature = getCreatureFromFieldString(target);
-  
+
   creature->addTrait(Config::getInstance().getTrait('T'));
 }
 
@@ -1182,7 +1170,7 @@ void Game::executeShock(std::string target)
   int column = (target.at(1)) - '0';
 
   //target creature takes 1 damage
-  creatureTakesDamage(1, target_player, zone_type, column);
+  creatureTakesDamage(SHOCK_DAMAGE, target_player, zone_type, column);
 }
 
 void Game::executeMobilize(std::string target)
@@ -1193,7 +1181,7 @@ void Game::executeMobilize(std::string target)
   creature->addTrait(Config::getInstance().getTrait('H'));
 
   //its attack increases by 1
-  creature->changeCurrentAttack(1);
+  creature->changeCurrentAttack(MOBILIZE_ATTACK_GAIN);
 }
 
 void Game::executeRapidRush(std::string target)
@@ -1207,7 +1195,7 @@ void Game::executeRapidRush(std::string target)
   creature->addTrait(Config::getInstance().getTrait('T'));
 
   //its attack increases by 2
-  creature->changeCurrentAttack(2);
+  creature->changeCurrentAttack(RAPID_RUSH_ATTACK_GAIN);
 }
 
 void Game::executeShield(std::string target)
@@ -1215,7 +1203,7 @@ void Game::executeShield(std::string target)
   Creature* creature = getCreatureFromFieldString(target);
 
   //its health increases by 2
-  creature->changeCurrentHealth(2);
+  creature->changeCurrentHealth(SHIELD_HEALTH_GAIN);
 }
 
 void Game::executeAmputate(std::string target)
@@ -1239,7 +1227,7 @@ void Game::executeFinalAct(std::string target)
   creature->addTrait(Config::getInstance().getTrait('T'));
 
   //its attack increases by 3
-  creature->changeCurrentAttack(3);
+  creature->changeCurrentAttack(FINAL_ACT_ATTACK_GAIN);
 }
 
 void Game::executeLoyalty(std::string target)
@@ -1250,7 +1238,7 @@ void Game::executeLoyalty(std::string target)
   creature->addTrait(Config::getInstance().getTrait('H'));
 
   //its health increases by 1
-  creature->changeCurrentHealth(1);
+  creature->changeCurrentHealth(LOYALTY_HEALTH_GAIN);
 }
 
 void Game::executeZombify(std::string target)

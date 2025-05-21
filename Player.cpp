@@ -2,8 +2,9 @@
 #include "Config.hpp"
 #include "Zone.hpp"
 
-#define STARTING_HAND_SIZE (6)
-#define ZONE_WIDTH (7)
+const int STARTING_HAND_SIZE (6);
+const int ZONE_WIDTH (7);
+const int CARD_NOT_FOUND (-1);
 
 Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible_{true},
                          done_{false}
@@ -19,7 +20,7 @@ Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible
   current_health_ = base_health_;
   current_mana_ = mana_pool_;
 
-  //draw 7 hand cards from the deck
+  //draw 6 hand cards from the deck
   for (int i = 0; i < STARTING_HAND_SIZE; i++)
   {
     drawCard();
@@ -124,7 +125,7 @@ void Player::moveToGraveyard(char zone, int column)
     graveyard_.addCardTop(battle_zone_.getCreature(column));
     battle_zone_.removeCreature(column);
   }
-  
+
   else
   {
     graveyard_.addCardTop(field_zone_.getCreature(column));
@@ -140,7 +141,7 @@ void Player::moveToGraveyard(Creature* creature)
   // Remove Creature from wherever it is
   int column = 0;
   column = field_zone_.searchCreature(creature);
-  if (column == -1)
+  if (column == CARD_NOT_FOUND)
   {
     battle_zone_.searchCreature(creature);
     battle_zone_.removeCreature(column);
@@ -168,7 +169,7 @@ void Player::playCreature(Card* card, std::string field_slot)
 
   // Make card entered_this_turn true
   creature->setEnter(true);
-  
+
   // take away mana
   current_mana_ -= creature->getManaCost();
 
@@ -218,7 +219,7 @@ void Player::moveToBattle(std::string field_slot, std::string battle_slot)
 void Player::moveToField(int battle_column)
 {
   //get the first free field zone and insert creature, if no slot is free add to graveyard
-  for (int i = 1; i <= 7; i++)
+  for (int i = 1; i <= ZONE_WIDTH; i++)
   {
     if (!field_zone_.isOccupied(i))
     {
@@ -232,7 +233,7 @@ void Player::moveToField(int battle_column)
 
 void Player::moveToField(Creature* creature)
 {
-  for (int i = 1; i <= 7; i++)
+  for (int i = 1; i <= ZONE_WIDTH; i++)
   {
     if (!field_zone_.isOccupied(i))
     {
@@ -334,12 +335,12 @@ CardPile* Player::getDeck() const
   return deck_;
 }
 
-const CardPile& Player::getGraveyard() const 
+const CardPile& Player::getGraveyard() const
 {
   return graveyard_;
 }
 
-const CardPile& Player::getHand() const 
+const CardPile& Player::getHand() const
 {
   return hand_;
 }

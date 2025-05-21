@@ -25,7 +25,6 @@ public:
   //Constructor, Copy-Assignment-Operator, Destructor
   Spell(std::string id, int mana_cost, std::string name, SpellType subtype, std::string effect) :
     Card(id, mana_cost, name), subtype_(subtype), effect_(effect) {}
-
   Spell(Spell&) = default;
   ~Spell() = default;
 

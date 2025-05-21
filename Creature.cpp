@@ -43,16 +43,16 @@ void Creature::addTrait(std::shared_ptr<Trait> trait)
   }
 
   int insert_before = 0;
-  for (size_t i = 0; i < current_traits_.size(); i++)
+  for (size_t position = 0; position < current_traits_.size(); position++)
   {
     //If the creature already has the trait return
-    if (current_traits_[i]->getId() == trait->getId())
+    if (current_traits_[position]->getId() == trait->getId())
       return;
-    
+
     //Save the number of the last trait that comes alphabetically before the one to be added
     //Add 1 to it to save number of the trait that comes after
-    if (current_traits_[i]->getId() < trait->getId())
-      insert_before = i + 1;
+    if (current_traits_[position]->getId() < trait->getId())
+      insert_before = position + 1;
   }
 
   current_traits_.insert(current_traits_.begin() + insert_before, trait);
@@ -61,11 +61,11 @@ void Creature::addTrait(std::shared_ptr<Trait> trait)
 
 void Creature::removeTrait(std::string trait)
 {
-  for (size_t i = 0; i < current_traits_.size(); i++)
+  for (size_t position = 0; position < current_traits_.size(); position++)
   {
-    if (current_traits_[i]->getName() == trait)
+    if (current_traits_[position]->getName() == trait)
     {
-      current_traits_.erase(current_traits_.begin() + i);
+      current_traits_.erase(current_traits_.begin() + position);
       return;
     }
   }
@@ -211,7 +211,7 @@ bool Creature::creatureHasTrait(std::string name) const
   for (auto& t : current_traits_)
     if (t->getName() == name)
       return true;
-  
+
   return false;
 }
 

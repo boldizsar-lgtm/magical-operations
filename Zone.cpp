@@ -1,5 +1,8 @@
 #include "Zone.hpp"
 
+const int CREATURE_NOT_FOUND (-1);
+const int ZONE_WIDTH (7);
+
 void Zone::removeCreature(int column)
 {
   slots_[column - 1] = nullptr;
@@ -51,12 +54,12 @@ std::vector<Creature*> Zone::getSlots() const
 
 int Zone::searchCreature(Creature* creature)
 {
-  for (int slot = 0; slot < 7; slot++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (creature == slots_[slot])
-      return slot + 1;
+    if (creature == slots_[column - 1])
+      return column;
   }
-  return -1;
+  return CREATURE_NOT_FOUND;
 }
 
 void Zone::turnZoneEnteredOff()

@@ -43,14 +43,6 @@ public:
   static bool decimalStringToFloat(const std::string& string, float& float_number);
 
   //------------------------------------------------------------------------------------------------------------------
-  // This function converts a string to a string with lowercase letters.
-  //
-  // @param string& - reference to the string that should be converted
-  // @return no return value
-  //
-  static void toLower(std::string& string);
-
-  //------------------------------------------------------------------------------------------------------------------
   // This function converts a string to a string with uppercase letters.
   //
   // @param string& - reference to the string that should be converted

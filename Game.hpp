@@ -10,6 +10,26 @@
 #include "CommandLine.hpp"
 
 
+enum Gain
+{
+  LIFESTEAL_HEALTH_GAIN = 2,
+  BATTLE_CRY_ATTACK_GAIN = 3,
+  MOBILIZE_ATTACK_GAIN = 1,
+  RAPID_RUSH_ATTACK_GAIN = 2,
+  SHIELD_HEALTH_GAIN = 2,
+  FINAL_ACT_ATTACK_GAIN = 3,
+  LOYALTY_HEALTH_GAIN = 1
+};
+
+enum Damage
+{
+  POISONED_DAMAGE = 1,
+  METEOR_DAMAGE = 3,
+  FIREBALL_DAMAGE = 2,
+  SHOCK_DAMAGE = 1
+
+};
+
 enum class EndCondition
 {
   DEFAULT,
@@ -51,7 +71,7 @@ public:
   bool directHitBattle(int column);
   bool startAttack(Creature*& creature_1, Creature*& creature_2, bool first_strike, bool& continue_battle,
   Player*& attacking_creature_owner);
-  void removeDeadCreatures(Role& first_attacker_role, Creature*& creature_1, Creature*& creature_2, int column);
+  void removeDeadCreatures(Creature*& creature_1, Creature*& creature_2, Role& first_attacker_role, int column);
   bool creatureFight(int column);
   Role processBattleTraits(Creature*& creature_1, Creature*& creature_2, bool& trait, std::string trait_name);
   void processTurnTraits();
