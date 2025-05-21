@@ -695,6 +695,29 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
   return 0;
 }
 
+void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type, int column)
+{
+  //target creature takes damage
+  target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(- amount);
+
+  //check if the creature would die and move it to the graveyard if it does
+  if (target_player->getZone(zone_type).getCreature(column)->getCurrentHealth() < 1)
+    target_player->moveToGraveyard(zone_type, column);
+}
+
+void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
+{
+  //target creature takes damage
+  creature->changeCurrentHealth(- amount);
+
+  //check if the creature would die and move it to the graveyard if it does
+  if (creature->getCurrentHealth() < 1)
+    owner->moveToGraveyard(creature);
+}
+
+
+///COMMANDS
+
 void Game::printHelp() const
 {
   std::cout << "=== Commands ============================================================================\n";
@@ -809,8 +832,6 @@ void Game::changeBoardStatus()
 void Game::processBattle(Command& command)
 {
   //Syntax: battle <FIELD_SLOT> <BATTLE_SLOT>
-  //move current player's creature from the field zone slot to the battle zone slot, a creature that was played this round cant battle, unless it has haste
-  //check challenger, and haste
 
   std::string field_slot = command.getParameters().at(0);
   std::string battle_slot = command.getParameters().at(1);
@@ -910,25 +931,20 @@ void Game::processSpell(Command& command)
 {
   // Syntax: spell <HAND_CARD_ID> <OPTIONAL_ADDITIONAL_PARAMETER>
 
-  // Check if parameter count is zero
   if (command.getParameters().size() == 0)
     throw CommandError("E_MISSING_CARD");
 
-  // Check if card exists:
   std::string card_id = command.getParameters().at(0);
   if (Config::getInstance().getCard(card_id) == nullptr)
     throw CommandError("E_INVALID_CARD");
 
-  // Check if the card is in the players hand
   Card* card = current_player_->getHand().searchCard(card_id);
   if (card == nullptr)
     throw CommandError("E_NOT_IN_HAND");
 
-  // Check if the card is a spell
   if (card->getType() != "Spell")
     throw CommandError("E_NOT_SPELL");
 
-  // Individual Spell Type handlings
   Spell* spell_card = dynamic_cast<Spell*>(card);
   SpellType sub_type = spell_card->getSubtype();
   std::string second_param;
@@ -937,7 +953,6 @@ void Game::processSpell(Command& command)
   if (sub_type == SpellType::GENERAL)
   {
     second_param = "";
-    // Check if parameters are valid
     if (command.getParameters().size() != GENERAL_SPELL_PARAM_SIZE)
       throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
   }
@@ -948,15 +963,12 @@ void Game::processSpell(Command& command)
 
   if (sub_type == SpellType::TARGET)
   {
-    // Check if parameters are valid
     if (command.getParameters().size() != TARGET_SPELL_PARAM_SIZE)
       throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
 
-    // Check if the target slot has valid syntax
     if (!std::regex_match(second_param, std::regex("O?(F|B)[1-7]")))
       throw CommandError("E_INVALID_SLOT_SPELL");
 
-    // Check if the target slot has a creature
     if (second_param.at(0) == 'O')
     {
       if (opposing_player_->isFieldSlotOccupied(second_param.substr(1)) == false)
@@ -971,11 +983,9 @@ void Game::processSpell(Command& command)
 
   if (sub_type == SpellType::GRAVEYARD)
   {
-    // Check if parameters are valid
     if (command.getParameters().size() != GRAVEYARD_SPELL_PARAM_SIZE)
       throw CommandError("E_INVALID_PARAM_COUNT_SPELL");
 
-    // Check if Graveyard contains the Card ID
     if (current_player_->getGraveyard().searchCard(second_param) == nullptr)
       throw CommandError("E_NOT_IN_GRAVEYARD");
   }
@@ -983,14 +993,11 @@ void Game::processSpell(Command& command)
   if (mana_cost == X_MANA_COST)
     mana_cost = calculateXMana(spell_card, second_param);
 
-  // Check player has enough mana
   if (current_player_->getCurrentMana() - mana_cost < 0)
     throw CommandError("E_NOT_ENOUGH_MANA");
 
-  // play spell
   current_player_->removeCardFromPile(PileType::HAND, spell_card->getId());
 
-  // execute spell
   executeSpell(command, card, mana_cost);
 }
 
@@ -1052,26 +1059,8 @@ void Game::executeSpell(Command& command, Card* card, int mana_cost)
     executeRevive(target);
 }
 
-void Game::creatureTakesDamage(int amount, Player* target_player, char zone_type, int column)
-{
-  //target creature takes damage
-  target_player->getZone(zone_type).getCreature(column)->changeCurrentHealth(- amount);
 
-  //check if the creature would die and move it to the graveyard if it does
-  if (target_player->getZone(zone_type).getCreature(column)->getCurrentHealth() < 1)
-    target_player->moveToGraveyard(zone_type, column);
-}
-
-void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
-{
-  //target creature takes damage
-  creature->changeCurrentHealth(- amount);
-
-  //check if the creature would die and move it to the graveyard if it does
-  if (creature->getCurrentHealth() < 1)
-    owner->moveToGraveyard(creature);
-}
-
+///SPELLS
 
 void Game::executeBattleCry()
 {

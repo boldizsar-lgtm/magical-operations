@@ -83,6 +83,8 @@ public:
   bool startFinalPhase(std::string file_path);
   Creature* getCreatureFromFieldString(std::string field_string);
   int calculateXMana(Spell* spell_card, std::string second_param);
+  void creatureTakesDamage(int amount, Player* target_player, char zone_type, int column);
+  void creatureTakesDamage(int amount, Creature* creature, Player* owner);
 
 
   ///COMMANDS
@@ -95,7 +97,7 @@ public:
   //------------------------------------------------------------------------------------------------------------------
   // executes the info command, printing information about a specific card
   //
-  // @param command, TODO
+  // @param command, a refrence to the Commmand class to refer to the user's command and parameters input
   // 
   void printInfo(Command& command) const;
 
@@ -115,26 +117,26 @@ public:
   void changeBoardStatus();
 
   //------------------------------------------------------------------------------------------------------------------
-  // executes the info command, printing information about a specific card
+  // executes the battle command
   //
-  // @param command, TODO
+  // @param command, a refrence to the Commmand class to refer to the user's command and parameters input
   // 
   void processBattle(Command& command);
   
-
+  //------------------------------------------------------------------------------------------------------------------
+  // executes the creature command, putting a creature on the plaayer's field zone
+  //
+  // @param command, a refrence to the Commmand class to refer to the user's command and parameters input
+  // 
   void processCreature(Command& command) const;
 
-
+  //------------------------------------------------------------------------------------------------------------------
+  //TODO
   void processSpell(Command& command);
 
-
+  //------------------------------------------------------------------------------------------------------------------
+  //TODO
   void executeSpell(Command& command, Card* card, int mana_cost);
-
-
-  void creatureTakesDamage(int  amount, Player* target_player, char zone_type, int column);
-
-
-  void creatureTakesDamage(int amount, Creature* creature, Player* owner);
 
 
   ///SPELLS
