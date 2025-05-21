@@ -21,7 +21,7 @@ Player::Player(int id) : id_{id}, field_zone_{}, battle_zone_{}, redraw_possible
   current_mana_ = mana_pool_;
 
   //draw 6 hand cards from the deck
-  for (int i = 0; i < STARTING_HAND_SIZE; i++)
+  for (int hand_cards = 0; hand_cards < STARTING_HAND_SIZE; hand_cards++)
   {
     drawCard();
   }
@@ -176,11 +176,11 @@ void Player::playCreature(Card* card, std::string field_slot)
 
 void Player::addToFirstEmptyField(Creature* creature)
 {
-  for (int slot = 1; slot <= ZONE_WIDTH; slot++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (field_zone_.getSlots()[slot + 1] == nullptr)
+    if (field_zone_.getSlots()[column + 1] == nullptr)
     {
-      field_zone_.switchCreaturePlace(creature, slot);
+      field_zone_.switchCreaturePlace(creature, column);
       return;
     }
   }
@@ -215,11 +215,11 @@ void Player::moveToBattle(std::string field_slot, std::string battle_slot)
 void Player::moveToField(int battle_column)
 {
   //get the first free field zone and insert creature, if no slot is free add to graveyard
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int field_column = 1; field_column <= ZONE_WIDTH; field_column++)
   {
-    if (!field_zone_.isOccupied(i))
+    if (!field_zone_.isOccupied(field_column))
     {
-      field_zone_.switchCreaturePlace(battle_zone_.getCreature(battle_column), i);
+      field_zone_.switchCreaturePlace(battle_zone_.getCreature(battle_column), field_column);
       battle_zone_.removeCreature(battle_column);
       return;
     }
@@ -229,12 +229,12 @@ void Player::moveToField(int battle_column)
 
 void Player::moveToField(Creature* creature)
 {
-  for (int i = 1; i <= ZONE_WIDTH; i++)
+  for (int column = 1; column <= ZONE_WIDTH; column++)
   {
-    if (!field_zone_.isOccupied(i))
+    if (!field_zone_.isOccupied(column))
     {
       //move card from graveyard to field zone
-      field_zone_.addCreature(creature, i);
+      field_zone_.addCreature(creature, column);
       creature->setEnter(true);
       graveyard_.removeCard(creature->getId());
       return;
@@ -270,18 +270,18 @@ bool Player::isZoneFull(char zone_type)
 
   if (zone_type == 'F')
   {
-    for (int slot = 1; slot <= ZONE_WIDTH; slot++)
+    for (int column = 1; column <= ZONE_WIDTH; column++)
     {
-      if (field_zone_.isOccupied(slot))
+      if (field_zone_.isOccupied(column))
         creature_amount++;
     }
   }
 
   else if (zone_type == 'B')
   {
-    for (int slot = 1; slot <= ZONE_WIDTH; slot++)
+    for (int column = 1; column <= ZONE_WIDTH; column++)
     {
-      if (battle_zone_.isOccupied(slot))
+      if (battle_zone_.isOccupied(column))
         creature_amount++;
     }
   }

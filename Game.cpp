@@ -674,7 +674,7 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
 
     float mana_cost = static_cast<float>(target->getManaCost()) / 2.0;
 
-    return (int)(ceil(mana_cost));
+    return static_cast<int>(ceil(mana_cost));
   }
 
   target = getCreatureFromFieldString(second_param);
@@ -683,7 +683,7 @@ int Game::calculateXMana(Spell* spell_card, std::string second_param)
   {
     float mana_cost =  static_cast<float>(target->getManaCost()) / 2.0;
 
-    return (int)(ceil(mana_cost));
+    return static_cast<int>(ceil(mana_cost));
   }
 
   else //(spell_card->getId() == "CURSE")
