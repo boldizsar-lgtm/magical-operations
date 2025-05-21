@@ -152,11 +152,7 @@ void Player::moveToGraveyard(Creature* creature)
 
 void Player::playCreature(Card* card, std::string field_slot)
 {
-  // user Binary Worrier, stackoverflow comment
-  // from: https://stackoverflow.com/a/439589
-  // begin
   int zone_column = field_slot.at(1) - '0';
-  // end
 
   // Remove card from hand
   removeCardFromPile(PileType::HAND, card->getId());
