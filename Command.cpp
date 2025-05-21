@@ -25,11 +25,15 @@ Command::Command(const std::vector<std::string>& input)
       type_ = CommandType::STATUS;
     else if (command_string == "DONE")
       type_ = CommandType::DONE;
+    else
+      type_ = CommandType::WRONG_PARAM;
   }
   else if (input.size() == 2)
   {
     if (command_string == "INFO")
       type_ = CommandType::INFO;
+    else
+      type_ = CommandType::WRONG_PARAM;
   }
   else if (input.size() == 3)
   {
@@ -37,11 +41,14 @@ Command::Command(const std::vector<std::string>& input)
       type_ = CommandType::BATTLE;
     else if (command_string == "CREATURE")
       type_ = CommandType::CREATURE;
+    else
+      type_ = CommandType::WRONG_PARAM;
   }
-  else if (command_string == "SPELL")
-    type_ = CommandType::SPELL;
   else
     type_ = CommandType::WRONG_PARAM;
+
+  if (command_string == "SPELL")
+    type_ = CommandType::SPELL;
 
   if (command_string != "QUIT" && command_string != "STATUS" && command_string != "GRAVEYARD" &&
       command_string != "HAND" && command_string != "BOARD"  && command_string != "CREATURE"  && 

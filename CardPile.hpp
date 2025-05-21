@@ -1,3 +1,17 @@
+//---------------------------------------------------------------------------------------------------------------------
+// CardPile.hpp/CardPile.cpp
+//
+// The CardPile class contains a vector of cards of a certain pile type (hand, deck, graveyard) and methods to modify the
+// position/existence of a card in this pile.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef CARDPILE_HPP
 #define CARDPILE_HPP
 

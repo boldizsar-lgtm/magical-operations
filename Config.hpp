@@ -1,3 +1,17 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Config.hpp/Config.cpp
+//
+// The Config class contains maps that store all available Cards, Traits and messages, as well as basic player and game
+// information from the config files.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 

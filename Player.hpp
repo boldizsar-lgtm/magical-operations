@@ -1,3 +1,17 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Player.hpp/Player.cpp
+//
+// The Player class contains all relevant information on the players of the current game and methods to modify current
+// health/attack values, the zones of each player and therefore creature member values and card piles of each player.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 

@@ -1,6 +1,6 @@
 #include "Creature.hpp"
 
-const int MAX_LETTERS (4);
+const int MAX_LETTERS (5);
 const int TWO_DIGITS (10);
 
 Creature::Creature(std::string id, int mana_cost, std::string name, std::vector<std::shared_ptr<Trait>> base_traits,
@@ -9,6 +9,33 @@ int base_attack, int base_health) : Card(id, mana_cost, name), base_attack_(base
                                     current_health_(base_health), current_traits_(base_traits),
                                     entered_this_turn_(false), is_dead_(false)
 {
+}
+
+Creature& Creature::operator+=(const std::shared_ptr<Trait> trait)
+{
+  //If the creature has no traits, just add the trait
+  if (current_traits_.empty())
+  {
+    current_traits_.push_back(trait);
+    return *this;
+  }
+
+  int insert_before = 0;
+  for (size_t position = 0; position < current_traits_.size(); position++)
+  {
+    //If the creature already has the trait return
+    if (current_traits_[position]->getId() == trait->getId())
+      return *this;
+
+    //Save the number of the last trait that comes alphabetically before the one to be added
+    //Add 1 to it to save number of the trait that comes after
+    if (current_traits_[position]->getId() < trait->getId())
+      insert_before = position + 1;
+  }
+
+  current_traits_.insert(current_traits_.begin() + insert_before, trait);
+
+  return *this;
 }
 
 void Creature::setCurrentAttack(int new_attack)
@@ -35,32 +62,6 @@ void Creature::changeCurrentHealth(int amount)
 {
   current_health_ += amount;
 }
-
-void Creature::addTrait(std::shared_ptr<Trait> trait)
-{
-  //If the creature has no traits, just add the trait
-  if (current_traits_.empty())
-  {
-    current_traits_.push_back(trait);
-    return;
-  }
-
-  int insert_before = 0;
-  for (size_t position = 0; position < current_traits_.size(); position++)
-  {
-    //If the creature already has the trait return
-    if (current_traits_[position]->getId() == trait->getId())
-      return;
-
-    //Save the number of the last trait that comes alphabetically before the one to be added
-    //Add 1 to it to save number of the trait that comes after
-    if (current_traits_[position]->getId() < trait->getId())
-      insert_before = position + 1;
-  }
-
-  current_traits_.insert(current_traits_.begin() + insert_before, trait);
-}
-
 
 void Creature::removeTrait(std::string trait)
 {
@@ -201,11 +202,11 @@ void Creature::printCardLine(int row) const
 {
   if (row == 1)
     std::cout << " _____M" << Card::getManaCostString();
-  else if (row == 2)
+  if (row == 2)
     std::cout << "| " << Card::getId() << " |";
-  else if (row == 3)
+  if (row == 3)
     std::cout << "| " << getTraitIds() << " |";
-  else if (row == 4)
+  if (row == 4)
     std::cout << 'A' << getAttackString() << "___H" << getHealthString();
 }
 

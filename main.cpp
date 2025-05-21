@@ -1,7 +1,16 @@
 //----------------------------------------------------------------------------------------------------------------------
 // main.cpp
 //
-// Borrowed from a1 and adjusted
+// In the main.cpp the validity of the config files is checked and a loop starts all different game phases until an
+// end condition is reached.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//
+// (Borrowed from a1 and adjusted)
 //----------------------------------------------------------------------------------------------------------------------
 
 // The following trick to convert digit characters into digit integers

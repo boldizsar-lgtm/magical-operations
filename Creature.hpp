@@ -1,3 +1,16 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Creature.hpp/Creature.cpp
+//
+// The Creature class contains base and current health/attack values and traits and methods to modify and print these.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef CREATURE_HPP
 #define CREATURE_HPP
 
@@ -28,6 +41,14 @@ public:
   int base_attack, int base_health);
   Creature(Creature&) = default;
   ~Creature() = default;
+
+  //------------------------------------------------------------------------------------------------------------------
+  // adds a trait to the current traits
+  //
+  // @param trait, trait to be added
+  //
+  Creature& operator+=(const std::shared_ptr<Trait> trait);
+
 
   //------------------------------------------------------------------------------------------------------------------
   // sets the creature's current attack to new_attack
@@ -147,7 +168,7 @@ public:
   // @return base_traits_ vector of shared trait pointers
   //
   std::vector<std::shared_ptr<Trait>> getBaseTraits() const;
-  
+
   //------------------------------------------------------------------------------------------------------------------
   // returns the current_traits_ vector of shared trait pointeers
   //
@@ -181,7 +202,7 @@ public:
   //------------------------------------------------------------------------------------------------------------------
   // checks if the creature has a specific trait in current_traits_
   //
-  // @param name, the name of the trait to be checked 
+  // @param name, the name of the trait to be checked
   //
   // @return true, if the creature has the given trait
   //         false, if it doesn't
