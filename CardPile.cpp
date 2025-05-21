@@ -2,6 +2,8 @@
 #include "CardPile.hpp"
 #include "Config.hpp"
 
+const int ZONE_WIDTH (7);
+
 void CardPile::createCard(std::string id)
 {
   Card* card = Config::getInstance().getCard(id);
@@ -82,7 +84,7 @@ void CardPile::removeTopCard()
 
 void CardPile::printCardPile() const
 {
-  float required_card_rows = (pile_.size() + 6) / 7;
+  float required_card_rows = (pile_.size() + 6) / ZONE_WIDTH;
 
   size_t current_card_rows = 0;
 
@@ -91,7 +93,7 @@ void CardPile::printCardPile() const
     for (int print_row = 1; print_row <= 4; print_row++)
     {
       std::cout << ' ';
-      for (size_t i = current_card_rows * 7; i < (current_card_rows + 1) * 7 && i < pile_.size(); i++)
+      for (size_t i = current_card_rows * ZONE_WIDTH; i < (current_card_rows + 1) * ZONE_WIDTH && i < pile_.size(); i++)
       {
         //print first 3 empty spaces
         std::cout << "   ";
