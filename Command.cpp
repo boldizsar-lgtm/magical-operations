@@ -88,7 +88,7 @@ Command::Command(const std::vector<std::string>& input)
   // Spell Command needs different handling of parameter
   else if (command_string == "SPELL")
     type_ = CommandType::SPELL;
-    
+
   else
     type_ = CommandType::INVALID;
 

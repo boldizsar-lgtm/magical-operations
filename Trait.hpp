@@ -1,3 +1,16 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Trait.hpp/Trait.cpp
+//
+// The Trait class contains getters for the trait information.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef TRAIT_HPP
 #define TRAIT_HPP
 

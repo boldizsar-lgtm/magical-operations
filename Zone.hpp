@@ -1,3 +1,18 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Zone.hpp/Zone.cpp
+//
+// The Zone class saves the slots of a player zone (field or battle) and contains functions to operate on the slot
+// information, e.g. add/remove creatures.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
+
 #ifndef ZONE_HPP
 #define ZONE_HPP
 

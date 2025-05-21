@@ -1,11 +1,13 @@
 //---------------------------------------------------------------------------------------------------------------------
+// Card.hpp/Card.cpp
 //
-// 
-// <... May have multiple lines.>
+// The Card class contains all basic information of a single card and methods to access these values.
 //
-// Group: <group name>
+// Group: 026
 //
-// Author: <name>, <name> ...
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
 //---------------------------------------------------------------------------------------------------------------------
 //
 

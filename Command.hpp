@@ -1,3 +1,16 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Command.hpp/Command.cpp
+//
+// The Command class creates a command of the correct type and has methods to get and set the type and parameters.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 

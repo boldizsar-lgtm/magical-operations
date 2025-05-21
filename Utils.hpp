@@ -2,7 +2,12 @@
 //
 // The Utils class contains some useful functions for use in other classes (Source: Assignment 1).
 //
-// Author: Tutors, Group 026
+// Group: 026
+//
+// Author: Tutors,
+//         Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
 //---------------------------------------------------------------------------------------------------------------------
 //
 

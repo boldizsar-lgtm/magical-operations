@@ -1,3 +1,17 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Game.hpp/Game.cpp
+//
+// The Game class contains all relevant information on the current game and methods that process the different aspects
+// of the each game phase (setup, battle, final) and finally writes the result of the game to the input file.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef GAME_HPP
 #define GAME_HPP
 
@@ -27,7 +41,6 @@ enum Damage
   METEOR_DAMAGE = 3,
   FIREBALL_DAMAGE = 2,
   SHOCK_DAMAGE = 1
-
 };
 
 enum class EndCondition

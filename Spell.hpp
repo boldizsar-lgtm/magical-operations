@@ -1,3 +1,16 @@
+//---------------------------------------------------------------------------------------------------------------------
+// Spell.hpp/Spell.cpp
+//
+// The Spell class contains getters for spell information and a printing function.
+//
+// Group: 026
+//
+// Author: Boldizsar Kiss, 12417350,
+//         Lenon Osmani, 12303674,
+//         Katharina Hartmann, 12219843
+//---------------------------------------------------------------------------------------------------------------------
+//
+
 #ifndef SPELL_HPP
 #define SPELL_HPP
 
