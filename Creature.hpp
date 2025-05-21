@@ -43,6 +43,14 @@ public:
   ~Creature() = default;
 
   //------------------------------------------------------------------------------------------------------------------
+  // adds a trait to the current traits
+  //
+  // @param trait, trait to be added
+  //
+  Creature& operator+=(const std::shared_ptr<Trait> trait);
+
+
+  //------------------------------------------------------------------------------------------------------------------
   // sets the creature's current attack to new_attack
   //
   // @param new_attack, the new attack value of the creature

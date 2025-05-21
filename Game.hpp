@@ -73,7 +73,7 @@ public:
   Game(Game&) = default;
   ~Game() = default;
 
-  
+
   bool startRound();
   bool startSetupPhase();
   bool doCommandLoop(CommandLine& cli);

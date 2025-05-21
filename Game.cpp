@@ -408,7 +408,7 @@ Role Game::processBattleTraits(Creature*& creature_1, Creature*& creature_2, boo
     if (creature_1->creatureHasTrait("Venomous"))
     {
       //add trait poisoned to opposing creature
-      creature_2->addTrait(Config::getInstance().getTrait('P'));
+      *creature_2 += (Config::getInstance().getTrait('P'));
       std::cout << Config::getInstance().getMessage("I_VENOMOUS") << std::endl;
     }
   }
@@ -1071,10 +1071,10 @@ void Game::executeBattleCry()
     if (current_player_->getZone('F').isOccupied(column))
     {
       //gains haste
-      current_player_->getZone('F').getCreature(column)->addTrait(Config::getInstance().getTrait('H'));
+      *current_player_->getZone('F').getCreature(column) += (Config::getInstance().getTrait('H'));
 
       //gains temporary
-      current_player_->getZone('F').getCreature(column)->addTrait(Config::getInstance().getTrait('T'));
+      *current_player_->getZone('F').getCreature(column) += (Config::getInstance().getTrait('T'));
 
       //attack increases by 3
       current_player_->getZone('F').getCreature(column)->changeCurrentAttack(BATTLE_CRY_ATTACK_GAIN);
@@ -1084,10 +1084,10 @@ void Game::executeBattleCry()
     if (current_player_->getZone('B').isOccupied(column))
     {
       //gains haste
-      current_player_->getZone('B').getCreature(column)->addTrait(Config::getInstance().getTrait('H'));
+      *current_player_->getZone('B').getCreature(column) += (Config::getInstance().getTrait('H'));
 
       //gains temporary
-      current_player_->getZone('B').getCreature(column)->addTrait(Config::getInstance().getTrait('T'));
+      *current_player_->getZone('B').getCreature(column) += (Config::getInstance().getTrait('T'));
 
       //attack increases by 3
       current_player_->getZone('B').getCreature(column)->changeCurrentAttack(BATTLE_CRY_ATTACK_GAIN);
@@ -1135,15 +1135,15 @@ void Game::executeClone(std::string target)
 
   current_player_->addToFirstEmptyField(clone);
 
-  clone->addTrait(Config::getInstance().getTrait('H'));
-  clone->addTrait(Config::getInstance().getTrait('T'));
+  *clone += (Config::getInstance().getTrait('H'));
+  *clone += (Config::getInstance().getTrait('T'));
 }
 
 void Game::executeDeathCurse(std::string target)
 {
   Creature* creature = getCreatureFromFieldString(target);
 
-  creature->addTrait(Config::getInstance().getTrait('T'));
+  *creature += (Config::getInstance().getTrait('T'));
 }
 
 void Game::executeShock(std::string target)
@@ -1167,7 +1167,7 @@ void Game::executeMobilize(std::string target)
   Creature* creature = getCreatureFromFieldString(target);
 
   //The target creature gains haste
-  creature->addTrait(Config::getInstance().getTrait('H'));
+  *creature += (Config::getInstance().getTrait('H'));
 
   //its attack increases by 1
   creature->changeCurrentAttack(MOBILIZE_ATTACK_GAIN);
@@ -1178,10 +1178,10 @@ void Game::executeRapidRush(std::string target)
   Creature* creature = getCreatureFromFieldString(target);
 
   //The target creature gains first strike
-  creature->addTrait(Config::getInstance().getTrait('F'));
+  *creature += (Config::getInstance().getTrait('F'));
 
   //The target creature gains temporary
-  creature->addTrait(Config::getInstance().getTrait('T'));
+  *creature += (Config::getInstance().getTrait('T'));
 
   //its attack increases by 2
   creature->changeCurrentAttack(RAPID_RUSH_ATTACK_GAIN);
@@ -1207,13 +1207,13 @@ void Game::executeFinalAct(std::string target)
   Creature* creature = getCreatureFromFieldString(target);
 
   //The target creature gains brutal
-  creature->addTrait(Config::getInstance().getTrait('B'));
+  *creature += (Config::getInstance().getTrait('B'));
 
   //The target creature gains haste
-  creature->addTrait(Config::getInstance().getTrait('H'));
+  *creature += (Config::getInstance().getTrait('H'));
 
   //The target creature gains temporary
-  creature->addTrait(Config::getInstance().getTrait('T'));
+  *creature += (Config::getInstance().getTrait('T'));
 
   //its attack increases by 3
   creature->changeCurrentAttack(FINAL_ACT_ATTACK_GAIN);
@@ -1224,7 +1224,7 @@ void Game::executeLoyalty(std::string target)
   Creature* creature = getCreatureFromFieldString(target);
 
   //The target creature gains haste
-  creature->addTrait(Config::getInstance().getTrait('H'));
+  *creature += (Config::getInstance().getTrait('H'));
 
   //its health increases by 1
   creature->changeCurrentHealth(LOYALTY_HEALTH_GAIN);
@@ -1235,10 +1235,10 @@ void Game::executeZombify(std::string target)
   Creature* creature = getCreatureFromFieldString(target);
 
   //The target creature gains venomous
-  creature->addTrait(Config::getInstance().getTrait('V'));
+  *creature += (Config::getInstance().getTrait('V'));
 
   //The target creature gains undying
-  creature->addTrait(Config::getInstance().getTrait('U'));
+  *creature += (Config::getInstance().getTrait('U'));
 }
 
 void Game::executeBloodlust(std::string target)
@@ -1246,10 +1246,10 @@ void Game::executeBloodlust(std::string target)
   Creature* creature = getCreatureFromFieldString(target);
 
   //The target creature gains brutal
-  creature->addTrait(Config::getInstance().getTrait('B'));
+  *creature += (Config::getInstance().getTrait('B'));
 
   //The target creature gains lifesteal
-  creature->addTrait(Config::getInstance().getTrait('L'));
+  *creature += (Config::getInstance().getTrait('L'));
 
   //its health is set to half its current health (rounded up)
   int new_health = creature->getCurrentHealth();
@@ -1265,10 +1265,10 @@ void Game::executeHeroicMemory(std::string target)
   current_player_->moveToField(creature);
 
   //The target creature gains Haste
-  creature->addTrait(Config::getInstance().getTrait('H'));
+  *creature += (Config::getInstance().getTrait('H'));
 
   //The target creature gains Temporary
-  creature->addTrait(Config::getInstance().getTrait('T'));
+  *creature += (Config::getInstance().getTrait('T'));
 }
 
 void Game::executeRevive(std::string target)
