@@ -138,7 +138,7 @@ public:
   bool directHitBattle(int column);
 
   //------------------------------------------------------------------------------------------------------------------
-  // executes the help command, printing all possible command options
+  // starts a singular attack between two creatures in the same battle slot
   //
   // @param creature_1 creature that is currently attacking
   // @param creature_2 creature that is currently being attacked
@@ -152,7 +152,7 @@ public:
                    Player*& attacking_creature_owner);
 
   //------------------------------------------------------------------------------------------------------------------
-  // moves the creatures that died during a single battle to the graveyard
+  // moves the creatures that died during a single battle (one slot) to the graveyard
   //
   // @param creature_1 first creature pointer
   // @param creature_2 second creature pointer
@@ -188,7 +188,7 @@ public:
   void processTurnTraits();
 
   //------------------------------------------------------------------------------------------------------------------
-  // starts a battle in at a certain column
+  // starts a battle at a certain column
   //
   // @param column column where the attack takes place
   //
