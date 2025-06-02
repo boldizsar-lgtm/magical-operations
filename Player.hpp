@@ -152,6 +152,9 @@ public:
   //
   void addToFirstEmptyField(Creature* creature);
 
+  //NEW a3 method
+  int getFirstEmptyFieldColumn();
+
   //------------------------------------------------------------------------------------------------------------------
   // remove a card with a specific id from the player's deck, hand, or graveyard
   //

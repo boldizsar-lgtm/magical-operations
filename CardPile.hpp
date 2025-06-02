@@ -115,6 +115,7 @@ public:
   // @return a card pointer
   //
   Card* getPileTop() const;
+  
   int getSize() const;
 };
 

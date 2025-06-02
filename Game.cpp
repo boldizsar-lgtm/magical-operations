@@ -1327,28 +1327,130 @@ void Game::letAiPlay()
   current values of creatures in the game*/
 
 
-  /*Bobo's idea:
-  Redraw up to twice if no other command is usable
-  
-  Creature on the first empty field zone if possible,
+  /*Creature on the first empty field zone if possible,
   always prefer creatures with haste,
   play around board wipes, don't play out all creatures
-  if they all have 3 or less health
+  if they all have 3 or less health*/
+
+  //check if creature can be executed
+  bool can_play_creature = false;
+  int available_mana = current_player_->getCurrentMana();
+  std::string creature_id;
+  Card* cast_creature = nullptr;
+
+  for (Card* card : current_player_->getHand().getPile())
+  {
+    Creature* creature = dynamic_cast<Creature*>(card);
+    //check for creatures with haste first
+    if (creature != nullptr && creature->getManaCost() <= available_mana && creature->creatureHasTrait("Haste"))
+    {
+      creature_id = creature->getId();
+      can_play_creature = true;
+      cast_creature = creature;
+    }
+    else if (creature != nullptr && creature->getManaCost() <= available_mana)
+    {
+      creature_id = creature->getId();
+      can_play_creature = true;
+      cast_creature = creature;
+    }
+  }
+
+  std::string field_slot = "f" + std::to_string(current_player_->getFirstEmptyFieldColumn());
+  if (field_slot == "f0")
+  {
+    can_play_creature = false;
+  }
   
-  Spell, if you have a spell that gives haste use it on the strongest creature you have
+  /*Spell, if you have a spell that gives haste use it on the strongest creature you have
   all other buff spells should only be used on creatures that can attack
   use board wipe when 3 or more opponent creatures can be destroyed,
   and if at most 1 less of your creatures is destroyed
   use board buff spells if you control at least 3 creatures
   use revive spells if you are close to winning or if you can target a good enough creature
-  use shock if you could kill an enemy creature.
+  use shock if you could kill an enemy creature.*/
 
-  Battle always, check if your creatures have haste and then battle if possible.
-  maybe check if an opposing creature has deathtouch and avoid battling then?
+  //check if spell can be executed
+  bool can_cast_spell = false;
+  //TODO
 
-  Done if no other option is available
-  */
+  //check if battle can be executed
+  bool can_battle = false;
+  Creature* creature = nullptr;
+  int battle_column;
+  for (battle_column = 1; battle_column <= ZONE_WIDTH; battle_column++)
+    if (current_player_->getZone('F').isOccupied(battle_column) &&
+        (!current_player_->getZone('F').getCreature(battle_column)->getEnter() ||
+        current_player_->getZone('F').getCreature(battle_column)->creatureHasTrait("Haste")))
+    {
+      can_battle = true;
+      creature = current_player_->getZone('F').getCreature(battle_column);
+      break;
+    }
 
 
+  if (can_play_creature)
+  {
+    std::cout << "AI: creature " << creature_id << ' ' << field_slot << std::endl;
+
+    current_player_->playCreature(cast_creature, field_slot);
+
+    current_player_->setRedrawNotPossible();
+  }
+  else if (can_cast_spell)
+  {
+    //TODO
+    current_player_->setRedrawNotPossible();
+  }
+  else if (can_battle)
+  {
+    //excute battle, mostly copied from processBattle()
+    if (current_player_->getZone('F').isOccupied(battle_column))
+    {
+      if (creature == current_player_->getZone('F').getCreature(battle_column))
+      {
+        std::cout << "AI: battle f" << battle_column << std::endl;
+        
+        std::string battle_slot = "B" + std::to_string(battle_column);
+        std::string field_slot = "F" + std::to_string(battle_column);
+
+        std::string column_str = std::to_string(battle_column);
+        current_player_->moveToBattle(field_slot, battle_slot);
+
+        bool has_haste = creature->creatureHasTrait("Haste");
+        bool has_challenger = creature->creatureHasTrait("Challenger");
+
+        // Print Haste
+        if (has_haste && creature->getEnter())
+          std::cout << Config::getInstance().getMessage("I_HASTE") << std::endl;
+
+        // Execute Challenger Trait
+        if (has_challenger)
+        {
+          if (opposing_player_->isFieldSlotOccupied(field_slot) == true &&
+              opposing_player_->isFieldSlotOccupied(battle_slot) == false)
+          {
+            opposing_player_->moveToBattle(column_str, column_str);
+            std::cout << Config::getInstance().getMessage("I_CHALLENGER") << std::endl;
+          }
+        }
+      }
+    }
+
+    current_player_->setRedrawNotPossible();
+  }
+  else if (current_player_->getRedrawPossible() && current_player_->getHand().getSize() > 5)
+  {
+    std::cout << "AI: redraw" << std::endl;
+    current_player_->redrawHand();
+  }
+  else //use done
+  {
+    std::cout << "AI: done" << std::endl;
+    current_player_->setDoneStatus(true);
+    processTurnTraits();
+    printBoard();
+    current_player_->setRedrawNotPossible();
+  }
 
 }

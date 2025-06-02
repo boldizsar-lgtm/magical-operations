@@ -210,7 +210,7 @@ public:
   bool creatureHasTrait(std::string name) const;
 
   //------------------------------------------------------------------------------------------------------------------
-  // checks if the creature has a specific trait in current_traits_
+  // checks if the creature entered this turn
   //
   // @return true, if the creature entered the battlefield this turn, and can't attack
   //         false, if it didn't enter this turrn, and it can attack

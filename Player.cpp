@@ -187,6 +187,20 @@ void Player::addToFirstEmptyField(Creature* creature)
   }
 }
 
+//NEW a3 method
+int Player::getFirstEmptyFieldColumn()
+{
+  for (int column = 1; column <= ZONE_WIDTH; column++)
+  {
+    if (field_zone_.getSlots()[column - 1] == nullptr)
+    {
+      return column;
+    }
+  }
+
+  return 0;
+}
+
 void Player::removeCardFromPile(PileType pile_type, std::string id)
 {
   if (pile_type == PileType::HAND)
