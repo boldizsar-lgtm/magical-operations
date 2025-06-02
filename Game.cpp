@@ -546,6 +546,27 @@ void Game::processCommand(Command command)
     processSpell(command);
     current_player_->setRedrawNotPossible();
   }
+
+  //NEW a3 commands added:
+  //print team name
+  if (command_type == CommandType::WHOAMI)
+  {
+    std::cout << "Serendipitous Sparrow" << std::endl;
+  }
+
+  //print board, status, and hand
+  if (command_type == CommandType::SYNC)
+  {
+    printBoard();
+    printStatus();
+    current_player_->printHand();
+  }
+
+  //AI automatically selects single command to execute next
+  if (command_type == CommandType::PLAY)
+  {
+    letAiPlay();
+  }
 }
 
 int Game::getRound() const
@@ -1272,4 +1293,10 @@ void Game::executeRevive(std::string target)
 {
   Creature* creature = dynamic_cast<Creature*>(current_player_->getGraveyard().searchCard(target));
   current_player_->moveToHand(creature);
+}
+
+//NEW a3 method:
+void Game::letAiPlay()
+{
+  //TODO
 }

@@ -475,6 +475,9 @@ public:
   //                1-7 signaling the column of the zone
   //
   void executeRevive(std::string target);
+
+  //NEW a3 method:
+  void letAiPlay();
 };
 
 #endif //GAME_HPP

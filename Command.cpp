@@ -25,6 +25,12 @@ Command::Command(const std::vector<std::string>& input)
       type_ = CommandType::STATUS;
     else if (command_string == "DONE")
       type_ = CommandType::DONE;
+    else if (command_string == "WHOAMI")
+      type_ = CommandType::WHOAMI;
+    else if (command_string == "SYNC")
+      type_ = CommandType::SYNC;
+    else if (command_string == "PLAY")
+      type_ = CommandType::PLAY;
     else
       type_ = CommandType::WRONG_PARAM;
   }
@@ -50,10 +56,11 @@ Command::Command(const std::vector<std::string>& input)
   if (command_string == "SPELL")
     type_ = CommandType::SPELL;
 
-  if (command_string != "QUIT" && command_string != "STATUS" && command_string != "GRAVEYARD" &&
-      command_string != "HAND" && command_string != "BOARD"  && command_string != "CREATURE"  && 
-      command_string != "DONE" && command_string != "INFO"   && command_string != "BATTLE"    &&
-      command_string != "HELP" && command_string != "REDRAW" && command_string != "SPELL") 
+  if (command_string != "QUIT"    && command_string != "STATUS" && command_string != "GRAVEYARD" &&
+      command_string != "HAND"    && command_string != "BOARD"  && command_string != "CREATURE"  && 
+      command_string != "DONE"    && command_string != "INFO"   && command_string != "BATTLE"    &&
+      command_string != "HELP"    && command_string != "REDRAW" && command_string != "SPELL"     &&
+      command_string != "WHOAMI"  && command_string != "SYNC"   && command_string != "PLAY") 
     type_ = CommandType::INVALID;
 
   parameters_ = std::vector<std::string>(input.begin() + 1, input.end());

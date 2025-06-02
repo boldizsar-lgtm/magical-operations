@@ -31,6 +31,9 @@ enum class CommandType
   BATTLE,
   CREATURE,
   SPELL,
+  WHOAMI,
+  SYNC,
+  PLAY,
   INVALID,
   WRONG_PARAM
 };
