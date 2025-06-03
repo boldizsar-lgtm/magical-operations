@@ -551,7 +551,7 @@ void Game::processCommand(Command command)
   //print team name
   if (command_type == CommandType::WHOAMI)
   {
-    std::cout << "Team: Team 26" << std::endl;
+    std::cout << "Team: Giveus Ana" << std::endl;
   }
 
   //print board, status, and hand
@@ -1301,37 +1301,6 @@ void Game::executeRevive(std::string target)
 //NEW a3 method:
 void Game::letAiPlay()
 {
-  //TODO
-
-  /*AI options: (per one play command, execute one of these)
-  Command: redraw
-  Command: done
-  Command: battle
-  Command: creature
-  Command: spell
-  
-  std::cout << "AI: <CHOSEN_COMMAND> <PARAMETERS>" << std::endl;
-  the command and parameters should be printed in lowercase letters
-  then the command should be executed*/
-
-
-  /*AI knows:
-  All Rules
-  Max_Rounds value
-  Board
-  game status command info
-  own hand
-  both graveyards
-  current round counter
-  base value of all cards
-  current values of creatures in the game*/
-
-
-  /*Creature on the first empty field zone if possible,
-  always prefer creatures with haste,
-  play around board wipes, don't play out all creatures
-  if they all have 3 or less health*/
-
   //check if creature can be executed
   bool can_play_creature = false;
   int available_mana = current_player_->getCurrentMana();
