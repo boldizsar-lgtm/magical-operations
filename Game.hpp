@@ -478,6 +478,8 @@ public:
 
   //NEW a3 method:
   void letAiPlay();
+
+  void printAiCommand(std::vector<std::string>& command);
 };
 
 #endif //GAME_HPP

@@ -1298,128 +1298,118 @@ void Game::executeRevive(std::string target)
   current_player_->moveToHand(creature);
 }
 
+
+//-----------------------------------------------------------------------------------------------------
 //NEW a3 method:
 void Game::letAiPlay()
 {
-  //check if creature can be executed
-  bool can_play_creature = false;
-  int available_mana = current_player_->getCurrentMana();
-  std::string creature_id;
-  Card* cast_creature = nullptr;
+  std::vector<std::string> command;
+  
+  int creature_priority = 0;
+  std::vector<std::string> creature_command = {"creature", " "};
+  //syntax: creature <id> <fieldzone>
 
+  int spell_priority = 0;
+  std::vector<std::string> spell_command = {"spell", " "};
+  //syntax: spell <id> <optional>
+
+  int battle_priority = 0;
+  std::vector<std::string> battle_command = {"battle", " "};
+  //syntax: battle <fieldzone> <battlezone>
+  
+
+  //determine spell/creature priorities
   for (Card* card : current_player_->getHand().getPile())
   {
-    Creature* creature = dynamic_cast<Creature*>(card);
-    //check for creatures with haste first
-    if (creature != nullptr && creature->getManaCost() <= available_mana && creature->creatureHasTrait("Haste"))
+    int current_creature_priority = 0;
+    int current_spell_priority = 0;
+    
+    if (card->getType() == "Creature")
     {
-      creature_id = creature->getId();
-      can_play_creature = true;
-      cast_creature = creature;
+      Creature* current_creature = dynamic_cast<Creature*>(card);
+      current_creature_priority += current_creature->getBaseAttack() + current_creature->getBaseHealth();
+      //Increase CREATURE PRIORITY
     }
-    else if (creature != nullptr && creature->getManaCost() <= available_mana)
+
+    if (card->getType() == "Spell")
     {
-      creature_id = creature->getId();
-      can_play_creature = true;
-      cast_creature = creature;
+      Spell* current_spell = dynamic_cast<Spell*>(card);
+      //Increase SPELL PRIORITY
+    }
+
+    //set priority to 0 if its too expensive
+    if (card->getManaCost() > current_player_->getCurrentMana())
+    {
+      current_creature_priority = 0;
+      current_spell_priority = 0;
+    }
+
+    //if current creature's priority is higher than the saved creature's save it instead
+    if (current_creature_priority > creature_priority)
+    {
+      creature_priority = current_creature_priority;
+      creature_command.at(1) = card->getId();
+    }
+
+    //If current spell's priority is higher than the saved spell's save it instead
+    if (current_spell_priority > creature_priority)
+    {
+      spell_priority = current_spell_priority;
+      spell_command.at(1) = card->getId();
     }
   }
 
-  std::string field_slot = "f" + std::to_string(current_player_->getFirstEmptyFieldColumn());
-  if (field_slot == "f0")
+  //find first empty field zone
+  creature_command.push_back("f" + std::to_string(current_player_->getFirstEmptyFieldColumn()));
+
+  //set creature priority to 0 if the board is full
+  if (creature_command.at(2) == "f0")
   {
-    can_play_creature = false;
+    creature_priority = 0;
   }
   
-  /*Spell, if you have a spell that gives haste use it on the strongest creature you have
-  all other buff spells should only be used on creatures that can attack
-  use board wipe when 3 or more opponent creatures can be destroyed,
-  and if at most 1 less of your creatures is destroyed
-  use board buff spells if you control at least 3 creatures
-  use revive spells if you are close to winning or if you can target a good enough creature
-  use shock if you could kill an enemy creature.*/
 
-  //check if spell can be executed
-  bool can_cast_spell = false;
+  //check BATTLE PRIORITY
   //TODO
 
-  //check if battle can be executed
-  bool can_battle = false;
-  Creature* creature = nullptr;
-  int battle_column;
-  for (battle_column = 1; battle_column <= ZONE_WIDTH; battle_column++)
-    if (current_player_->getZone('F').isOccupied(battle_column) &&
-        (!current_player_->getZone('F').getCreature(battle_column)->getEnter() ||
-        current_player_->getZone('F').getCreature(battle_column)->creatureHasTrait("Haste")))
-    {
-      can_battle = true;
-      creature = current_player_->getZone('F').getCreature(battle_column);
-      break;
-    }
 
 
-  if (can_play_creature)
-  {
-    std::cout << "AI: creature " << creature_id << ' ' << field_slot << std::endl;
-
-    current_player_->playCreature(cast_creature, field_slot);
-
-    current_player_->setRedrawNotPossible();
-  }
-  else if (can_cast_spell)
-  {
-    //TODO
-    current_player_->setRedrawNotPossible();
-  }
-  else if (can_battle)
-  {
-    //excute battle, mostly copied from processBattle()
-    if (current_player_->getZone('F').isOccupied(battle_column))
-    {
-      if (creature == current_player_->getZone('F').getCreature(battle_column))
-      {
-        std::cout << "AI: battle f" << battle_column << std::endl;
-        
-        std::string battle_slot = "B" + std::to_string(battle_column);
-        std::string field_slot = "F" + std::to_string(battle_column);
-
-        std::string column_str = std::to_string(battle_column);
-        current_player_->moveToBattle(field_slot, battle_slot);
-
-        bool has_haste = creature->creatureHasTrait("Haste");
-        bool has_challenger = creature->creatureHasTrait("Challenger");
-
-        // Print Haste
-        if (has_haste && creature->getEnter())
-          std::cout << Config::getInstance().getMessage("I_HASTE") << std::endl;
-
-        // Execute Challenger Trait
-        if (has_challenger)
-        {
-          if (opposing_player_->isFieldSlotOccupied(field_slot) == true &&
-              opposing_player_->isFieldSlotOccupied(battle_slot) == false)
-          {
-            opposing_player_->moveToBattle(column_str, column_str);
-            std::cout << Config::getInstance().getMessage("I_CHALLENGER") << std::endl;
-          }
-        }
-      }
-    }
-
-    current_player_->setRedrawNotPossible();
-  }
+  //creature
+  if (creature_priority > spell_priority && creature_priority > battle_priority)
+    command = creature_command;
+  //spell
+  else if (spell_priority > creature_priority && spell_priority > battle_priority)
+    command = spell_command;
+  //battle
+  else if (battle_priority > spell_priority && battle_priority > creature_priority)
+    command = battle_command;
+  //redraw
   else if (current_player_->getRedrawPossible() && current_player_->getHand().getSize() > 5)
+    command = {"redraw"};
+  //done
+  else
+    command = {"done"};
+  
+
+  printAiCommand(command);
+
+  Command ai(command);
+  processCommand(ai);
+}
+
+//since we work with uppercase, and a3 wants us to print in lowercase this method toUppers after printing in lowercase
+void Game::printAiCommand(std::vector<std::string>& command)
+{
+  std::cout << "AI:";
+
+  for(std::string& parameter : command)
   {
-    std::cout << "AI: redraw" << std::endl;
-    current_player_->redrawHand();
-  }
-  else //use done
-  {
-    std::cout << "AI: done" << std::endl;
-    current_player_->setDoneStatus(true);
-    processTurnTraits();
-    printBoard();
-    current_player_->setRedrawNotPossible();
+    std::cout << ' ' << parameter;
+
+    //turn the lowercase parameters uppercase so our program can handle them
+    Utils::toUpper(parameter);
   }
 
+  std::cout << std::endl;
 }
+
