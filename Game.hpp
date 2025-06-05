@@ -479,6 +479,12 @@ public:
   //NEW a3 method:
   void letAiPlay();
 
+  void getCreaturePriority(int& priority, std::vector<std::string>& command);
+
+  void getSpellPriority(int& priority, std::vector<std::string>& command);
+
+  void getBattlePriority(int& priority, std::vector<std::string>& command);
+
   void printAiCommand(std::vector<std::string>& command);
 };
 

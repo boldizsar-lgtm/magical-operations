@@ -51,3 +51,13 @@ void Utils::toUpper(std::string& string)
     character = toupper(static_cast<unsigned char>(character));
   }
 }
+
+void Utils::toLower(std::string& string)
+{
+  for(char& character : string)
+  {
+    character = tolower(static_cast<unsigned char>(character));
+  }
+}
+
+

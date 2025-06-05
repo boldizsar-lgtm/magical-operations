@@ -1306,72 +1306,28 @@ void Game::letAiPlay()
   std::vector<std::string> command;
   
   int creature_priority = 0;
-  std::vector<std::string> creature_command = {"creature", " "};
+  std::vector<std::string> creature_command = {"creature", ""};
   //syntax: creature <id> <fieldzone>
 
   int spell_priority = 0;
-  std::vector<std::string> spell_command = {"spell", " "};
+  std::vector<std::string> spell_command = {"spell", "", ""};
   //syntax: spell <id> <optional>
 
   int battle_priority = 0;
-  std::vector<std::string> battle_command = {"battle", " "};
+  std::vector<std::string> battle_command = {"battle", "", ""};
   //syntax: battle <fieldzone> <battlezone>
-  
 
-  //determine spell/creature priorities
-  for (Card* card : current_player_->getHand().getPile())
-  {
-    int current_creature_priority = 0;
-    int current_spell_priority = 0;
-    
-    if (card->getType() == "Creature")
-    {
-      Creature* current_creature = dynamic_cast<Creature*>(card);
-      current_creature_priority += current_creature->getBaseAttack() + current_creature->getBaseHealth();
-      //Increase CREATURE PRIORITY
-    }
-
-    if (card->getType() == "Spell")
-    {
-      Spell* current_spell = dynamic_cast<Spell*>(card);
-      //Increase SPELL PRIORITY
-    }
-
-    //set priority to 0 if its too expensive
-    if (card->getManaCost() > current_player_->getCurrentMana())
-    {
-      current_creature_priority = 0;
-      current_spell_priority = 0;
-    }
-
-    //if current creature's priority is higher than the saved creature's save it instead
-    if (current_creature_priority > creature_priority)
-    {
-      creature_priority = current_creature_priority;
-      creature_command.at(1) = card->getId();
-    }
-
-    //If current spell's priority is higher than the saved spell's save it instead
-    if (current_spell_priority > creature_priority)
-    {
-      spell_priority = current_spell_priority;
-      spell_command.at(1) = card->getId();
-    }
-  }
 
   //find first empty field zone
   creature_command.push_back("f" + std::to_string(current_player_->getFirstEmptyFieldColumn()));
 
-  //set creature priority to 0 if the board is full
-  if (creature_command.at(2) == "f0")
-  {
-    creature_priority = 0;
-  }
-  
+  //if the board is not full get creature priority
+  if (creature_command.at(2) != "f0")
+    getCreaturePriority(creature_priority, creature_command);
 
-  //check BATTLE PRIORITY
-  //TODO
+  getSpellPriority(spell_priority, spell_command);
 
+  getBattlePriority(battle_priority, battle_command);
 
 
   //creature
@@ -1397,16 +1353,103 @@ void Game::letAiPlay()
   processCommand(ai);
 }
 
-//since we work with uppercase, and a3 wants us to print in lowercase this method toUppers after printing in lowercase
+//------------------
+void Game::getCreaturePriority(int& priority, std::vector<std::string>& command)
+{
+  for (Card* card : current_player_->getHand().getPile())
+  {
+    int current_priority = 0;
+
+    //if card is too expensive, skip it
+    if (card->getManaCost() > current_player_->getCurrentMana())
+      continue;
+    
+    if (card->getType() == "Creature")
+    {
+      Creature* creature = dynamic_cast<Creature*>(card);
+      //Increase CREATURE PRIORITY
+      current_priority += creature->getBaseAttack() + creature->getBaseHealth();
+    }
+
+    //if current creature's priority is higher than the saved creature's save it instead
+    if (current_priority > priority)
+    {
+      priority = current_priority;
+      command.at(1) = card->getId();
+    }
+  }
+}
+
+//------------------
+void Game::getSpellPriority(int& priority, std::vector<std::string>& command)
+{
+  for (Card* card : current_player_->getHand().getPile())
+  {
+    int current_priority = 0;
+    
+    //if card is too expensive, skip it
+    if (card->getManaCost() > current_player_->getCurrentMana())
+      continue;
+
+    if (card->getType() == "Spell")
+    {
+      Spell* spell = dynamic_cast<Spell*>(card);
+      //Increase SPELL PRIORITY
+    }
+
+    //if current spell's priority is higher than the saved spell's save it instead
+    if (current_priority > priority)
+    {
+      priority = current_priority;
+      command.at(1) = card->getId();
+    }
+  }
+}
+
+//------------------
+void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
+{
+  for (int column = 1; column <= ZONE_WIDTH; column++)
+  {
+    int current_priority = 0;
+
+    //if fieldzone is not occupied, skip this column
+    if(!current_player_->getZone('F').isOccupied(column))
+      continue;
+
+    //if the creature entered this turn and doesnt have haste, skkip this   column
+    if (current_player_->getZone('F').getCreature(column)->getEnter() &&
+        !current_player_->getZone('F').getCreature(column)->creatureHasTrait("Haste"))
+      continue;
+    
+    //increase BATTLE PRRIORITY
+    current_priority++;
+
+    //if current creature's priority is higher than the saved creature's save it instead
+    if (current_priority > priority)
+    {
+      priority = current_priority;
+      command.at(1) = "f" + std::to_string(column);
+
+      if (current_player_->getRoleString() == "Attacker")
+        command.at(2) = "b" + std::to_string(column);
+      else //current_player is defender
+        command.at(2) = "b" + std::to_string(column); //CHANGE, it should block instead
+    }
+  }
+}
+
+//------------------
 void Game::printAiCommand(std::vector<std::string>& command)
 {
   std::cout << "AI:";
 
   for(std::string& parameter : command)
   {
+    Utils::toLower(parameter);
+    
     std::cout << ' ' << parameter;
 
-    //turn the lowercase parameters uppercase so our program can handle them
     Utils::toUpper(parameter);
   }
 
