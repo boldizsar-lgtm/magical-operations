@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include <fstream>
 #include <cmath>
+#include <ranges>
 
 const int TIE (0);
 const int ZONE_WIDTH (7);
@@ -1304,7 +1305,7 @@ void Game::executeRevive(std::string target)
 void Game::letAiPlay()
 {
   std::vector<std::string> command;
-  
+
   int creature_priority = 0;
   std::vector<std::string> creature_command = {"creature", ""};
   //syntax: creature <id> <fieldzone>
@@ -1345,7 +1346,7 @@ void Game::letAiPlay()
   //done
   else
     command = {"done"};
-  
+
 
   printAiCommand(command);
 
@@ -1363,7 +1364,7 @@ void Game::getCreaturePriority(int& priority, std::vector<std::string>& command)
     //if card is too expensive, skip it
     if (card->getManaCost() > current_player_->getCurrentMana())
       continue;
-    
+
     if (card->getType() == "Creature")
     {
       Creature* creature = dynamic_cast<Creature*>(card);
@@ -1386,7 +1387,7 @@ void Game::getSpellPriority(int& priority, std::vector<std::string>& command)
   for (Card* card : current_player_->getHand().getPile())
   {
     int current_priority = 0;
-    
+
     //if card is too expensive, skip it
     if (card->getManaCost() > current_player_->getCurrentMana())
       continue;
@@ -1409,6 +1410,9 @@ void Game::getSpellPriority(int& priority, std::vector<std::string>& command)
 //------------------
 void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 {
+  // TODO: maybe look for creatures that can take the damage of brutal creatures
+  // TODO: place weakest creatures infront of creatures
+
   for (int column = 1; column <= ZONE_WIDTH; column++)
   {
     int current_priority = 0;
@@ -1421,7 +1425,46 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
     if (current_player_->getZone('F').getCreature(column)->getEnter() &&
         !current_player_->getZone('F').getCreature(column)->creatureHasTrait("Haste"))
       continue;
-    
+
+    // Logic for Defense in Battle Zone
+    int battle_slot_to_defend = 1;
+    if(current_player_->getRoleString() == "Defender")
+    {
+
+      // filter that keeps creatures that are undefended
+      auto undefended_creatures = opposing_player_->getZone('B').getSlots()
+      | std::views::filter([this] (Creature* creature) -> bool 
+      {
+        int opposing_slot = opposing_player_->getCreatureColumn('B', creature);
+
+        if (creature != nullptr && !current_player_->getZone('B').isOccupied(opposing_slot))
+          return true; // keep creatures that are undefended
+        return false;
+      });
+
+      // check if there are brutal creatures that could deal damage to current player (the opposing battle slot is still empty)
+      auto undefended_brutal_creatures =  opposing_player_->getZone('B').getSlots()
+      | std::views::filter([this] (Creature* creature) -> bool
+        {
+          int opposing_slot = opposing_player_->getCreatureColumn('B', creature);
+
+          if (creature != nullptr && creature->creatureHasTrait("Brutal") && !current_player_->getZone('B').isOccupied(opposing_slot))
+            return true; // keep creatures that have brutal trait and are undefended
+          return false;
+        });
+
+
+      // determine which creature to defend against first depending on max current attack
+      if (std::ranges::distance(undefended_brutal_creatures) != 0)
+      {
+        battle_slot_to_defend = determineBestDefenseSlot(undefended_brutal_creatures);
+      }
+      else if(std::ranges::distance(undefended_creatures) != 0)
+      {
+        battle_slot_to_defend = determineBestDefenseSlot(undefended_creatures);
+      }
+    }
+
     //increase BATTLE PRRIORITY
     current_priority++;
 
@@ -1434,9 +1477,31 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       if (current_player_->getRoleString() == "Attacker")
         command.at(2) = "b" + std::to_string(column);
       else //current_player is defender
-        command.at(2) = "b" + std::to_string(column); //CHANGE, it should block instead
+        command.at(2) = "b" + std::to_string(battle_slot_to_defend); //CHANGE, it should block instead
     }
   }
+}
+
+// TODO: hier vielleicht eigene lambda function übergeben, die verschiedene Maximalwerte bestimmen kann
+// bzw. wodurch man getCurrentAttack() zu anderen Getter machen kann?? (idk ob das so funktioniert)
+int Game::determineBestDefenseSlot(auto& undefended_creatures)
+{
+  Creature* first_creature = *std::ranges::begin(undefended_creatures);
+
+  int max_attack_value = first_creature->getCurrentAttack();
+  int battle_slot_to_defend = opposing_player_->getCreatureColumn('B', first_creature);
+
+  for (auto creature : undefended_creatures)
+  {
+    // switch column if there is a creture with a higher attack value
+    if (creature->getCurrentAttack() > max_attack_value)  
+    {
+      max_attack_value = creature->getCurrentAttack();
+      battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
+    }
+  }
+
+  return battle_slot_to_defend;
 }
 
 //------------------
@@ -1447,7 +1512,7 @@ void Game::printAiCommand(std::vector<std::string>& command)
   for(std::string& parameter : command)
   {
     Utils::toLower(parameter);
-    
+
     std::cout << ' ' << parameter;
 
     Utils::toUpper(parameter);

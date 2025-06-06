@@ -155,6 +155,9 @@ public:
   //NEW a3 method
   int getFirstEmptyFieldColumn();
 
+  // TODO: function header
+  int getCreatureColumn(char zone, Creature* creature);
+
   //------------------------------------------------------------------------------------------------------------------
   // remove a card with a specific id from the player's deck, hand, or graveyard
   //

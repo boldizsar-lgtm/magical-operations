@@ -201,6 +201,16 @@ int Player::getFirstEmptyFieldColumn()
   return 0;
 }
 
+//NEW a3
+int Player::getCreatureColumn(char zone, Creature* creature)
+{
+  if (zone == 'B')
+    return battle_zone_.searchCreature(creature);
+  else
+    return field_zone_.searchCreature(creature);
+}
+
+
 void Player::removeCardFromPile(PileType pile_type, std::string id)
 {
   if (pile_type == PileType::HAND)
