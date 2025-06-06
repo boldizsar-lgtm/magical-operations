@@ -1456,13 +1456,13 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 
       // determine which creature to defend against first depending on max current attack
       if (std::ranges::distance(undefended_brutal_creatures) != 0)
-      {
         battle_slot_to_defend = determineBestDefenseSlot(undefended_brutal_creatures);
-      }
+
       else if(std::ranges::distance(undefended_creatures) != 0)
-      {
         battle_slot_to_defend = determineBestDefenseSlot(undefended_creatures);
-      }
+        
+      else
+        return;
     }
 
     //increase BATTLE PRRIORITY
@@ -1494,7 +1494,7 @@ int Game::determineBestDefenseSlot(auto& undefended_creatures)
   for (auto creature : undefended_creatures)
   {
     // switch column if there is a creture with a higher attack value
-    if (creature->getCurrentAttack() > max_attack_value)  
+    if (creature->getCurrentAttack() > max_attack_value)
     {
       max_attack_value = creature->getCurrentAttack();
       battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
