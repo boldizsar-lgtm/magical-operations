@@ -485,7 +485,7 @@ public:
 
   void getBattlePriority(int& priority, std::vector<std::string>& command);
 
-  int determineBestDefenseSlot(auto& undefended_creatures);
+  int determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer);
 
   void printAiCommand(std::vector<std::string>& command);
 };
