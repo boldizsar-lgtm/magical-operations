@@ -1445,6 +1445,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
   if (health_opposer.size() != 0)
     min_health_opposer = *std::ranges::min_element(health_opposer);
 
+  //Iterate through current player's field zone column
   for (int column = 1; column <= ZONE_WIDTH; column++)
   {
     int current_priority = 0;
@@ -1453,7 +1454,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
     if(!current_player_->getZone('F').isOccupied(column))
       continue;
 
-    //if the creature entered this turn and doesnt have haste, skkip this   column
+    //if the creature entered this turn and doesnt have haste, skip this column
     if (current_player_->getZone('F').getCreature(column)->getEnter() &&
         !current_player_->getZone('F').getCreature(column)->creatureHasTrait("Haste"))
       continue;
@@ -1521,6 +1522,59 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
         return;
     }
 
+    //determine first free battle zone slot the creature can be moved to
+    int attack_column;
+    for (attack_column = 1; attack_column <= ZONE_WIDTH; attack_column++)
+    {
+      if (current_player_->getZone('B').isOccupied(attack_column))
+        continue;
+      
+      break;
+    }
+
+    //Attacker Tactics
+    if(current_player_->getRoleString() == "Attacker")
+    {
+      Creature* attacking_creature = current_player_->getZone('F').getCreature(column);
+
+      //get creature with highest attack + health
+      current_priority += attacking_creature->getCurrentHealth(); 
+      current_priority += attacking_creature->getCurrentAttack();
+
+      if (attacking_creature->creatureHasTrait("Challenger"))
+      {
+        
+        //determine which column to attack
+        for (int opponent_column = 1; opponent_column <= ZONE_WIDTH; opponent_column++)
+        {
+          //if fieldzone is not occupied, skip this column
+          if(!opposing_player_->getZone('F').isOccupied(opponent_column))
+            continue;
+          
+          Creature* creature_to_challenge = nullptr;
+
+          //if opponent creature we re looking at rn has less attack than our attacking creature's health, and less health than our creature's attack, attack it
+          if (attacking_creature->getCurrentHealth() > opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack() 
+          && attacking_creature->getCurrentAttack() >= opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth())
+          {
+            if (creature_to_challenge == nullptr)
+            {
+              attack_column = opponent_column;
+              creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
+            }
+            
+            //challenge the creature with the highest attack and health that is lower than our attacking creature's
+            else if (creature_to_challenge->getCurrentHealth() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth()
+                  || creature_to_challenge->getCurrentAttack() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack())
+            {
+              attack_column = opponent_column;
+              creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
+            }
+          }
+        }
+      }
+    }
+      
     //increase BATTLE PRRIORITY
     current_priority++;
 
@@ -1531,9 +1585,10 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       command.at(1) = "f" + std::to_string(column);
 
       if (current_player_->getRoleString() == "Attacker")
-        command.at(2) = "b" + std::to_string(column);
+        command.at(2) = "b" + std::to_string(attack_column);
+      
       else //current_player is defender
-        command.at(2) = "b" + std::to_string(battle_slot_to_defend); //CHANGE, it should block instead
+        command.at(2) = "b" + std::to_string(battle_slot_to_defend);
     }
   }
 }
