@@ -483,6 +483,12 @@ public:
 
   void getSpellPriority(int& priority, std::vector<std::string>& command);
 
+  void getGeneralSpellPriority(Spell* spell, int& priority);
+
+  void getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command);
+
+  void getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command);
+
   void getBattlePriority(int& priority, std::vector<std::string>& command);
 
   int determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer);

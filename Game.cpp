@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cmath>
 #include <ranges>
+#include <cmath>
 
 const int TIE (0);
 const int ZONE_WIDTH (7);
@@ -1368,8 +1369,33 @@ void Game::getCreaturePriority(int& priority, std::vector<std::string>& command)
     if (card->getType() == "Creature")
     {
       Creature* creature = dynamic_cast<Creature*>(card);
-      //Increase CREATURE PRIORITY
+      //Increase CREATURE PRIORITY by their added attack and health
       current_priority += creature->getBaseAttack() + creature->getBaseHealth();
+
+      //Increase priority by 2 for each trait, 4 for haste, 6 for undying, and reduce it by 2 for temporary
+      if (creature->creatureHasTrait("Brutal"))
+        current_priority += 2;
+      if (creature->creatureHasTrait("Challenger"))
+        current_priority += 2;
+      if (creature->creatureHasTrait("First Strike"))
+        current_priority += 2;
+      if (creature->creatureHasTrait("Haste"))
+        current_priority += 4;
+      if (creature->creatureHasTrait("Lifesteal"))
+        current_priority += 2;
+      if (creature->creatureHasTrait("Poisoned"))
+        current_priority += 2;
+      if (creature->creatureHasTrait("Regenerate"))
+        current_priority += 2;
+      if (creature->creatureHasTrait("Temporary"))
+        current_priority -= 2;
+      if (creature->creatureHasTrait("Undying"))
+        current_priority += 6;
+      if (creature->creatureHasTrait("Venomous"))
+        current_priority += 2;
+
+      //priority is halved
+      current_priority = current_priority / 2;
     }
 
     //if current creature's priority is higher than the saved creature's save it instead
@@ -1396,6 +1422,13 @@ void Game::getSpellPriority(int& priority, std::vector<std::string>& command)
     {
       Spell* spell = dynamic_cast<Spell*>(card);
       //Increase SPELL PRIORITY
+
+      if (spell->getSubtype() == SpellType::GENERAL)
+        getGeneralSpellPriority(spell, priority);
+      if (spell->getSubtype() == SpellType::TARGET)
+        getTargetSpellPriority(spell, priority, command);
+      if (spell->getSubtype() == SpellType::GRAVEYARD)
+        getGraveyardSpellPriority(spell, priority, command);
     }
 
     //if current spell's priority is higher than the saved spell's save it instead
@@ -1404,6 +1437,182 @@ void Game::getSpellPriority(int& priority, std::vector<std::string>& command)
       priority = current_priority;
       command.at(1) = card->getId();
     }
+  }
+}
+
+//------------------
+void Game::getGeneralSpellPriority(Spell* spell, int& priority)
+{
+  if (spell->getId() == "BTLCY")
+  {
+    //Don't use it if the palyer is the defender
+    if (current_player_->getRoleString() == "Defender")
+      return;
+
+    int opponent_health = opposing_player_->getCurrentHealth();
+    int sum_of_attack_power = 0;
+    int num_of_attacking_creatures = 0;
+    int num_of_defending_creatures = 0;
+
+    for (int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (current_player_->getZone('F').isOccupied(column))
+      {
+        sum_of_attack_power += current_player_->getZone('F').getCreature(column)->getCurrentAttack() + Gain::BATTLE_CRY_ATTACK_GAIN;
+        num_of_attacking_creatures++;
+      }
+
+      if (current_player_->getZone('B').isOccupied(column))
+      {
+        sum_of_attack_power += current_player_->getZone('B').getCreature(column)->getCurrentAttack() + Gain::BATTLE_CRY_ATTACK_GAIN;
+        num_of_attacking_creatures++;
+      }
+
+      if (opposing_player_->getZone('F').isOccupied(column))
+        num_of_defending_creatures++;
+
+      if (opposing_player_->getZone('B').isOccupied(column))
+        num_of_defending_creatures++;
+    }
+
+    //get priority, currently uses averages so its a very loose calculation
+    int average_attack_per_creature = sum_of_attack_power / num_of_attacking_creatures;
+
+    int potential_damage = sum_of_attack_power - num_of_defending_creatures * average_attack_per_creature;
+
+    if (potential_damage >= opponent_health)
+      priority = 100;
+  }
+
+  if (spell->getId() == "METOR")
+  {
+    int num_opponent_deaths = 0;
+    int num_allied_deaths = 0;
+
+    
+    for (int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      //Check creatures that would die under your opponent's control
+      if (opposing_player_->getZone('F').isOccupied(column))
+        if (opposing_player_->getZone('F').getCreature(column)->getCurrentHealth() <= Damage::METEOR_DAMAGE)
+          num_opponent_deaths++;
+
+      if (opposing_player_->getZone('B').isOccupied(column))
+        if (opposing_player_->getZone('B').getCreature(column)->getCurrentHealth() <= Damage::METEOR_DAMAGE)
+          num_opponent_deaths++;
+      
+      //Check creatures that would die under your control
+      if (current_player_->getZone('F').isOccupied(column))
+        if (current_player_->getZone('F').getCreature(column)->getCurrentHealth() <= Damage::METEOR_DAMAGE)
+          num_allied_deaths++;
+
+      if (current_player_->getZone('B').isOccupied(column))
+        if (current_player_->getZone('B').getCreature(column)->getCurrentHealth() <= Damage::METEOR_DAMAGE)
+          num_allied_deaths++;
+    }
+
+    if (num_opponent_deaths == 0)
+      priority = 0;
+
+    else
+      priority = std::pow(2,num_opponent_deaths) - std::pow(2, num_allied_deaths);
+      //priority = 2^num_opponent_deaths - 2^num_allied_deaths
+  }
+
+  if (spell->getId() == "FIRBL")
+  {
+    int num_opponent_deaths = 0;
+
+    for (int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (opposing_player_->getZone('F').isOccupied(column))
+        if (opposing_player_->getZone('F').getCreature(column)->getCurrentHealth() <= Damage::FIREBALL_DAMAGE)
+          num_opponent_deaths++;
+
+      if (opposing_player_->getZone('B').isOccupied(column))
+        if (opposing_player_->getZone('B').getCreature(column)->getCurrentHealth() <= Damage::FIREBALL_DAMAGE)
+          num_opponent_deaths++;
+    }
+
+    if (num_opponent_deaths == 0)
+      priority = 0;
+
+    else
+      priority = std::pow(2, num_opponent_deaths);
+      //priority = 2^num_opponent_deaths
+  }
+}
+
+//------------------
+void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command)
+{
+  if (spell->getId() == "CLONE")
+  {
+    //
+  }
+
+  if (spell->getId() == "CURSE")
+  {
+    //
+  }
+
+  if (spell->getId() == "SHOCK")
+  {
+    //
+  }
+
+  if (spell->getId() == "MOBLZ")
+  {
+    //
+  }
+
+  if (spell->getId() == "RRUSH")
+  {
+    //
+  }
+
+  if (spell->getId() == "SHILD")
+  {
+    //
+  }
+
+  if (spell->getId() == "AMPUT")
+  {
+    //
+  }
+
+  if (spell->getId() == "FINAL")
+  {
+    //
+  }
+
+  if (spell->getId() == "LYLTY")
+  {
+    //
+  }
+
+  if (spell->getId() == "ZMBFY")
+  {
+    //
+  }
+
+  if (spell->getId() == "BLOOD")
+  {
+    //
+  }
+}
+
+//------------------
+void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command)
+{
+  if (spell->getId() == "MEMRY")
+  {
+    //
+  }
+
+  if (spell->getId() == "REVIV")
+  {
+    //
   }
 }
 
@@ -1593,6 +1802,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
   }
 }
 
+//---------------------------
 int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer)
 {
   int max_attack_value = 0;
