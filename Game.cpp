@@ -1347,7 +1347,7 @@ void Game::letAiPlay()
   //done
   else
     command = {"done"};
-    
+
 
   printAiCommand(command);
 
@@ -1467,13 +1467,16 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority, std::vector<std:
     }
 
     //get priority, currently uses averages so its a very loose calculation
+    if (num_of_attacking_creatures == 0)
+      return;
+
     int average_attack_per_creature = sum_of_attack_power / num_of_attacking_creatures;
 
     int potential_damage = sum_of_attack_power - num_of_defending_creatures * average_attack_per_creature;
 
     if (potential_damage >= opponent_health)
     {
-      priority = 100;
+      priority = potential_damage;
       command.at(1) = spell->getId();
     }
   }
@@ -1615,25 +1618,25 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           new_priority = creature->getCurrentAttack();
 
           if (creature->creatureHasTrait("Brutal"))
-            priority += 2;
+            new_priority += 2;
           if (creature->creatureHasTrait("Challenger"))
-            priority += 2;
+            new_priority += 2;
           if (creature->creatureHasTrait("First Strike"))
-            priority += 2;
+            new_priority += 2;
           if (creature->creatureHasTrait("Haste"))
-            priority += 3;
+            new_priority += 3;
           if (creature->creatureHasTrait("Lifesteal"))
-            priority += 2;
+            new_priority += 2;
           if (creature->creatureHasTrait("Poisoned"))
-            priority += 2;
+            new_priority += 2;
           if (creature->creatureHasTrait("Regenerate"))
-            priority += 2;
+            new_priority += 2;
           if (creature->creatureHasTrait("Temporary"))
-            priority -= 4;
+            new_priority -= 4;
           if (creature->creatureHasTrait("Undying"))
-            priority += 4;
+            new_priority += 4;
           if (creature->creatureHasTrait("Venomous"))
-            priority += 2;
+            new_priority += 2;
         
           if (new_priority > priority)
           {
@@ -1697,12 +1700,100 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
 {
   if (spell->getId() == "MEMRY")
   {
-    //
+    int new_priority = 0;
+
+    for (Card* card : current_player_->getGraveyard().getPile())
+    {
+      Creature* creature = dynamic_cast<Creature*>(card);
+
+      new_priority = creature->getCurrentAttack();
+      new_priority = creature->getCurrentHealth();
+
+      if (creature->creatureHasTrait("Brutal"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Challenger"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("First Strike"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Haste"))
+        new_priority -= 2;
+      if (creature->creatureHasTrait("Lifesteal"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Poisoned"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Regenerate"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Temporary"))
+        new_priority -= 4;
+      if (creature->creatureHasTrait("Undying"))
+        new_priority += 6;
+      if (creature->creatureHasTrait("Venomous"))
+        new_priority += 2;
+
+      new_priority = new_priority / 2;
+
+      int cost = (1 + creature->getManaCost()) / 2;
+    
+      if (new_priority > priority && current_player_->getCurrentMana() >= cost)
+      {
+        priority = new_priority;
+
+        command.at(1) = spell->getId();
+
+        if (command.size() != 3)
+        command.push_back(creature->getId());
+        else
+        command.at(2) = creature->getId();
+      }
+    }
   }
 
   if (spell->getId() == "REVIV")
   {
-    //
+    int new_priority = 0;
+
+    for (Card* card : current_player_->getGraveyard().getPile())
+    {
+      Creature* creature = dynamic_cast<Creature*>(card);
+
+      new_priority = creature->getCurrentAttack();
+      new_priority = creature->getCurrentHealth();
+
+      if (creature->creatureHasTrait("Brutal"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Challenger"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("First Strike"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Haste"))
+        new_priority += 3;
+      if (creature->creatureHasTrait("Lifesteal"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Poisoned"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Regenerate"))
+        new_priority += 2;
+      if (creature->creatureHasTrait("Temporary"))
+        new_priority -= 4;
+      if (creature->creatureHasTrait("Undying"))
+        new_priority += 4;
+      if (creature->creatureHasTrait("Venomous"))
+        new_priority += 2;
+
+      new_priority = new_priority / 3;
+    
+      if (new_priority > priority)
+      {
+        priority = new_priority;
+
+        command.at(1) = spell->getId();
+
+        if (command.size() != 3)
+        command.push_back(creature->getId());
+        else
+        command.at(2) = creature->getId();
+      }
+    }
   }
 }
 
