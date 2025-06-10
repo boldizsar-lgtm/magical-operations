@@ -559,7 +559,18 @@ void Game::processCommand(Command command)
   //print board, status, and hand
   if (command_type == CommandType::SYNC)
   {
-    printBoard();
+    std::cout << "================================== DEFENDER: PLAYER " << defender_->getId() <<
+                 " ===================================" << std::endl;
+    defender_->printFieldZone();
+    std::cout << Config::getInstance().getMessage("D_BORDER_A") << std::endl;
+    defender_->printBattleZone();
+    std::cout << Config::getInstance().getMessage("D_BORDER_B") << std::endl;
+    attacker_->printBattleZone();
+    std::cout << Config::getInstance().getMessage("D_BORDER_A") << std::endl;
+    attacker_->printFieldZone();
+    std::cout << "================================== ATTACKER: PLAYER " << attacker_->getId() <<
+                 " ===================================" << std::endl;
+    
     printStatus();
     std::cout << "Player 1" << std::endl;
     player1_.printHand();
