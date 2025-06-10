@@ -483,7 +483,7 @@ public:
 
   void getSpellPriority(int& priority, std::vector<std::string>& command);
 
-  void getGeneralSpellPriority(Spell* spell, int& priority);
+  void getGeneralSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command);
 
   void getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command);
 

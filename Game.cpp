@@ -1312,7 +1312,7 @@ void Game::letAiPlay()
   //syntax: creature <id> <fieldzone>
 
   int spell_priority = 0;
-  std::vector<std::string> spell_command = {"spell", "", ""};
+  std::vector<std::string> spell_command = {"spell", ""};
   //syntax: spell <id> <optional>
 
   int battle_priority = 0;
@@ -1333,10 +1333,10 @@ void Game::letAiPlay()
 
 
   //creature
-  if (creature_priority > spell_priority && creature_priority > battle_priority)
+  if (creature_priority > spell_priority && creature_priority > battle_priority && creature_command.at(1) != "")
     command = creature_command;
   //spell
-  else if (spell_priority > creature_priority && spell_priority > battle_priority)
+  else if (spell_priority > creature_priority && spell_priority > battle_priority && spell_command.at(1) != "")
     command = spell_command;
   //battle
   else if (battle_priority > spell_priority && battle_priority > creature_priority)
@@ -1347,7 +1347,7 @@ void Game::letAiPlay()
   //done
   else
     command = {"done"};
-
+    
 
   printAiCommand(command);
 
@@ -1412,8 +1412,6 @@ void Game::getSpellPriority(int& priority, std::vector<std::string>& command)
 {
   for (Card* card : current_player_->getHand().getPile())
   {
-    int current_priority = 0;
-
     //if card is too expensive, skip it
     if (card->getManaCost() > current_player_->getCurrentMana())
       continue;
@@ -1424,24 +1422,17 @@ void Game::getSpellPriority(int& priority, std::vector<std::string>& command)
       //Increase SPELL PRIORITY
 
       if (spell->getSubtype() == SpellType::GENERAL)
-        getGeneralSpellPriority(spell, priority);
+        getGeneralSpellPriority(spell, priority, command);
       if (spell->getSubtype() == SpellType::TARGET)
         getTargetSpellPriority(spell, priority, command);
       if (spell->getSubtype() == SpellType::GRAVEYARD)
         getGraveyardSpellPriority(spell, priority, command);
     }
-
-    //if current spell's priority is higher than the saved spell's save it instead
-    if (current_priority > priority)
-    {
-      priority = current_priority;
-      command.at(1) = card->getId();
-    }
   }
 }
 
 //------------------
-void Game::getGeneralSpellPriority(Spell* spell, int& priority)
+void Game::getGeneralSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command)
 {
   if (spell->getId() == "BTLCY")
   {
@@ -1481,14 +1472,17 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority)
     int potential_damage = sum_of_attack_power - num_of_defending_creatures * average_attack_per_creature;
 
     if (potential_damage >= opponent_health)
+    {
       priority = 100;
+      command.at(1) = spell->getId();
+    }
   }
 
   if (spell->getId() == "METOR")
   {
     int num_opponent_deaths = 0;
     int num_allied_deaths = 0;
-
+    int new_priority = 0;
     
     for (int column = 1; column <= ZONE_WIDTH; column++)
     {
@@ -1511,17 +1505,20 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority)
           num_allied_deaths++;
     }
 
-    if (num_opponent_deaths == 0)
-      priority = 0;
+    new_priority = std::pow(2, num_opponent_deaths - 1) - std::pow(2, num_allied_deaths - 1);
 
-    else
-      priority = std::pow(2,num_opponent_deaths) - std::pow(2, num_allied_deaths);
-      //priority = 2^num_opponent_deaths - 2^num_allied_deaths
+    if (new_priority > priority)
+    {
+      priority =  new_priority;
+
+      command.at(1) = spell->getId();
+    }
   }
 
   if (spell->getId() == "FIRBL")
   {
     int num_opponent_deaths = 0;
+    int new_priority = 0;
 
     for (int column = 1; column <= ZONE_WIDTH; column++)
     {
@@ -1534,12 +1531,15 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority)
           num_opponent_deaths++;
     }
 
-    if (num_opponent_deaths == 0)
-      priority = 0;
+    
+    new_priority = std::pow(2, num_opponent_deaths - 1);
 
-    else
-      priority = std::pow(2, num_opponent_deaths);
-      //priority = 2^num_opponent_deaths
+    if (new_priority > priority)
+    {
+      priority =  new_priority;
+
+      command.at(1) = spell->getId();
+    }
   }
 }
 
@@ -1558,7 +1558,97 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "SHOCK")
   {
-    //
+    Creature* creature = nullptr;
+    int new_priority = 0;
+    
+    for (int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (opposing_player_->getZone('F').isOccupied(column))
+      {
+        if (opposing_player_->getZone('F').getCreature(column)->getCurrentHealth() <= Damage::SHOCK_DAMAGE)
+        {
+          creature = opposing_player_->getZone('F').getCreature(column);
+
+          new_priority = creature->getCurrentAttack();
+
+          if (creature->creatureHasTrait("Brutal"))
+            new_priority += 2;
+          if (creature->creatureHasTrait("Challenger"))
+            new_priority += 2;
+          if (creature->creatureHasTrait("First Strike"))
+            new_priority += 2;
+          if (creature->creatureHasTrait("Haste"))
+            new_priority += 3;
+          if (creature->creatureHasTrait("Lifesteal"))
+            new_priority += 2;
+          if (creature->creatureHasTrait("Poisoned"))
+            new_priority += 2;
+          if (creature->creatureHasTrait("Regenerate"))
+            new_priority += 2;
+          if (creature->creatureHasTrait("Temporary"))
+            new_priority -= 4;
+          if (creature->creatureHasTrait("Undying"))
+            new_priority += 4;
+          if (creature->creatureHasTrait("Venomous"))
+            new_priority += 2;
+
+          if (new_priority > priority)
+          {
+            priority = new_priority;
+
+            command.at(1) = spell->getId();
+
+            if (command.size() != 3)
+            command.push_back("of" + std::to_string(column));
+            else
+            command.at(2) = "of" + std::to_string(column);
+          }
+        }
+      }
+
+      if (opposing_player_->getZone('B').isOccupied(column))
+      {
+        if (opposing_player_->getZone('B').getCreature(column)->getCurrentHealth() <= Damage::SHOCK_DAMAGE)
+        {
+          creature = opposing_player_->getZone('B').getCreature(column);
+
+          new_priority = creature->getCurrentAttack();
+
+          if (creature->creatureHasTrait("Brutal"))
+            priority += 2;
+          if (creature->creatureHasTrait("Challenger"))
+            priority += 2;
+          if (creature->creatureHasTrait("First Strike"))
+            priority += 2;
+          if (creature->creatureHasTrait("Haste"))
+            priority += 3;
+          if (creature->creatureHasTrait("Lifesteal"))
+            priority += 2;
+          if (creature->creatureHasTrait("Poisoned"))
+            priority += 2;
+          if (creature->creatureHasTrait("Regenerate"))
+            priority += 2;
+          if (creature->creatureHasTrait("Temporary"))
+            priority -= 4;
+          if (creature->creatureHasTrait("Undying"))
+            priority += 4;
+          if (creature->creatureHasTrait("Venomous"))
+            priority += 2;
+        
+          if (new_priority > priority)
+          {
+            priority = new_priority;
+
+            command.at(1) = spell->getId();
+
+            if (command.size() != 3)
+            command.push_back("ob" + std::to_string(column));
+            else
+            command.at(2) = "ob" + std::to_string(column);
+          }
+        }
+      }
+    }
   }
 
   if (spell->getId() == "MOBLZ")
