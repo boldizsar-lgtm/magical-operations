@@ -1562,12 +1562,276 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 {
   if (spell->getId() == "CLONE")
   {
-    //
+    Creature* creature = nullptr;
+    int new_priority = 0;
+
+    for(int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (opposing_player_->getZone('F').isOccupied(column))
+      {
+        creature = opposing_player_->getZone('F').getCreature(column);
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        if (creature->creatureHasTrait("Brutal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Challenger"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("First Strike"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Haste"))
+          new_priority -= 2;
+        if (creature->creatureHasTrait("Lifesteal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Poisoned"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Regenerate"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Temporary"))
+          new_priority += 0;
+        if (creature->creatureHasTrait("Undying"))
+          new_priority += 6;
+        if (creature->creatureHasTrait("Venomous"))
+          new_priority += 2;
+
+        int cost = (1 + creature->getManaCost()) / 2;
+      
+        if (new_priority > priority && current_player_->getCurrentMana() >= cost)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("of" + std::to_string(column));
+          else
+          command.at(2) = "of" + std::to_string(column);
+        }
+      }
+
+      if (opposing_player_->getZone('B').isOccupied(column))
+      {
+        creature = opposing_player_->getZone('B').getCreature(column);
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        if (creature->creatureHasTrait("Brutal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Challenger"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("First Strike"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Haste"))
+          new_priority -= 2;
+        if (creature->creatureHasTrait("Lifesteal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Poisoned"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Regenerate"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Temporary"))
+          new_priority += 0;
+        if (creature->creatureHasTrait("Undying"))
+          new_priority += 6;
+        if (creature->creatureHasTrait("Venomous"))
+          new_priority += 2;
+
+        int cost = (1 + creature->getManaCost()) / 2;
+      
+        if (new_priority > priority && current_player_->getCurrentMana() >= cost)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("ob" + std::to_string(column));
+          else
+          command.at(2) = "ob" + std::to_string(column);
+        }
+      }
+
+      if (current_player_->getZone('F').isOccupied(column))
+      {
+        creature = current_player_->getZone('F').getCreature(column);
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        if (creature->creatureHasTrait("Brutal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Challenger"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("First Strike"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Haste"))
+          new_priority -= 2;
+        if (creature->creatureHasTrait("Lifesteal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Poisoned"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Regenerate"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Temporary"))
+          new_priority += 0;
+        if (creature->creatureHasTrait("Undying"))
+          new_priority += 6;
+        if (creature->creatureHasTrait("Venomous"))
+          new_priority += 2;
+
+        int cost = (1 + creature->getManaCost()) / 2;
+      
+        if (new_priority > priority && current_player_->getCurrentMana() >= cost)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("f" + std::to_string(column));
+          else
+          command.at(2) = "f" + std::to_string(column);
+        }
+      }
+
+      if (current_player_->getZone('B').isOccupied(column))
+      {
+        creature = current_player_->getZone('B').getCreature(column);
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        if (creature->creatureHasTrait("Brutal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Challenger"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("First Strike"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Haste"))
+          new_priority -= 2;
+        if (creature->creatureHasTrait("Lifesteal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Poisoned"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Regenerate"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Temporary"))
+          new_priority += 0;
+        if (creature->creatureHasTrait("Undying"))
+          new_priority += 6;
+        if (creature->creatureHasTrait("Venomous"))
+          new_priority += 2;
+
+        int cost = (1 + creature->getManaCost()) / 2;
+      
+        if (new_priority > priority && current_player_->getCurrentMana() >= cost)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("b" + std::to_string(column));
+          else
+          command.at(2) = "b" + std::to_string(column);
+        }
+      }
+    }
   }
 
   if (spell->getId() == "CURSE")
   {
-    //
+    Creature* creature = nullptr;
+    int new_priority = 0;
+
+    for(int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (opposing_player_->getZone('F').isOccupied(column))
+      {
+        creature = opposing_player_->getZone('F').getCreature(column);
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        if (creature->creatureHasTrait("Brutal"))
+          new_priority += 4;
+        if (creature->creatureHasTrait("Challenger"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("First Strike"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Haste"))
+          new_priority += 3;
+        if (creature->creatureHasTrait("Lifesteal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Poisoned"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Regenerate"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Temporary"))
+          new_priority = -100;
+        if (creature->creatureHasTrait("Undying"))
+          new_priority += 6;
+        if (creature->creatureHasTrait("Venomous"))
+          new_priority += 2;
+
+        new_priority = new_priority / 2;
+
+        int cost = (1 + creature->getManaCost());
+      
+        if (new_priority > priority && current_player_->getCurrentMana() >= cost)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("of" + std::to_string(column));
+          else
+          command.at(2) = "of" + std::to_string(column);
+        }
+      }
+
+      if (opposing_player_->getZone('B').isOccupied(column))
+      {
+        creature = opposing_player_->getZone('B').getCreature(column);
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        if (creature->creatureHasTrait("Brutal"))
+          new_priority += 4;
+        if (creature->creatureHasTrait("Challenger"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("First Strike"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Haste"))
+          new_priority += 3;
+        if (creature->creatureHasTrait("Lifesteal"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Poisoned"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Regenerate"))
+          new_priority += 2;
+        if (creature->creatureHasTrait("Temporary"))
+          new_priority = -100;
+        if (creature->creatureHasTrait("Undying"))
+          new_priority += 6;
+        if (creature->creatureHasTrait("Venomous"))
+          new_priority += 2;
+        
+        new_priority = new_priority / 2;
+
+        int cost = (1 + creature->getManaCost());
+      
+        if (new_priority > priority && current_player_->getCurrentMana() >= cost)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("ob" + std::to_string(column));
+          else
+          command.at(2) = "ob" + std::to_string(column);
+        }
+      }
+    }
   }
 
   if (spell->getId() == "SHOCK")
@@ -1711,14 +1975,14 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
 {
   if (spell->getId() == "MEMRY")
   {
+    Creature* creature = nullptr;
     int new_priority = 0;
 
     for (Card* card : current_player_->getGraveyard().getPile())
     {
-      Creature* creature = dynamic_cast<Creature*>(card);
+      creature = dynamic_cast<Creature*>(card);
 
-      new_priority = creature->getCurrentAttack();
-      new_priority = creature->getCurrentHealth();
+      new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
 
       if (creature->creatureHasTrait("Brutal"))
         new_priority += 2;
@@ -1735,7 +1999,7 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
       if (creature->creatureHasTrait("Regenerate"))
         new_priority += 2;
       if (creature->creatureHasTrait("Temporary"))
-        new_priority -= 4;
+        new_priority += 0;
       if (creature->creatureHasTrait("Undying"))
         new_priority += 6;
       if (creature->creatureHasTrait("Venomous"))
@@ -1767,8 +2031,7 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
     {
       Creature* creature = dynamic_cast<Creature*>(card);
 
-      new_priority = creature->getCurrentAttack();
-      new_priority = creature->getCurrentHealth();
+      new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
 
       if (creature->creatureHasTrait("Brutal"))
         new_priority += 2;
@@ -1939,8 +2202,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       Creature* attacking_creature = current_player_->getZone('F').getCreature(column);
 
       //get creature with highest attack + health
-      current_priority += attacking_creature->getCurrentHealth(); 
-      current_priority += attacking_creature->getCurrentAttack();
+      current_priority += attacking_creature->getCurrentHealth() + attacking_creature->getCurrentAttack();
 
       if (attacking_creature->creatureHasTrait("Challenger"))
       {
