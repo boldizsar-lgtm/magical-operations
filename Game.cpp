@@ -1362,13 +1362,13 @@ void Game::letAiPlay()
     ai_actions_++;
 
     //creature
-    if (creature_priority > spell_priority && creature_priority > battle_priority && creature_command.at(1) != "")
+    if (creature_priority >= spell_priority && creature_priority >= battle_priority && creature_command.at(1) != "")
       command = creature_command;
     //spell
     else if (spell_priority > creature_priority && spell_priority > battle_priority && spell_command.at(1) != "")
       command = spell_command;
     //battle
-    else if (battle_priority > spell_priority && battle_priority > creature_priority)
+    else if (battle_priority >= spell_priority && battle_priority > creature_priority)
       command = battle_command;
     //redraw
     else if (current_player_->getRedrawPossible() && current_player_->getHand().getSize() > 5)
@@ -1405,26 +1405,9 @@ void Game::getCreaturePriority(int& priority, std::vector<std::string>& command)
       current_priority += creature->getBaseAttack() + creature->getBaseHealth();
 
       //Increase priority by 2 for each trait, 4 for haste, 6 for undying, and reduce it by 2 for temporary
-      if (creature->creatureHasTrait("Brutal"))
-        current_priority += 2;
-      if (creature->creatureHasTrait("Challenger"))
-        current_priority += 2;
-      if (creature->creatureHasTrait("First Strike"))
-        current_priority += 2;
-      if (creature->creatureHasTrait("Haste"))
-        current_priority += 4;
-      if (creature->creatureHasTrait("Lifesteal"))
-        current_priority += 2;
-      if (creature->creatureHasTrait("Poisoned"))
-        current_priority += 2;
-      if (creature->creatureHasTrait("Regenerate"))
-        current_priority += 2;
-      if (creature->creatureHasTrait("Temporary"))
-        current_priority -= 2;
-      if (creature->creatureHasTrait("Undying"))
-        current_priority += 6;
-      if (creature->creatureHasTrait("Venomous"))
-        current_priority += 2;
+      calculateTraitPriority(current_priority, creature,
+        {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 4}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 2}, {"Undying", 6}, {"Venomous", 2}});
 
       //priority is halved
       current_priority = current_priority / 2;
@@ -2375,8 +2358,8 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       if (std::ranges::distance(undefended_brutal_creatures) != 0)
       {
         // defense against brutal has highest priority
-        current_priority += 2;
-        if (max_health == attacking_creature->getCurrentHealth())  
+        current_priority += 4;
+        if (max_health == attacking_creature->getCurrentHealth())
         {
           battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_brutal_creatures, min_health_opposer);
         }
@@ -2388,7 +2371,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
         battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_creatures, min_health_opposer);
         // if the defender has a brutal creature that creature gains priority
         if (attacking_creature->creatureHasTrait("Brutal"))
-          current_priority++;
+          current_priority += 3;
       }
       else
         return;
@@ -2479,7 +2462,7 @@ int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefende
       battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
       return battle_slot_to_defend;
     }
-    if (creature->getCurrentAttack() > max_attack_value)  
+    if (creature->getCurrentAttack() > max_attack_value || (creature->getCurrentAttack() == 0 && max_attack_value == 0))  
     {
       max_attack_value = creature->getCurrentAttack();
       battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
