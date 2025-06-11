@@ -2173,12 +2173,127 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "ZMBFY")
   {
-    //
+    Creature* creature = nullptr;
+    int new_priority = 0;
+
+    for(int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (current_player_->getZone('F').isOccupied(column))
+      {
+        creature = current_player_->getZone('F').getCreature(column);
+
+        new_priority = creature->getCurrentAttack();
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -20}, {"Undying", -100}, {"Venomous", -100}});
+
+        new_priority = new_priority / 4;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("f" + std::to_string(column));
+          else
+          command.at(2) = "f" + std::to_string(column);
+        }
+      }
+      if (current_player_->getZone('B').isOccupied(column))
+      {
+        creature = current_player_->getZone('B').getCreature(column);
+
+        new_priority = creature->getCurrentAttack();
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -20}, {"Undying", -100}, {"Venomous", -100}});
+
+        new_priority = new_priority / 4;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("b" + std::to_string(column));
+          else
+          command.at(2) = "b" + std::to_string(column);
+        }
+      }
+    }
   }
+
 
   if (spell->getId() == "BLOOD")
   {
-    //
+    Creature* creature = nullptr;
+    int new_priority = 0;
+
+    for(int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (current_player_->getZone('F').isOccupied(column))
+      {
+        creature = current_player_->getZone('F').getCreature(column);
+
+        new_priority = creature->getCurrentHealth() + creature->getCurrentAttack();
+
+        // do not use spell on creatures that already have brutal or lifesteal
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",2}, {"Lifesteal", -100},
+        {"Poisoned", 0}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 1}, {"Venomous", 1}});
+
+        // decrease priority by health loss
+        new_priority -= (creature->getCurrentHealth() - (std::ceil(creature->getCurrentHealth()/2.0)));
+
+        new_priority = new_priority / 5;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("f" + std::to_string(column));
+          else
+          command.at(2) = "f" + std::to_string(column);
+        }
+      }
+      if (current_player_->getZone('B').isOccupied(column))
+      {
+        creature = current_player_->getZone('B').getCreature(column);
+
+        new_priority = creature->getCurrentHealth() + creature->getCurrentAttack();
+
+        // do not use spell on creatures that already have brutal or lifesteal
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",2}, {"Lifesteal", -100},
+        {"Poisoned", 0}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 1}, {"Venomous", 1}});
+
+        // decrease priority by health loss
+        new_priority -= (creature->getCurrentHealth() - (std::ceil(creature->getCurrentHealth()/2.0)));
+
+        new_priority = new_priority / 5;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("b" + std::to_string(column));
+          else
+          command.at(2) = "b" + std::to_string(column);
+        }
+      }
+    }
   }
 }
 
