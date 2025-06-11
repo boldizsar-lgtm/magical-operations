@@ -2258,7 +2258,43 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "LYLTY")
   {
-    //
+    // Idea: Check if creature in field zone doesn't have haste and adjust priority accordingly
+    // Ideas to implement: check if the +1 health would help prevent a direct hit
+
+    Creature* creature = nullptr;
+    int new_priority = 0;
+
+    for(int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (current_player_->getZone('F').isOccupied(column))
+      {
+        creature = current_player_->getZone('F').getCreature(column);
+
+        // if it has haste already, or did not get played this turn - skip
+        if (creature->creatureHasTrait("Haste") || !creature->getEnter())
+          continue;
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", 6}, {"Challenger", 2}, {"First Strike", 6}, {"Haste", -100}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 6}, {"Undying", 4}, {"Venomous", 2}});
+
+        new_priority = new_priority / 4;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("f" + std::to_string(column));
+          else
+          command.at(2) = "f" + std::to_string(column);
+        }
+      }
+    }
   }
 
   if (spell->getId() == "ZMBFY")
@@ -2386,7 +2422,6 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
     }
   }
 }
-
 
 void Game::calculateTraitPriority(int& priority, Creature* creature, const std::vector<std::pair<std::string, int>>& trait_pairs)
 {
