@@ -1352,11 +1352,16 @@ void Game::letAiPlay()
 
   getBattlePriority(battle_priority, battle_command);
 
-  if (ai_actions_ == 59)
+  if (ai_actions_ >= 58)
+  {
       command = {"done"};
+      ai_actions_ = 0;
+  }
   else
   {
-     //creature
+    ai_actions_++;
+
+    //creature
     if (creature_priority > spell_priority && creature_priority > battle_priority && creature_command.at(1) != "")
       command = creature_command;
     //spell
@@ -1370,15 +1375,16 @@ void Game::letAiPlay()
       command = {"redraw"};
     //done
     else
+    {
       command = {"done"};
+      ai_actions_ = 0;
+    }
   }
 
   printAiCommand(command);
 
   Command ai(command);
   processCommand(ai);
-
-  ai_actions_++;
 }
 
 //------------------
