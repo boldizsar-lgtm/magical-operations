@@ -1810,7 +1810,41 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "MOBLZ")
   {
-    //
+    //find a creature without haste that entered this turn with the highest power
+    Creature* creature = nullptr;
+    int new_priority = 0;
+
+    for(int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (current_player_->getZone('F').isOccupied(column))
+      {
+        creature = current_player_->getZone('F').getCreature(column);
+
+        //if it can already attack skip
+        if (!creature->getEnter())
+          continue;
+
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",-100}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -4}, {"Undying", 6}, {"Venomous", 2}});
+
+        new_priority = new_priority / 4;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("f" + std::to_string(column));
+          else
+          command.at(2) = "f" + std::to_string(column);
+        }
+      }
+    }
   }
 
   if (spell->getId() == "RRUSH")
@@ -1820,7 +1854,76 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "SHILD")
   {
-    //
+    {
+    //find the most powerful creature with the least health
+    Creature* creature = nullptr;
+    int new_priority = 0;
+
+    for(int column = 1; column <= ZONE_WIDTH; column++)
+    {
+      if (current_player_->getZone('F').isOccupied(column))
+      {
+        creature = current_player_->getZone('F').getCreature(column);
+
+        new_priority = creature->getCurrentAttack();
+
+        if (creature->getCurrentHealth() == 1)
+          new_priority += 16;
+        
+        if (creature->getCurrentHealth() == 2)
+          new_priority += 8;
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 6}, {"Venomous", 2}});
+
+        new_priority = new_priority / 4;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+          command.push_back("f" + std::to_string(column));
+          else
+          command.at(2) = "f" + std::to_string(column);
+        }
+      }
+
+      if (current_player_->getZone('B').isOccupied(column))
+      {
+        creature = current_player_->getZone('B').getCreature(column);
+
+        new_priority = creature->getCurrentAttack();
+
+        if (creature->getCurrentHealth() == 1)
+          new_priority += 16;
+          
+        if (creature->getCurrentHealth() == 2)
+          new_priority += 8;
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 6}, {"Venomous", 2}});
+
+        new_priority = new_priority / 4;
+        
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+            command.push_back("b" + std::to_string(column));
+          else
+            command.at(2) = "b" + std::to_string(column);
+        }
+        }
+      }
+    }
   }
 
 
