@@ -1857,58 +1857,65 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
     std::string target;
 
     // determine which creature from field zone has the most powerful first trait
-    for (auto creature : opposing_field_zone)
+    for (auto& creature : opposing_field_zone)
     {
       int new_priority_field = 0;
-      traits_field = creature->getCurrentTraits();
+      int column = opposing_player_->getCreatureColumn('F', creature);
+
+      Creature* creature_copy = new Creature(*creature);
+      traits_field = creature_copy->getCurrentTraits();
 
       std::shared_ptr<Trait> first_trait = traits_field.at(0);
 
       // remove all traits and add back the first one
       for (auto& trait : traits_field)
       {
-        creature->removeTrait(trait->getName());
+        creature_copy->removeTrait(trait->getName());
       }
-      *creature += first_trait;
-      
-      calculateTraitPriority(new_priority_field, creature, 
+      *creature_copy += first_trait;
+
+      calculateTraitPriority(new_priority_field, creature_copy, 
       {{"Brutal", 6}, {"Challenger", 3}, {"First Strike", 2}, {"Haste", 3}, {"Lifesteal", 2},
       {"Poisoned", -100}, {"Regenerate", 3}, {"Temporary", -100}, {"Undying", 4}, {"Venomous", 5}});
 
       if (new_priority_field > priority_field)
       {
-        target = "of" + std::to_string(opposing_player_->getCreatureColumn('F', creature));
+        target = "of" + std::to_string(column);
         priority_field = new_priority_field;
+        new_priority = priority_field;
       }
     }
 
     // determine which creature from battle zone has the most powerful first trait
-    for (auto creature : opposing_battle_zone)
+    for (auto& creature : opposing_battle_zone)
     {
       int new_priority_battle = 0;
-      traits_battle = creature->getCurrentTraits();
+      int column = opposing_player_->getCreatureColumn('B', creature);
+
+      Creature* creature_copy = new Creature(*creature);
+      traits_battle = creature_copy->getCurrentTraits();
 
       std::shared_ptr<Trait> first_trait = traits_battle.at(0);
 
       // remove all traits and add back the first one
       for (auto& trait : traits_battle)
       {
-        creature->removeTrait(trait->getName());
+        creature_copy->removeTrait(trait->getName());
       }
-      *creature += first_trait;
-      
-      calculateTraitPriority(new_priority_battle, creature, 
+      *creature_copy += first_trait;
+
+      calculateTraitPriority(new_priority_battle, creature_copy, 
       {{"Brutal", 6}, {"Challenger", 2}, {"First Strike", 3}, {"Haste", 2}, {"Lifesteal", 4},
       {"Poisoned", -100}, {"Regenerate", 2}, {"Temporary", -100}, {"Undying", 4}, {"Venomous", 5}});
 
       if (new_priority_battle > priority_battle && new_priority_battle >= priority_field)
       {
-        target = "ob" + std::to_string(opposing_player_->getCreatureColumn('B', creature));
+        target = "ob" + std::to_string(column);
         priority_battle = new_priority_battle;
-        new_priority = priority_battle/2;
+        new_priority = priority_battle;
       }
     }
-    
+
     if (new_priority > priority)
     {
       priority = new_priority;
