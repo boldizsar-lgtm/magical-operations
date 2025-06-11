@@ -2200,7 +2200,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         creature = current_player_->getZone('F').getCreature(column);
 
         // if it has the brutal and haste already, or has brutal and didn't enter this turn - skip
-        if ((creature->creatureHasTrait("Brutal") (&&) (!creature->creatureHasTrait("Haste")) || (creature->creatureHasTrait("Brutal") && !creature->getEnter())))
+        if (((creature->creatureHasTrait("Brutal") && (!creature->creatureHasTrait("Haste"))) || (creature->creatureHasTrait("Brutal") && !creature->getEnter())))
           continue;
 
         new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
@@ -2229,7 +2229,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         creature = current_player_->getZone('B').getCreature(column);
 
         // if it has the brutal and haste already, or has brutal and didn't enter this turn - skip
-        if ((creature->creatureHasTrait("Brutal") (&&) (!creature->creatureHasTrait("Haste")) || (creature->creatureHasTrait("Brutal") && !creature->getEnter())))
+        if (((creature->creatureHasTrait("Brutal") && (!creature->creatureHasTrait("Haste"))) || (creature->creatureHasTrait("Brutal") && !creature->getEnter())))
           continue;
 
         // Use this creatures default priority
