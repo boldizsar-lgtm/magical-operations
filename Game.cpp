@@ -2277,10 +2277,10 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
 
         calculateTraitPriority(new_priority, creature, 
-        {{"Brutal", 6}, {"Challenger", 2}, {"First Strike", 4}, {"Haste", -100}, {"Lifesteal", 2},
+        {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 4}, {"Haste", -100}, {"Lifesteal", 2},
         {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 4}, {"Undying", 4}, {"Venomous", 2}});
 
-        new_priority = new_priority / 5;
+        new_priority = new_priority / 8;
       
         if (new_priority > priority)
         {
