@@ -1352,8 +1352,9 @@ void Game::letAiPlay()
 
   getBattlePriority(battle_priority, battle_command);
 
-  if (ai_actions_ == 59)
+  if (ai_actions_ >= 58)
       command = {"done"};
+      ai_actions_ = 0;
   else
   {
      //creature
