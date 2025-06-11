@@ -15,7 +15,7 @@ const int MINIMUM_STARTING_HAND_SIZE (2);
 
 Game::Game(int max_rounds) : player1_{1}, player2_{2}, attacker_(&player1_), defender_(&player2_),
                              max_rounds_{max_rounds}, round_count_{0}, board_active_{true}
-                             , end_condition_{EndCondition::DEFAULT}, winner_id_{TIE}
+                             , end_condition_{EndCondition::DEFAULT}, winner_id_{TIE}, ai_actions_{0}
 {
   //set default roles of players
   player1_.setRole(Role::ATTACKER);
@@ -84,6 +84,8 @@ bool Game::startRound()
     winner_id_ = attacker_->getId();
     return false;
   }
+
+  ai_actions_ = 0;
 
   return true;
 }
@@ -1350,28 +1352,33 @@ void Game::letAiPlay()
 
   getBattlePriority(battle_priority, battle_command);
 
-
-  //creature
-  if (creature_priority > spell_priority && creature_priority > battle_priority && creature_command.at(1) != "")
-    command = creature_command;
-  //spell
-  else if (spell_priority > creature_priority && spell_priority > battle_priority && spell_command.at(1) != "")
-    command = spell_command;
-  //battle
-  else if (battle_priority > spell_priority && battle_priority > creature_priority)
-    command = battle_command;
-  //redraw
-  else if (current_player_->getRedrawPossible() && current_player_->getHand().getSize() > 5)
-    command = {"redraw"};
-  //done
+  if (ai_actions_ == 59)
+      command = {"done"};
   else
-    command = {"done"};
-
+  {
+     //creature
+    if (creature_priority > spell_priority && creature_priority > battle_priority && creature_command.at(1) != "")
+      command = creature_command;
+    //spell
+    else if (spell_priority > creature_priority && spell_priority > battle_priority && spell_command.at(1) != "")
+      command = spell_command;
+    //battle
+    else if (battle_priority > spell_priority && battle_priority > creature_priority)
+      command = battle_command;
+    //redraw
+    else if (current_player_->getRedrawPossible() && current_player_->getHand().getSize() > 5)
+      command = {"redraw"};
+    //done
+    else
+      command = {"done"};
+  }
 
   printAiCommand(command);
 
   Command ai(command);
   processCommand(ai);
+
+  ai_actions_++;
 }
 
 //------------------
@@ -2040,7 +2047,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 
   // save the health of all creatures of the field zone of the current player
   auto health_values = current_player_->getZone('F').getSlots()
-  | std::views::filter([this] (Creature* creature) -> bool
+  | std::views::filter([] (Creature* creature) -> bool
   {
     if (creature && (!creature->getEnter() || creature->creatureHasTrait("Haste"))) 
     {
@@ -2090,7 +2097,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
     {
       // filter that keeps current players field creatures that have brutal trait (maybe switch this to a count func?)
       auto defender_brutal_creatures =  current_player_->getZone('F').getSlots()
-      | std::views::filter([this] (Creature* creature) -> bool
+      | std::views::filter([] (Creature* creature) -> bool
         {
           if (creature != nullptr && creature->creatureHasTrait("Brutal"))
             return true; // keep creatures that have brutal trait

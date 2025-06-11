@@ -66,6 +66,7 @@ protected:
   bool board_active_;
   EndCondition end_condition_;
   int winner_id_;
+  int ai_actions_;
 
 public:
   // Constructor, Copy-Assignment-Operator, Destructor
@@ -73,7 +74,9 @@ public:
   Game(Game&) = default;
   ~Game() = default;
 
-  
+  // to increase priority of a creature by certain values in the trait pair, if the creature has a trait (or also decrease)
+  void calculateTraitPriority(int& priority, Creature* creature, const std::vector<std::pair<std::string, int>>& trait_pairs);
+
   //------------------------------------------------------------------------------------------------------------------
   // starts and handles a single round of the game, updates all needed values
   //
@@ -480,9 +483,6 @@ public:
   void letAiPlay();
 
   void getCreaturePriority(int& priority, std::vector<std::string>& command);
-
-  // to increase priority of a creature by certain values in the trait pair, if the creature has a trait (or also decrease)
-  void calculateTraitPriority(int& priority, Creature* creature, const std::vector<std::pair<std::string, int>>& trait_pairs);
 
   void getSpellPriority(int& priority, std::vector<std::string>& command);
 
