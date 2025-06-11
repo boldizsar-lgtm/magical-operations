@@ -748,9 +748,12 @@ void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
   //target creature takes damage
   creature->changeCurrentHealth(- amount);
 
+  int column = owner->getCreatureColumn('B', creature);
+
   //check if the creature would die and move it to the graveyard if it does
   if (creature->getCurrentHealth() < 1)
-    owner->moveToGraveyard(creature);
+    owner->moveToGraveyard('B', column);
+
 }
 
 
