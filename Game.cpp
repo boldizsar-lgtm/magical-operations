@@ -1905,7 +1905,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
       {
         target = "ob" + std::to_string(opposing_player_->getCreatureColumn('B', creature));
         priority_battle = new_priority_battle;
-        new_priority = priority_battle;
+        new_priority = priority_battle/2;
       }
     }
     
