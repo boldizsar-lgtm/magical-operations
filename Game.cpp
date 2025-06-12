@@ -474,7 +474,7 @@ void Game::processTurnTraits()
 
       if (creature->creatureHasTrait("Poisoned"))
       {
-        creatureTakesDamageFieldZone(POISONED_DAMAGE, creature, current_player_);
+        creatureTakesDamage(POISONED_DAMAGE, creature, current_player_);
         std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
       }
     }
@@ -756,18 +756,7 @@ void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
   //check if the creature would die and move it to the graveyard if it does
   if (creature->getCurrentHealth() < 1)
     owner->moveToGraveyard('B', column);
-}
 
-void Game::creatureTakesDamageFieldZone(int amount, Creature* creature, Player* owner)
-{
-  //target creature takes damage
-  creature->changeCurrentHealth(- amount);
-
-  int column = owner->getCreatureColumn('F', creature);
-
-  //check if the creature would die and move it to the graveyard if it does
-  if (creature->getCurrentHealth() < 1)
-    owner->moveToGraveyard('F', column);
 }
 
 
@@ -1356,7 +1345,7 @@ void Game::letAiPlay()
   creature_command.push_back("f" + std::to_string(current_player_->getFirstEmptyFieldColumn()));
 
   //if the board is not full get creature priority
-  if (creature_command.at(2) != "f0" && !current_player_->isZoneFull('B'))
+  if (creature_command.at(2) != "f0")
     getCreaturePriority(creature_priority, creature_command);
 
   getSpellPriority(spell_priority, spell_command);
@@ -1588,10 +1577,6 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   {
     Creature* creature = nullptr;
     int new_priority = 0;
-
-    //Skip if no clone can be created, because the field zone is full
-    if (current_player_->isZoneFull('F'))
-      return;
 
     for(int column = 1; column <= ZONE_WIDTH; column++)
     {
@@ -1893,31 +1878,49 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   {
     //The target creature gains the First Strike and Temporary traits and its current attack is increased by 2.
 
-    //use it on enemy creatures that are blocked and don't have brutal, only if the our would creature die and the enemy wouldnt
+    // Idea: Check if creature in battle zone doesn't have first strike and adjust priority accordingly
+
     Creature* creature = nullptr;
     int new_priority = 0;
 
+    // check if the +2 attack would help win a fight
+    std::vector<int> opponent_health_vector;
+    for(int opp_column = 1; opp_column <= ZONE_WIDTH; opp_column++)
+    {
+      Creature* opposing_creature = opposing_player_->getZone('B').getCreature(opp_column);
+
+      if (opposing_creature != nullptr)
+        opponent_health_vector.push_back(opposing_creature->getCurrentHealth());
+    }
+
     for(int column = 1; column <= ZONE_WIDTH; column++)
     {
-      if (opposing_player_->getZone('B').isOccupied(column))
+      if (current_player_->getZone('F').isOccupied(column))
       {
-        creature = current_player_->getZone('B').getCreature(column);
+        creature = current_player_->getZone('F').getCreature(column);
 
-        //if the creature is attacking and has brutal also skip
-        if  (opposing_player_->getRoleString() == "Attacker" || creature->creatureHasTrait("Brutal"))
+         //if it has the first strike already, or doesn't have haste and entered this turn - skip
+        if (creature->creatureHasTrait("First Strike") || (!creature->creatureHasTrait("Haste") && creature->getEnter()))
           continue;
-
-        //if it is being blocked by a creature that would kill it, skip it
-        if (current_player_->getZone('B').isOccupied(column))
-          if (creature->getCurrentHealth() <= current_player_->getZone('B').getCreature(column)->getCurrentAttack())
-            continue;
-            //last
 
         new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
 
+        // Check if other player has a creature with more/equal health than our attack before spell and less health than our attack after spell
+        if (current_player_->getRoleString() == "Defender")
+        {
+          bool exists = false;
+          for (int health : opponent_health_vector)
+          {
+            if ((creature->getCurrentAttack()) <= health && (creature->getCurrentAttack() + 2) > health)
+              exists = true;
+          }
+          if (exists)
+            new_priority += 2;
+        }
+
         calculateTraitPriority(new_priority, creature, 
-        {{"Brutal", 0}, {"Challenger", 2}, {"First Strike", 4}, {"Haste", 2}, {"Lifesteal", 2},
-        {"Poisoned", -2}, {"Regenerate", 2}, {"Temporary", -100}, {"Undying", 2}, {"Venomous", 2}});
+        {{"Brutal", 6}, {"Challenger", 2}, {"First Strike", -100}, {"Haste", 2}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 6}, {"Venomous", 2}});
 
         new_priority = new_priority / 4;
       
@@ -1931,6 +1934,36 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           command.push_back("f" + std::to_string(column));
           else
           command.at(2) = "f" + std::to_string(column);
+        }
+      }
+
+      if (current_player_->getZone('B').isOccupied(column))
+      {
+        creature = current_player_->getZone('B').getCreature(column);
+
+        //if it has the first strike already, skip
+        if (creature->creatureHasTrait("First Strike"))
+          continue;
+
+        // Use this creatures default priority
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", 6}, {"Challenger", 2}, {"First Strike", -100}, {"Haste", 0}, {"Lifesteal", 2},
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 6}, {"Venomous", 2}});
+
+        new_priority = new_priority / 4;
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+            command.push_back("b" + std::to_string(column));
+          else
+            command.at(2) = "b" + std::to_string(column);
         }
       }
     }
@@ -1953,19 +1986,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         new_priority = creature->getCurrentAttack();
 
         if (creature->getCurrentHealth() == 1)
-          new_priority += 16;
+          new_priority += 12;
         
         if (creature->getCurrentHealth() == 2)
-          new_priority += 8;
+          new_priority += 6;
 
         if (creature->getCurrentHealth() == 3)
-          new_priority += 4;
+          new_priority += 3;
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
         {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 2}, {"Venomous", 2}});
 
-        new_priority = new_priority / 4;
+        new_priority = new_priority / 3;
       
         if (new_priority > priority)
         {
@@ -1987,19 +2020,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         new_priority = creature->getCurrentAttack();
 
         if (creature->getCurrentHealth() == 1)
-          new_priority += 16;
+          new_priority += 12;
           
         if (creature->getCurrentHealth() == 2)
-          new_priority += 8;
+          new_priority += 6;
 
         if (creature->getCurrentHealth() == 3)
-          new_priority += 4;
+          new_priority += 3;
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
         {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 2}, {"Venomous", 2}});
 
-        new_priority = new_priority / 4;
+        new_priority = new_priority / 3;
         
         if (new_priority > priority)
         {
@@ -2572,7 +2605,7 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
       {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 3}, {"Lifesteal", 2},
       {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -4}, {"Undying", 0}, {"Venomous", 2}});
 
-      new_priority = new_priority / 4;
+      new_priority = new_priority / 3;
     
       if (new_priority > priority)
       {
@@ -2645,19 +2678,11 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
     // Logic for Defense in Battle Zone
     if(current_player_->getRoleString() == "Defender")
     {
-      auto creatures_field_zone_defender = current_player_->getZone('F').getSlots()
-      | std::views::filter([] (Creature* creature) -> bool
-      {
-        if (creature != nullptr  && (!creature->getEnter() || creature->creatureHasTrait("Haste")))
-          return true; // keep creatures that can defend
-        return false;
-      });
-      
       // filter that keeps current players field creatures that have brutal trait (maybe switch this to a count func?)
       auto defender_brutal_creatures =  current_player_->getZone('F').getSlots()
       | std::views::filter([] (Creature* creature) -> bool
         {
-          if (creature != nullptr && creature->creatureHasTrait("Brutal") && (!creature->getEnter() || creature->creatureHasTrait("Haste")))
+          if (creature != nullptr && creature->creatureHasTrait("Brutal"))
             return true; // keep creatures that have brutal trait
           return false;
         });
@@ -2678,21 +2703,15 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       // check if there are brutal creatures that could deal damage to current player (the opposing battle slot is still empty)
       auto undefended_brutal_creatures =  opposing_battle_slots
       | std::views::filter([this] (Creature* creature) -> bool
-      {
-        int opposing_slot = opposing_player_->getCreatureColumn('B', creature);
+        {
+          int opposing_slot = opposing_player_->getCreatureColumn('B', creature);
 
-        if (creature != nullptr && creature->creatureHasTrait("Brutal") && !current_player_->getZone('B').isOccupied(opposing_slot))
-          return true; // keep creatures that have brutal trait and are undefended
-        return false;
-      });
+          if (creature != nullptr && creature->creatureHasTrait("Brutal") && !current_player_->getZone('B').isOccupied(opposing_slot))
+            return true; // keep creatures that have brutal trait and are undefended
+          return false;
+        });
 
       Creature* attacking_creature = current_player_->getZone('F').getCreature(column);
-
-      bool brutal_defends_min_health{false};
-
-      if (std::ranges::distance(creatures_field_zone_defender) == std::ranges::distance(undefended_creatures))
-        brutal_defends_min_health = true;
-
 
       // determine which slot to defend (brutal creatures defended by creature with highest health)
       if (std::ranges::distance(undefended_brutal_creatures) != 0)
@@ -2701,16 +2720,17 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
         current_priority += 6;
         if (max_health == attacking_creature->getCurrentHealth())
         {
-          battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_brutal_creatures, min_health_opposer, brutal_defends_min_health);
+          battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_brutal_creatures, min_health_opposer);
         }
         else
           continue;
       }
       else if(std::ranges::distance(undefended_creatures) != 0)
       {
-        battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_creatures, min_health_opposer, brutal_defends_min_health);
-        
-        current_priority += 4;
+        battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_creatures, min_health_opposer);
+        // if the defender has a brutal creature that creature gains priority
+        if (attacking_creature->creatureHasTrait("Brutal"))
+          current_priority += 4;
       }
       else
         return;
@@ -2718,7 +2738,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 
     //determine first free battle zone slot the creature can be moved to
     int attack_column;
-    for (attack_column = 1; attack_column <= ZONE_WIDTH; ++attack_column)
+    for (attack_column = 1; attack_column <= ZONE_WIDTH; attack_column++)
     {
       if (current_player_->getZone('B').isOccupied(attack_column))
         continue;
@@ -2734,14 +2754,9 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       //get creature with highest attack + health
       current_priority += attacking_creature->getCurrentHealth() + attacking_creature->getCurrentAttack();
 
-      //check traits
-
-      Creature* creature_to_challenge = nullptr;
-      int creature_to_challenge_priority = 0;
-      int new_to_challenge_priority = 0;
-
       if (attacking_creature->creatureHasTrait("Challenger"))
       {
+        
         //determine which column to attack
         for (int opponent_column = 1; opponent_column <= ZONE_WIDTH; opponent_column++)
         {
@@ -2749,60 +2764,32 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
           if(!opposing_player_->getZone('F').isOccupied(opponent_column))
             continue;
           
-          creature_to_challenge = opposing_player_->getZone('F').getCreature(opponent_column);
+          Creature* creature_to_challenge = nullptr;
 
           //if opponent creature we re looking at rn has less attack than our attacking creature's health, and less health than our creature's attack, attack it
-          if (attacking_creature->getCurrentHealth() > creature_to_challenge->getCurrentAttack() 
-          && attacking_creature->getCurrentAttack() >= creature_to_challenge->getCurrentHealth())
+          if (attacking_creature->getCurrentHealth() > opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack() 
+          && attacking_creature->getCurrentAttack() >= opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth())
           {
-            new_to_challenge_priority = creature_to_challenge->getCurrentAttack() + creature_to_challenge->getCurrentHealth();
-
-            int lifesteal_priority = -100;
-            int venomous_priority = -100;
-
-            if (attacking_creature->getCurrentAttack() >= creature_to_challenge->getCurrentHealth() + Gain::LIFESTEAL_HEALTH_GAIN)
-              lifesteal_priority = 10;
-
-            if (attacking_creature->getCurrentHealth() > creature_to_challenge->getCurrentAttack() + Damage::POISONED_DAMAGE
-                || attacking_creature->creatureHasTrait("Poisoned"))
-              venomous_priority = 10;
-            
-            calculateTraitPriority(new_to_challenge_priority, creature_to_challenge, 
-            {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 2}, {"Lifesteal", lifesteal_priority},
-            {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -6}, {"Undying", 0}, {"Venomous", venomous_priority}});
-
-            if (new_to_challenge_priority > creature_to_challenge_priority)
+            if (creature_to_challenge == nullptr)
             {
-              creature_to_challenge_priority = new_to_challenge_priority;
               attack_column = opponent_column;
               creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
             }
-          }
-
-          //if opponent creature we re looking at rn has could trade with our creature
-          if (attacking_creature->getCurrentHealth() <= creature_to_challenge->getCurrentAttack() 
-          && attacking_creature->getCurrentAttack() >= creature_to_challenge->getCurrentHealth())
-          {
-            new_to_challenge_priority = creature_to_challenge->getCurrentAttack() + creature_to_challenge->getCurrentHealth();
             
-            calculateTraitPriority(new_to_challenge_priority, creature_to_challenge, 
-            {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 2}, {"Lifesteal", 2},
-            {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -6}, {"Undying", 0}, {"Venomous", 2}});
-
-            new_to_challenge_priority = new_to_challenge_priority / 2;
-
-            if (new_to_challenge_priority > creature_to_challenge_priority)
+            //challenge the creature with the highest attack and health that is lower than our attacking creature's
+            else if (creature_to_challenge->getCurrentHealth() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth()
+                  || creature_to_challenge->getCurrentAttack() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack())
             {
-              creature_to_challenge_priority = new_to_challenge_priority;
               attack_column = opponent_column;
               creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
             }
           }
         }
-
-        current_priority += creature_to_challenge_priority;
       }
     }
+      
+    //increase BATTLE PRRIORITY
+    current_priority++;
 
     //if current creature's priority is higher than the saved creature's save it instead
     if (current_priority > priority)
@@ -2820,15 +2807,16 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 }
 
 //---------------------------
-int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer, bool brutal_defends_min_health)
+int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer)
 {
   int max_attack_value = 0;
   int battle_slot_to_defend = 0;
 
   for (auto creature : undefended_creatures)
   {
+
     // switch column if there is a creture with a higher attack value
-    if (brutal_defends_min_health && attacking_creature->creatureHasTrait("Brutal") && creature->getCurrentHealth() == min_health_opposer)
+    if (attacking_creature->creatureHasTrait("Brutal") && creature->getCurrentHealth() == min_health_opposer)
     {
       battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
       return battle_slot_to_defend;

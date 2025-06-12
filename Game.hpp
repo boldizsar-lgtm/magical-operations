@@ -271,7 +271,6 @@ public:
   // 
   void creatureTakesDamage(int amount, Creature* creature, Player* owner);
 
-  void creatureTakesDamageFieldZone(int amount, Creature* creature, Player* owner);
 
   ///COMMANDS
 
@@ -495,8 +494,7 @@ public:
 
   void getBattlePriority(int& priority, std::vector<std::string>& command);
 
-  int determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer,
-  bool brutal_defends_min_health);
+  int determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer);
 
   void printAiCommand(std::vector<std::string>& command);
 };
