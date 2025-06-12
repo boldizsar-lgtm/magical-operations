@@ -474,7 +474,7 @@ void Game::processTurnTraits()
 
       if (creature->creatureHasTrait("Poisoned"))
       {
-        creatureTakesDamage(POISONED_DAMAGE, creature, current_player_);
+        creatureTakesDamageFieldZone(POISONED_DAMAGE, creature, current_player_);
         std::cout << Config::getInstance().getMessage("I_POISONED") << std::endl;
       }
     }
@@ -756,7 +756,18 @@ void Game::creatureTakesDamage(int amount, Creature* creature, Player* owner)
   //check if the creature would die and move it to the graveyard if it does
   if (creature->getCurrentHealth() < 1)
     owner->moveToGraveyard('B', column);
+}
 
+void Game::creatureTakesDamageFieldZone(int amount, Creature* creature, Player* owner)
+{
+  //target creature takes damage
+  creature->changeCurrentHealth(- amount);
+
+  int column = owner->getCreatureColumn('F', creature);
+
+  //check if the creature would die and move it to the graveyard if it does
+  if (creature->getCurrentHealth() < 1)
+    owner->moveToGraveyard('F', column);
 }
 
 
