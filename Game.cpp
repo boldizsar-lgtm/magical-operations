@@ -1345,7 +1345,7 @@ void Game::letAiPlay()
   creature_command.push_back("f" + std::to_string(current_player_->getFirstEmptyFieldColumn()));
 
   //if the board is not full get creature priority
-  if (creature_command.at(2) != "f0")
+  if (creature_command.at(2) != "f0" && !current_player_->isZoneFull('B'))
     getCreaturePriority(creature_priority, creature_command);
 
   getSpellPriority(spell_priority, spell_command);
@@ -1577,6 +1577,10 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   {
     Creature* creature = nullptr;
     int new_priority = 0;
+
+    //Skip if no clone can be created, because the field zone is full
+    if (current_player_->isZoneFull('F'))
+      return;
 
     for(int column = 1; column <= ZONE_WIDTH; column++)
     {
@@ -2648,7 +2652,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 
     //determine first free battle zone slot the creature can be moved to
     int attack_column;
-    for (attack_column = 1; attack_column <= ZONE_WIDTH; attack_column++)
+    for (attack_column = 1; attack_column <= ZONE_WIDTH; ++attack_column)
     {
       if (current_player_->getZone('B').isOccupied(attack_column))
         continue;
@@ -2664,9 +2668,14 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       //get creature with highest attack + health
       current_priority += attacking_creature->getCurrentHealth() + attacking_creature->getCurrentAttack();
 
+      //check traits
+
+      Creature* creature_to_challenge = nullptr;
+      int creature_to_challenge_priority = 0;
+      int new_to_challenge_priority = 0;
+
       if (attacking_creature->creatureHasTrait("Challenger"))
       {
-        
         //determine which column to attack
         for (int opponent_column = 1; opponent_column <= ZONE_WIDTH; opponent_column++)
         {
@@ -2674,32 +2683,60 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
           if(!opposing_player_->getZone('F').isOccupied(opponent_column))
             continue;
           
-          Creature* creature_to_challenge = nullptr;
+          creature_to_challenge = opposing_player_->getZone('F').getCreature(opponent_column);
 
           //if opponent creature we re looking at rn has less attack than our attacking creature's health, and less health than our creature's attack, attack it
-          if (attacking_creature->getCurrentHealth() > opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack() 
-          && attacking_creature->getCurrentAttack() >= opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth())
+          if (attacking_creature->getCurrentHealth() > creature_to_challenge->getCurrentAttack() 
+          && attacking_creature->getCurrentAttack() >= creature_to_challenge->getCurrentHealth())
           {
-            if (creature_to_challenge == nullptr)
+            new_to_challenge_priority = creature_to_challenge->getCurrentAttack() + creature_to_challenge->getCurrentHealth();
+
+            int lifesteal_priority = -100;
+            int venomous_priority = -100;
+
+            if (attacking_creature->getCurrentAttack() >= creature_to_challenge->getCurrentHealth() + Gain::LIFESTEAL_HEALTH_GAIN)
+              lifesteal_priority = 10;
+
+            if (attacking_creature->getCurrentHealth() > creature_to_challenge->getCurrentAttack() + Damage::POISONED_DAMAGE
+                || attacking_creature->creatureHasTrait("Poisoned"))
+              venomous_priority = 10;
+            
+            calculateTraitPriority(new_to_challenge_priority, creature_to_challenge, 
+            {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 2}, {"Lifesteal", lifesteal_priority},
+            {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -6}, {"Undying", 0}, {"Venomous", venomous_priority}});
+
+            if (new_to_challenge_priority > creature_to_challenge_priority)
             {
+              creature_to_challenge_priority = new_to_challenge_priority;
               attack_column = opponent_column;
               creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
             }
+          }
+
+          //if opponent creature we re looking at rn has could trade with our creature
+          if (attacking_creature->getCurrentHealth() <= creature_to_challenge->getCurrentAttack() 
+          && attacking_creature->getCurrentAttack() >= creature_to_challenge->getCurrentHealth())
+          {
+            new_to_challenge_priority = creature_to_challenge->getCurrentAttack() + creature_to_challenge->getCurrentHealth();
             
-            //challenge the creature with the highest attack and health that is lower than our attacking creature's
-            else if (creature_to_challenge->getCurrentHealth() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth()
-                  || creature_to_challenge->getCurrentAttack() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack())
+            calculateTraitPriority(new_to_challenge_priority, creature_to_challenge, 
+            {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 2}, {"Lifesteal", 2},
+            {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -6}, {"Undying", 0}, {"Venomous", 2}});
+
+            new_to_challenge_priority = new_to_challenge_priority / 2;
+
+            if (new_to_challenge_priority > creature_to_challenge_priority)
             {
+              creature_to_challenge_priority = new_to_challenge_priority;
               attack_column = opponent_column;
               creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
             }
           }
         }
+
+        current_priority += creature_to_challenge_priority;
       }
     }
-      
-    //increase BATTLE PRRIORITY
-    current_priority++;
 
     //if current creature's priority is higher than the saved creature's save it instead
     if (current_priority > priority)
