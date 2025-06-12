@@ -2820,16 +2820,15 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 }
 
 //---------------------------
-int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer)
+int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer, bool brutal_defends_min_health)
 {
   int max_attack_value = 0;
   int battle_slot_to_defend = 0;
 
   for (auto creature : undefended_creatures)
   {
-
     // switch column if there is a creture with a higher attack value
-    if (attacking_creature->creatureHasTrait("Brutal") && creature->getCurrentHealth() == min_health_opposer)
+    if (brutal_defends_min_health && attacking_creature->creatureHasTrait("Brutal") && creature->getCurrentHealth() == min_health_opposer)
     {
       battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
       return battle_slot_to_defend;
