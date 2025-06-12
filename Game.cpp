@@ -1850,7 +1850,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
               exists = true;
           }
           if (exists)
-            new_priority += 6;
+            new_priority += 2;
         }
 
         calculateTraitPriority(new_priority, creature, 
@@ -1915,7 +1915,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
               exists = true;
           }
           if (exists)
-            new_priority += 6;
+            new_priority += 2;
         }
 
         calculateTraitPriority(new_priority, creature, 
@@ -2295,7 +2295,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
               exists = true;
           }
           if (exists)
-            new_priority += 6;
+            new_priority += 2;
         }
 
         calculateTraitPriority(new_priority, creature, 
@@ -2389,7 +2389,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
               exists = true;
           }
           if (exists)
-            new_priority += 6;
+            new_priority += 2;
         }
        
         calculateTraitPriority(new_priority, creature, 
