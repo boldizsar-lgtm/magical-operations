@@ -2436,7 +2436,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
       {
         creature = current_player_->getZone('F').getCreature(column);
 
-        new_priority = creature->getCurrentAttack();
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
@@ -2460,7 +2460,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
       {
         creature = current_player_->getZone('B').getCreature(column);
 
-        new_priority = creature->getCurrentAttack();
+        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
@@ -2809,6 +2809,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 
         current_priority += creature_to_challenge_priority;
       }
+    }
     
 
       //if current creature's priority is higher than the saved creature's save it instead
@@ -2824,7 +2825,6 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
           command.at(2) = "b" + std::to_string(battle_slot_to_defend);
       }
     }
-  }
 }
 
 //---------------------------
