@@ -2764,9 +2764,12 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       //get creature with highest attack + health
       current_priority += attacking_creature->getCurrentHealth() + attacking_creature->getCurrentAttack();
 
+      Creature* creature_to_challenge = nullptr;
+      int creature_to_challenge_priority = 0;
+      int new_to_challenge_priority = 0;
+
       if (attacking_creature->creatureHasTrait("Challenger"))
       {
-        
         //determine which column to attack
         for (int opponent_column = 1; opponent_column <= ZONE_WIDTH; opponent_column++)
         {
@@ -2774,44 +2777,52 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
           if(!opposing_player_->getZone('F').isOccupied(opponent_column))
             continue;
           
-          Creature* creature_to_challenge = nullptr;
+          creature_to_challenge = opposing_player_->getZone('F').getCreature(opponent_column);
 
           //if opponent creature we re looking at rn has less attack than our attacking creature's health, and less health than our creature's attack, attack it
           if (attacking_creature->getCurrentHealth() > opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack() 
           && attacking_creature->getCurrentAttack() >= opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth())
           {
-            if (creature_to_challenge == nullptr)
-            {
-              attack_column = opponent_column;
-              creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
-            }
+            new_to_challenge_priority = creature_to_challenge->getCurrentAttack() + creature_to_challenge->getCurrentHealth();
+
+            int lifesteal_priority = -100;
+            int venomous_priority = -100;
+
+            if (attacking_creature->getCurrentAttack() >= creature_to_challenge->getCurrentHealth() + Gain::LIFESTEAL_HEALTH_GAIN)
+              lifesteal_priority = 10;
+
+            if (attacking_creature->getCurrentHealth() > creature_to_challenge->getCurrentAttack() + Damage::POISONED_DAMAGE
+                || attacking_creature->creatureHasTrait("Poisoned"))
+              venomous_priority = 10;
             
-            //challenge the creature with the highest attack and health that is lower than our attacking creature's
-            else if (creature_to_challenge->getCurrentHealth() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth()
-                  || creature_to_challenge->getCurrentAttack() < opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack())
+            calculateTraitPriority(new_to_challenge_priority, creature_to_challenge, 
+            {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 2}, {"Lifesteal", lifesteal_priority},
+            {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -6}, {"Undying", 0}, {"Venomous", venomous_priority}});
+
+            if (new_to_challenge_priority > creature_to_challenge_priority)
             {
+              creature_to_challenge_priority = new_to_challenge_priority;
               attack_column = opponent_column;
-              creature_to_challenge =  opposing_player_->getZone('F').getCreature(opponent_column);
             }
           }
         }
+
+        current_priority += creature_to_challenge_priority;
       }
-    }
-      
-    //increase BATTLE PRRIORITY
-    current_priority++;
+    
 
-    //if current creature's priority is higher than the saved creature's save it instead
-    if (current_priority > priority)
-    {
-      priority = current_priority;
-      command.at(1) = "f" + std::to_string(column);
+      //if current creature's priority is higher than the saved creature's save it instead
+      if (current_priority > priority)
+      {
+        priority = current_priority;
+        command.at(1) = "f" + std::to_string(column);
 
-      if (current_player_->getRoleString() == "Attacker")
-        command.at(2) = "b" + std::to_string(attack_column);
-      
-      else //current_player is defender
-        command.at(2) = "b" + std::to_string(battle_slot_to_defend);
+        if (current_player_->getRoleString() == "Attacker")
+          command.at(2) = "b" + std::to_string(attack_column);
+        
+        else //current_player is defender
+          command.at(2) = "b" + std::to_string(battle_slot_to_defend);
+      }
     }
   }
 }
