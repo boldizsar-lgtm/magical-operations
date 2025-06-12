@@ -1451,6 +1451,8 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority, std::vector<std:
 {
   if (spell->getId() == "BTLCY")
   {
+    //All of the player's own creatures on the board gain the Haste and Temporary traits, and their current attack is increased by 3.
+    
     //Don't use it if the palyer is the defender
     if (current_player_->getRoleString() == "Defender")
       return;
@@ -1498,6 +1500,8 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority, std::vector<std:
 
   if (spell->getId() == "METOR")
   {
+    //All creatures on the board take 3 damage.
+    
     int num_opponent_deaths = 0;
     int num_allied_deaths = 0;
     int new_priority = 0;
@@ -1535,6 +1539,8 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority, std::vector<std:
 
   if (spell->getId() == "FIRBL")
   {
+    //All enemy creatures on the board take 2 damage.
+
     int num_opponent_deaths = 0;
     int new_priority = 0;
 
@@ -1564,6 +1570,9 @@ void Game::getGeneralSpellPriority(Spell* spell, int& priority, std::vector<std:
 //------------------
 void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::string>& command)
 {
+  //A newly created creature of the same type as the target creature enters the board in the player's first empty Field Zone slot.
+  //The new creature's current attack, current health and current traits are set to the target creature's values, and it gains the Haste and Temporary traits.
+  
   if (spell->getId() == "CLONE")
   {
     Creature* creature = nullptr;
@@ -1675,6 +1684,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "CURSE")
   {
+    //The target creature gains the Temporary trait. This spell's mana cost is equal to the target creature's mana cost plus 1.
+    
     Creature* creature = nullptr;
     int new_priority = 0;
 
@@ -1738,6 +1749,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "SHOCK")
   {
+    //The target creature's current health is reduced by 1
+    
     Creature* creature = nullptr;
     int new_priority = 0;
     
@@ -1799,6 +1812,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "MOBLZ")
   {
+    //The target creature gains the Haste trait and its current attack is increased by 1.
+    
     //find a creature without haste that entered this turn with the highest power
     Creature* creature = nullptr;
     int new_priority = 0;
@@ -1838,8 +1853,10 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "RRUSH")
   {
+    //The target creature gains the First Strike and Temporary traits and its current attack is increased by 2.
+
     // Idea: Check if creature in battle zone doesn't have first strike and adjust priority accordingly
-    // Ideas to implement: check if the +2 health would help prevent a direct hit
+    // Ideas to implement: check if the first strike would prevent a direct hit, or save a creature
 
     Creature* creature = nullptr;
     int new_priority = 0;
@@ -1909,8 +1926,9 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "SHILD")
   {
-    {
-    //find the most powerful creature with the least health
+    //The target creature's current health is increased by 2.
+
+    //find the most powerful creature with the least health (3, 2 or 1 health)
     Creature* creature = nullptr;
     int new_priority = 0;
 
@@ -1923,16 +1941,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         new_priority = creature->getCurrentAttack();
 
         if (creature->getCurrentHealth() == 1)
-          new_priority += 16;
+          new_priority += 12;
         
         if (creature->getCurrentHealth() == 2)
-          new_priority += 8;
+          new_priority += 6;
+
+        if (creature->getCurrentHealth() == 3)
+          new_priority += 3;
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
-        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 6}, {"Venomous", 2}});
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 2}, {"Venomous", 2}});
 
-        new_priority = new_priority / 4;
+        new_priority = new_priority / 3;
       
         if (new_priority > priority)
         {
@@ -1954,16 +1975,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         new_priority = creature->getCurrentAttack();
 
         if (creature->getCurrentHealth() == 1)
-          new_priority += 16;
+          new_priority += 12;
           
         if (creature->getCurrentHealth() == 2)
-          new_priority += 8;
+          new_priority += 6;
+
+        if (creature->getCurrentHealth() == 3)
+          new_priority += 3;
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",3}, {"Lifesteal", 2},
-        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 6}, {"Venomous", 2}});
+        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -8}, {"Undying", 2}, {"Venomous", 2}});
 
-        new_priority = new_priority / 4;
+        new_priority = new_priority / 3;
         
         if (new_priority > priority)
         {
@@ -1976,7 +2000,6 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           else
             command.at(2) = "b" + std::to_string(column);
         }
-        }
       }
     }
   }
@@ -1985,6 +2008,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   // INFO: getestet in der opposing battle zone, sollte funktionieren (aber vielleicht nicht in der field zone :( )
   if (spell->getId() == "AMPUT")
   {
+    //The target creature's first trait in alphabetical order is removed.
+
     int priority_field = 0;
     int priority_battle = 0;
     int new_priority = 0;
@@ -2040,8 +2065,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
       *creature_copy += first_trait;
 
       calculateTraitPriority(new_priority_field, creature_copy, 
-      {{"Brutal", 6}, {"Challenger", 3}, {"First Strike", 2}, {"Haste", 3}, {"Lifesteal", 2},
-      {"Poisoned", -100}, {"Regenerate", 3}, {"Temporary", -100}, {"Undying", 4}, {"Venomous", 5}});
+      {{"Brutal", 5}, {"Challenger", 3}, {"First Strike", 2}, {"Haste", 3}, {"Lifesteal", 2},
+      {"Poisoned", -100}, {"Regenerate", 3}, {"Temporary", -100}, {"Undying", 6}, {"Venomous", 4}});
 
       if (new_priority_field > priority_field)
       {
@@ -2070,8 +2095,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
       *creature_copy += first_trait;
 
       calculateTraitPriority(new_priority_battle, creature_copy, 
-      {{"Brutal", 6}, {"Challenger", 2}, {"First Strike", 3}, {"Haste", 2}, {"Lifesteal", 4},
-      {"Poisoned", -100}, {"Regenerate", 3}, {"Temporary", -100}, {"Undying", 4}, {"Venomous", 5}});
+      {{"Brutal", 5}, {"Challenger", 3}, {"First Strike", 2}, {"Haste", 3}, {"Lifesteal", 2},
+      {"Poisoned", -100}, {"Regenerate", 3}, {"Temporary", -100}, {"Undying", 6}, {"Venomous", 4}});
 
       if (new_priority_battle > priority_battle && new_priority_battle >= priority_field)
       {
@@ -2132,7 +2157,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
       calculateTraitPriority(new_priority_field, creature_copy, 
       {{"Brutal", -100}, {"Challenger", -100}, {"First Strike", -100}, {"Haste", -100}, {"Lifesteal", -100},
-      {"Poisoned", 2}, {"Regenerate", -100}, {"Temporary", 4}, {"Undying", -100}, {"Venomous", -100}});
+      {"Poisoned", 2}, {"Regenerate", -100}, {"Temporary", 6}, {"Undying", -100}, {"Venomous", -100}});
 
       if (new_priority_field > priority_field)
       {
@@ -2162,7 +2187,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
       calculateTraitPriority(new_priority_battle, creature_copy, 
       {{"Brutal", -100}, {"Challenger", -100}, {"First Strike", -100}, {"Haste", -100}, {"Lifesteal", -100},
-      {"Poisoned", 2}, {"Regenerate", -100}, {"Temporary", 4}, {"Undying", -100}, {"Venomous", -100}});
+      {"Poisoned", 2}, {"Regenerate", -100}, {"Temporary", 6}, {"Undying", -100}, {"Venomous", -100}});
 
       if (new_priority_battle > priority_battle && new_priority_battle >= priority_field)
       {
@@ -2188,8 +2213,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   if (spell->getId() == "FINAL")
   {
     // Idea: Check if creature in field or battle zone doesn't have haste or brutal and adjust priority accordingly
-    // Ideas to implement: check if the +3 health would help prevent a direct hit
 
+    //The target creature gains the Brutal, Haste and Temporary traits, and its current attack is increased by 3.
     Creature* creature = nullptr;
     int new_priority = 0;
 
@@ -2261,6 +2286,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
     // Idea: Check if creature in field zone doesn't have haste and adjust priority accordingly
     // Ideas to implement: check if the +1 health would help prevent a direct hit
 
+    //The target creature gains the Haste trait and its current health is increased by 1.
     Creature* creature = nullptr;
     int new_priority = 0;
 
@@ -2299,6 +2325,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "ZMBFY")
   {
+    //The target creature gains the Venomous and Undying traits.
     Creature* creature = nullptr;
     int new_priority = 0;
 
@@ -2358,6 +2385,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "BLOOD")
   {
+    //The target creature gains the Brutal and Lifesteal traits, but its current health is reduced to half its previous value (rounded up).
     Creature* creature = nullptr;
     int new_priority = 0;
 
@@ -2439,6 +2467,8 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
 {
   if (spell->getId() == "MEMRY")
   {
+    //This spell moves a creature from the player's graveyard into their first empty Field Zone slot.
+    //It gains the Haste and Temporary traits. This spell's mana cost is equal to half the moved creature's mana cost (rounded up).
     Creature* creature = nullptr;
     int new_priority = 0;
 
@@ -2450,9 +2480,7 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
 
       calculateTraitPriority(new_priority, creature, 
       {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", -2}, {"Lifesteal", 2},
-      {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 6}, {"Venomous", 2}});
-
-      // TODO: warum hat hier undying einen gain von 6? creatures vom graveyard mit undying bleiben nicht lang genug im graveyard, damit das sinn macht oder nicht? -kathi
+      {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 0}, {"Venomous", 2}});
 
       new_priority = new_priority / 2;
 
@@ -2474,6 +2502,7 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
 
   if (spell->getId() == "REVIV")
   {
+    //This spell moves a creature from the player's graveyard into their hand.
     int new_priority = 0;
 
     for (Card* card : current_player_->getGraveyard().getPile())
@@ -2484,7 +2513,7 @@ void Game::getGraveyardSpellPriority(Spell* spell, int& priority, std::vector<st
 
       calculateTraitPriority(new_priority, creature, 
       {{"Brutal", 2}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 3}, {"Lifesteal", 2},
-      {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -4}, {"Undying", 4}, {"Venomous", 2}});
+      {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", -4}, {"Undying", 0}, {"Venomous", 2}});
 
       new_priority = new_priority / 3;
     
