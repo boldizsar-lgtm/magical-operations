@@ -2645,11 +2645,19 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
     // Logic for Defense in Battle Zone
     if(current_player_->getRoleString() == "Defender")
     {
+      auto creatures_field_zone_defender = current_player_->getZone('F').getSlots()
+      | std::views::filter([] (Creature* creature) -> bool
+      {
+        if (creature != nullptr  && (!creature->getEnter() || creature->creatureHasTrait("Haste")))
+          return true; // keep creatures that can defend
+        return false;
+      });
+      
       // filter that keeps current players field creatures that have brutal trait (maybe switch this to a count func?)
       auto defender_brutal_creatures =  current_player_->getZone('F').getSlots()
       | std::views::filter([] (Creature* creature) -> bool
         {
-          if (creature != nullptr && creature->creatureHasTrait("Brutal"))
+          if (creature != nullptr && creature->creatureHasTrait("Brutal") && (!creature->getEnter() || creature->creatureHasTrait("Haste")))
             return true; // keep creatures that have brutal trait
           return false;
         });
@@ -2670,15 +2678,21 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       // check if there are brutal creatures that could deal damage to current player (the opposing battle slot is still empty)
       auto undefended_brutal_creatures =  opposing_battle_slots
       | std::views::filter([this] (Creature* creature) -> bool
-        {
-          int opposing_slot = opposing_player_->getCreatureColumn('B', creature);
+      {
+        int opposing_slot = opposing_player_->getCreatureColumn('B', creature);
 
-          if (creature != nullptr && creature->creatureHasTrait("Brutal") && !current_player_->getZone('B').isOccupied(opposing_slot))
-            return true; // keep creatures that have brutal trait and are undefended
-          return false;
-        });
+        if (creature != nullptr && creature->creatureHasTrait("Brutal") && !current_player_->getZone('B').isOccupied(opposing_slot))
+          return true; // keep creatures that have brutal trait and are undefended
+        return false;
+      });
 
       Creature* attacking_creature = current_player_->getZone('F').getCreature(column);
+
+      bool brutal_defends_min_health{false};
+
+      if (std::ranges::distance(creatures_field_zone_defender) == std::ranges::distance(undefended_creatures))
+        brutal_defends_min_health = true;
+
 
       // determine which slot to defend (brutal creatures defended by creature with highest health)
       if (std::ranges::distance(undefended_brutal_creatures) != 0)
@@ -2687,17 +2701,16 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
         current_priority += 6;
         if (max_health == attacking_creature->getCurrentHealth())
         {
-          battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_brutal_creatures, min_health_opposer);
+          battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_brutal_creatures, min_health_opposer, brutal_defends_min_health);
         }
         else
           continue;
       }
       else if(std::ranges::distance(undefended_creatures) != 0)
       {
-        battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_creatures, min_health_opposer);
-        // if the defender has a brutal creature that creature gains priority
-        if (attacking_creature->creatureHasTrait("Brutal"))
-          current_priority += 4;
+        battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_creatures, min_health_opposer, brutal_defends_min_health);
+        
+        current_priority += 4;
       }
       else
         return;
