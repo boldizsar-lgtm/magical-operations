@@ -271,6 +271,7 @@ public:
   // 
   void creatureTakesDamage(int amount, Creature* creature, Player* owner);
 
+  void creatureTakesDamageFieldZone(int amount, Creature* creature, Player* owner);
 
   ///COMMANDS
 
