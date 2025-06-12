@@ -1803,6 +1803,16 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
     Creature* creature = nullptr;
     int new_priority = 0;
 
+    // check if the +1 attack would help win a fight
+    std::vector<int> opponent_health_vector;
+    for(int opp_column = 1; opp_column <= ZONE_WIDTH; opp_column++)
+    {
+      Creature* opposing_creature = opposing_player_->getZone('B').getCreature(opp_column);
+
+      if (opposing_creature != nullptr)
+        opponent_health_vector.push_back(opposing_creature->getCurrentHealth());
+    }
+
     for(int column = 1; column <= ZONE_WIDTH; column++)
     {
       if (current_player_->getZone('F').isOccupied(column))
@@ -1814,6 +1824,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           continue;
 
         new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        // Check if other player has a creature with more/equal health than our attack before spell and less health than our attack after spell
+        if (current_player_->getRoleString() == "Defender")
+        {
+          bool exists = false;
+          for (int health : opponent_health_vector)
+          {
+            if ((creature->getCurrentAttack()) <= health && (creature->getCurrentAttack() + 1) > health)
+              exists = true;
+          }
+          if (exists)
+            new_priority += 6;
+        }
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",-100}, {"Lifesteal", 2},
@@ -1839,10 +1862,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   if (spell->getId() == "RRUSH")
   {
     // Idea: Check if creature in battle zone doesn't have first strike and adjust priority accordingly
-    // Ideas to implement: check if the +2 health would help prevent a direct hit
 
     Creature* creature = nullptr;
     int new_priority = 0;
+
+    // check if the +2 attack would help win a fight
+    std::vector<int> opponent_health_vector;
+    for(int opp_column = 1; opp_column <= ZONE_WIDTH; opp_column++)
+    {
+      Creature* opposing_creature = opposing_player_->getZone('B').getCreature(opp_column);
+
+      if (opposing_creature != nullptr)
+        opponent_health_vector.push_back(opposing_creature->getCurrentHealth());
+    }
 
     for(int column = 1; column <= ZONE_WIDTH; column++)
     {
@@ -1855,6 +1887,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           continue;
 
         new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        // Check if other player has a creature with more/equal health than our attack before spell and less health than our attack after spell
+        if (current_player_->getRoleString() == "Defender")
+        {
+          bool exists = false;
+          for (int health : opponent_health_vector)
+          {
+            if ((creature->getCurrentAttack()) <= health && (creature->getCurrentAttack() + 2) > health)
+              exists = true;
+          }
+          if (exists)
+            new_priority += 6;
+        }
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 6}, {"Challenger", 2}, {"First Strike", -100}, {"Haste", 2}, {"Lifesteal", 2},
@@ -2188,10 +2233,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   if (spell->getId() == "FINAL")
   {
     // Idea: Check if creature in field or battle zone doesn't have haste or brutal and adjust priority accordingly
-    // Ideas to implement: check if the +3 health would help prevent a direct hit
 
     Creature* creature = nullptr;
     int new_priority = 0;
+
+    // check if the +3 attack would help win a fight
+    std::vector<int> opponent_health_vector;
+    for(int opp_column = 1; opp_column <= ZONE_WIDTH; opp_column++)
+    {
+      Creature* opposing_creature = opposing_player_->getZone('B').getCreature(opp_column);
+
+      if (opposing_creature != nullptr)
+        opponent_health_vector.push_back(opposing_creature->getCurrentHealth());
+    }
 
     for(int column = 1; column <= ZONE_WIDTH; column++)
     {
@@ -2204,6 +2258,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           continue;
 
         new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
+
+        // Check if other player has a creature with more/equal health than our attack before spell and less health than our attack after spell
+        if (current_player_->getRoleString() == "Defender")
+        {
+          bool exists = false;
+          for (int health : opponent_health_vector)
+          {
+            if ((creature->getCurrentAttack()) <= health && (creature->getCurrentAttack() + 3) > health)
+              exists = true;
+          }
+          if (exists)
+            new_priority += 6;
+        }
 
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 6}, {"Haste", -4}, {"Lifesteal", 2},
@@ -2259,10 +2326,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
   if (spell->getId() == "LYLTY")
   {
     // Idea: Check if creature in field zone doesn't have haste and adjust priority accordingly
-    // Ideas to implement: check if the +1 health would help prevent a direct hit
 
     Creature* creature = nullptr;
     int new_priority = 0;
+
+    // check if the +1 health would help defend
+    std::vector<int> opponent_attack_vector;
+    for(int opp_column = 1; opp_column <= ZONE_WIDTH; opp_column++)
+    {
+      Creature* opposing_creature = opposing_player_->getZone('B').getCreature(opp_column);
+
+      if (opposing_creature != nullptr)
+        opponent_attack_vector.push_back(opposing_creature->getCurrentAttack());
+    }
 
     for(int column = 1; column <= ZONE_WIDTH; column++)
     {
@@ -2276,6 +2352,19 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
         new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
 
+        // Check if other player has a creature with more/equal attack than our health before spell and less attack than our health after spell
+        if (current_player_->getRoleString() == "Defender")
+        {
+          bool exists = false;
+          for (int attack : opponent_attack_vector)
+          {
+            if ((creature->getCurrentHealth()) <= attack && (creature->getCurrentHealth() + 1) > attack)
+              exists = true;
+          }
+          if (exists)
+            new_priority += 6;
+        }
+       
         calculateTraitPriority(new_priority, creature, 
         {{"Brutal", 4}, {"Challenger", 2}, {"First Strike", 4}, {"Haste", -100}, {"Lifesteal", 2},
         {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 4}, {"Undying", 4}, {"Venomous", 2}});
