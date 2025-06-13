@@ -2392,12 +2392,11 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
     }
   }
 
-
-  if (spell->getId() == "BLOOD")
   if (spell->getId() == "BLOOD")
   {
     //The target creature gains the Brutal and Lifesteal traits, but its current health is reduced to half its previous value (rounded up).
     Creature* creature = nullptr;
+    Creature* enemy_creature = nullptr;
     int new_priority = 0;
 
     for(int column = 1; column <= ZONE_WIDTH; column++)
@@ -2416,7 +2415,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         // decrease priority by health loss
         new_priority -= (creature->getCurrentHealth() - (std::ceil(creature->getCurrentHealth()/2.0)));
 
-        new_priority = new_priority / 5;
+        new_priority = new_priority / 4;
       
         if (new_priority > priority)
         {
@@ -2430,21 +2429,36 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           command.at(2) = "f" + std::to_string(column);
         }
       }
-      if (current_player_->getZone('B').isOccupied(column))
+      
+      if (current_player_->getZone('B').isOccupied(column) && opposing_player_->getZone('B').isOccupied(column))
       {
         creature = current_player_->getZone('B').getCreature(column);
+        enemy_creature = opposing_player_->getZone('B').getCreature(column);
 
-        new_priority = creature->getCurrentHealth() + creature->getCurrentAttack();
+        if (creature->getCurrentAttack() >= opposing_player_->getCurrentHealth() + enemy_creature->getCurrentHealth())
+        {
+          new_priority = creature->getCurrentHealth() + creature->getCurrentAttack() + 50;
 
-        // do not use spell on creatures that already have brutal or lifesteal
-        calculateTraitPriority(new_priority, creature, 
-        {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",2}, {"Lifesteal", -100},
-        {"Poisoned", 0}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 1}, {"Venomous", 1}});
+          calculateTraitPriority(new_priority, creature, 
+          {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",2}, {"Lifesteal", 0},
+          {"Poisoned", 0}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 1}, {"Venomous", 1}});
+        }
 
-        // decrease priority by health loss
-        new_priority -= (creature->getCurrentHealth() - (std::ceil(creature->getCurrentHealth()/2.0)));
+        int creature_health = ((creature->getCurrentHealth() + 1) / 2) + 2;
 
-        new_priority = new_priority / 5;
+        if (enemy_creature->creatureHasTrait("First Strike"))
+          creature_health -= 2;
+
+        if (creature_health > enemy_creature->getCurrentAttack() && creature->getCurrentAttack() > enemy_creature->getCurrentHealth())
+        {
+          new_priority = creature->getCurrentHealth() + creature->getCurrentAttack();
+
+          calculateTraitPriority(new_priority, creature, 
+          {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",2}, {"Lifesteal", -100},
+          {"Poisoned", 0}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 1}, {"Venomous", 1}});
+
+          new_priority = new_priority / 2;
+        }
       
         if (new_priority > priority)
         {
