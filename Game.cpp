@@ -2801,7 +2801,7 @@ int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefende
 
     if (!creature->creatureHasTrait("Brutal") && attacking_creature->creatureHasTrait("First Strike"))
     {
-      if (attacking_creature->getCurrentAttack() >= first_strike_health_to_battle)
+      if (creature->getCurrentHealth() == first_strike_health_to_battle)
       {
         battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
         return battle_slot_to_defend;
