@@ -2733,6 +2733,9 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
           if (attacking_creature->getCurrentHealth() > opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentAttack() 
           && attacking_creature->getCurrentAttack() >= opposing_player_->getZone('F').getCreature(opponent_column)->getCurrentHealth())
           {
+            if (current_player_->getZone('B').isOccupied(opponent_column))
+              continue;
+            
             new_to_challenge_priority = creature_to_challenge->getCurrentAttack() + creature_to_challenge->getCurrentHealth();
 
             int lifesteal_priority = -100;
