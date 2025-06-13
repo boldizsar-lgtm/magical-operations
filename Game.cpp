@@ -2757,7 +2757,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
           }
         }
 
-        current_priority += creature_to_challenge_priority;
+        current_priority += creature_to_challenge_priority * 10;
       }
     }
 
