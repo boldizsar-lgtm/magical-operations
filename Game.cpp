@@ -2181,10 +2181,12 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
   if (spell->getId() == "FINAL")
   {
+    //TODO FINAL
     // Idea: Check if creature in field or battle zone doesn't have haste or brutal and adjust priority accordingly
 
     //The target creature gains the Brutal, Haste and Temporary traits, and its current attack is increased by 3.
     Creature* creature = nullptr;
+    Creature* enemy_creature = nullptr;
     int new_priority = 0;
 
     // check if the +3 attack would help win a fight
@@ -2197,8 +2199,33 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         opponent_health_vector.push_back(opposing_creature->getCurrentHealth());
     }
 
-    for(int column = 1; column <= ZONE_WIDTH; column++)
+    for(int column = 1; column <= ZONE_WIDTH; column++) 
     {
+       if (current_player_->getZone('B').isOccupied(column) && opposing_player_->getZone('B').isOccupied(column))
+      {
+        creature = current_player_->getZone('B').getCreature(column);
+        enemy_creature = opposing_player_->getZone('B').getCreature(column);
+
+        if (creature->getCurrentAttack() + 3 >= opposing_player_->getCurrentHealth() + enemy_creature->getCurrentHealth())
+          new_priority = creature->getCurrentAttack() + creature->getCurrentHealth() + 50;
+
+        calculateTraitPriority(new_priority, creature, 
+        {{"Brutal", -50}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 0}, {"Lifesteal", 0},
+        {"Poisoned", 0}, {"Regenerate", 0}, {"Temporary", 6}, {"Undying", 4}, {"Venomous", 0}});
+      
+        if (new_priority > priority)
+        {
+          priority = new_priority;
+
+          command.at(1) = spell->getId();
+
+          if (command.size() != 3)
+            command.push_back("b" + std::to_string(column));
+          else
+            command.at(2) = "b" + std::to_string(column);
+        }
+      }
+      
       if (current_player_->getZone('F').isOccupied(column))
       {
         creature = current_player_->getZone('F').getCreature(column);
@@ -2238,36 +2265,6 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           command.push_back("f" + std::to_string(column));
           else
           command.at(2) = "f" + std::to_string(column);
-        }
-      }
-
-      if (current_player_->getZone('B').isOccupied(column))
-      {
-        creature = current_player_->getZone('B').getCreature(column);
-
-        // if it has the brutal and haste already, or has brutal and didn't enter this turn - skip
-        if (((creature->creatureHasTrait("Brutal") && (!creature->creatureHasTrait("Haste"))) || (creature->creatureHasTrait("Brutal") && !creature->getEnter())))
-          continue;
-
-        // Use this creatures default priority
-        new_priority = creature->getCurrentAttack() + creature->getCurrentHealth();
-
-        calculateTraitPriority(new_priority, creature, 
-        {{"Brutal", 0}, {"Challenger", 2}, {"First Strike", 6}, {"Haste", -4}, {"Lifesteal", 2},
-        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 4}, {"Venomous", 2}});
-
-        new_priority = new_priority / 4;
-      
-        if (new_priority > priority)
-        {
-          priority = new_priority;
-
-          command.at(1) = spell->getId();
-
-          if (command.size() != 3)
-            command.push_back("b" + std::to_string(column));
-          else
-            command.at(2) = "b" + std::to_string(column);
         }
       }
     }
@@ -2413,7 +2410,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
 
         if (creature->getCurrentAttack() >= opposing_player_->getCurrentHealth() + enemy_creature->getCurrentHealth())
         {
-          new_priority = creature->getCurrentHealth() + creature->getCurrentAttack();
+          new_priority = creature->getCurrentHealth() + creature->getCurrentAttack() + 50;
 
           calculateTraitPriority(new_priority, creature, 
           {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 2}, {"Haste",2}, {"Lifesteal", 0},
@@ -2425,7 +2422,7 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         if (enemy_creature->creatureHasTrait("First Strike"))
           creature_health -= 2;
 
-        if (creature_health > enemy_creature->getCurrentAttack())
+        if (creature_health > enemy_creature->getCurrentAttack() && creature->getCurrentAttack() > enemy_creature->getCurrentHealth())
         {
           new_priority = creature->getCurrentHealth() + creature->getCurrentAttack();
 
