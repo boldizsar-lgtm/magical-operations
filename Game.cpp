@@ -2656,6 +2656,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
       Creature* attacking_creature = current_player_->getZone('F').getCreature(column);
 
       bool skip_creature{false};
+      int first_strike_defeat_health = 0;
       // if defender has a first strike creature that can defend a creature play this creature first if no brutal creature need to be defended
       if (first_strike_defender && (std::ranges::distance(undefended_brutal_creatures) == 0))
       {
@@ -2663,7 +2664,10 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
         {
           if (max_first_strike_attack >= health)
           {
-            if (!attacking_creature->creatureHasTrait("First Strike") || !(attacking_creature->getCurrentAttack() == max_first_strike_attack))
+            if (health >= first_strike_defeat_health)
+              first_strike_defeat_health = health;
+
+            if (!(attacking_creature->creatureHasTrait("First Strike")) || !(attacking_creature->getCurrentAttack() == max_first_strike_attack))
             {
               skip_creature = true;
               break;
@@ -2681,14 +2685,14 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
         current_priority += 6;
         if (max_health == attacking_creature->getCurrentHealth())
         {
-          battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_brutal_creatures, min_health_opposer);
+          battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_brutal_creatures, min_health_opposer, first_strike_defeat_health);
         }
         else
           continue;
       }
       else if(std::ranges::distance(undefended_creatures) != 0)
       {
-        battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_creatures, min_health_opposer);
+        battle_slot_to_defend = determineBestDefenseSlot(attacking_creature, undefended_creatures, min_health_opposer, first_strike_defeat_health);
         // if the defender has a brutal creature that creature gains priority
         current_priority += 4;
       }
@@ -2780,7 +2784,7 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
 }
 
 //---------------------------
-int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer)
+int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefended_creatures, int min_health_opposer, int first_strike_health_to_battle)
 {
   int max_attack_value = 0;
   int battle_slot_to_defend = 0;
@@ -2797,13 +2801,15 @@ int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefende
 
     if (!creature->creatureHasTrait("Brutal") && attacking_creature->creatureHasTrait("First Strike"))
     {
-      if (attacking_creature->getCurrentAttack() >= creature->getCurrentHealth())
+      if (attacking_creature->getCurrentAttack() >= first_strike_health_to_battle)
       {
-        if ((creature->getCurrentAttack() > max_attack_value || (creature->getCurrentAttack() == 0 && max_attack_value == 0)))
-        {
-          max_attack_value = creature->getCurrentAttack();
-          battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
-        }
+        battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
+        return battle_slot_to_defend;
+      }
+      else if (creature->getCurrentAttack() > max_attack_value || (creature->getCurrentAttack() == 0 && max_attack_value == 0))
+      {
+        max_attack_value = creature->getCurrentAttack();
+        battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
       }
     }
     else if (creature->getCurrentAttack() > max_attack_value || (creature->getCurrentAttack() == 0 && max_attack_value == 0))  
