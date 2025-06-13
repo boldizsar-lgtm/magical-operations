@@ -1356,7 +1356,7 @@ void Game::letAiPlay()
   creature_command.push_back("f" + std::to_string(current_player_->getFirstEmptyFieldColumn()));
 
   //if the board is not full get creature priority
-  if (creature_command.at(2) != "f0" && !current_player_->isZoneFull('B)'))
+  if (creature_command.at(2) != "f0" && !current_player_->isZoneFull('B'))
     getCreaturePriority(creature_priority, creature_command);
 
   getSpellPriority(spell_priority, spell_command);
