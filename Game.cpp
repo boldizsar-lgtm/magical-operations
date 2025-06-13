@@ -2210,8 +2210,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
           new_priority = creature->getCurrentAttack() + creature->getCurrentHealth() + 50;
 
         calculateTraitPriority(new_priority, creature, 
-        {{"Brutal", -50}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", 0}, {"Lifesteal", 0},
-        {"Poisoned", 0}, {"Regenerate", 0}, {"Temporary", 6}, {"Undying", 4}, {"Venomous", 0}});
+        {{"Brutal", -50}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", -50}, {"Lifesteal", 0},
+        {"Poisoned", 0}, {"Regenerate", 0}, {"Temporary", -50}, {"Undying", 4}, {"Venomous", 0}});
       
         if (new_priority > priority)
         {
@@ -2250,8 +2250,8 @@ void Game::getTargetSpellPriority(Spell* spell, int& priority, std::vector<std::
         }
 
         calculateTraitPriority(new_priority, creature, 
-        {{"Brutal", -100}, {"Challenger", 2}, {"First Strike", 6}, {"Haste", -4}, {"Lifesteal", 2},
-        {"Poisoned", 2}, {"Regenerate", 2}, {"Temporary", 0}, {"Undying", 4}, {"Venomous", 2}});
+        {{"Brutal", -50}, {"Challenger", 2}, {"First Strike", 2}, {"Haste", -50}, {"Lifesteal", 0},
+        {"Poisoned", 0}, {"Regenerate", 0}, {"Temporary", -50}, {"Undying", 4}, {"Venomous", 0}});
 
         new_priority = new_priority / 4;
       
