@@ -2551,11 +2551,16 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
   // TODO: place weakest creatures infront of creatures
 
   // save the health of all creatures of the field zone of the current player
+  bool first_strike_defender{false};
+
   auto health_values = current_player_->getZone('F').getSlots()
-  | std::views::filter([] (Creature* creature) -> bool
+  | std::views::filter([&first_strike_defender] (Creature* creature) -> bool
   {
     if (creature && (!creature->getEnter() || creature->creatureHasTrait("Haste"))) 
     {
+      if (creature->creatureHasTrait("First Strike"))
+        first_strike_defender = true;
+
       return true;
     }
     return false;
@@ -2600,6 +2605,21 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
     // Logic for Defense in Battle Zone
     if(current_player_->getRoleString() == "Defender")
     {
+      auto first_strike_attack_defender = current_player_->getZone('F').getSlots()
+    | std::views::filter([] (Creature* creature) -> bool
+      {
+        if (creature && (!creature->getEnter() || creature->creatureHasTrait("Haste")) && creature->creatureHasTrait("First Strike")) 
+        {
+          return true;
+        }
+        return false;
+      })
+      | std::views::transform([] (Creature* creature) -> int {return creature->getCurrentAttack();});
+
+      int max_first_strike_attack = 0;
+      if (std::ranges::distance(first_strike_attack_defender) != 0)
+        max_first_strike_attack = *std::ranges::max_element(first_strike_attack_defender);
+
       // filter that keeps current players field creatures that have brutal trait (maybe switch this to a count func?)
       auto defender_brutal_creatures =  current_player_->getZone('F').getSlots()
       | std::views::filter([] (Creature* creature) -> bool
@@ -2634,6 +2654,25 @@ void Game::getBattlePriority(int& priority, std::vector<std::string>& command)
         });
 
       Creature* attacking_creature = current_player_->getZone('F').getCreature(column);
+
+      bool skip_creature{false};
+      // if defender has a first strike creature that can defend a creature play this creature first if no brutal creature need to be defended
+      if (first_strike_defender && (std::ranges::distance(undefended_brutal_creatures) == 0))
+      {
+        for (auto& health : health_opposer)
+        {
+          if (max_first_strike_attack >= health)
+          {
+            if (!attacking_creature->creatureHasTrait("First Strike") || !(attacking_creature->getCurrentAttack() == max_first_strike_attack))
+            {
+              skip_creature = true;
+              break;
+            }
+          }
+        }
+      }
+      if (skip_creature)
+        continue;
 
       // determine which slot to defend (brutal creatures defended by creature with highest health)
       if (std::ranges::distance(undefended_brutal_creatures) != 0)
@@ -2752,13 +2791,24 @@ int Game::determineBestDefenseSlot(Creature* attacking_creature, auto& undefende
       battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
       return battle_slot_to_defend;
     }
-    if (creature->getCurrentAttack() > max_attack_value || (creature->getCurrentAttack() == 0 && max_attack_value == 0))  
+
+    if (attacking_creature->creatureHasTrait("First Strike"))
+    {
+      if (attacking_creature->getCurrentAttack() >= creature->getCurrentHealth())
+      {
+        if ((creature->getCurrentAttack() > max_attack_value || (creature->getCurrentAttack() == 0 && max_attack_value == 0)))
+        {
+          max_attack_value = creature->getCurrentAttack();
+          battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
+        }
+      }
+    }
+    else if (creature->getCurrentAttack() > max_attack_value || (creature->getCurrentAttack() == 0 && max_attack_value == 0))  
     {
       max_attack_value = creature->getCurrentAttack();
       battle_slot_to_defend = opposing_player_->getCreatureColumn('B', creature);
     }
   }
-
   return battle_slot_to_defend;
 }
 
