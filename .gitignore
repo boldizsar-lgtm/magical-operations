@@ -1,5 +1,6 @@
 /build/
 /a2
+/main
 /testreport.html
 /valgrind_logs
 /.idea/
